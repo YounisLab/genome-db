@@ -37,13 +37,15 @@ class BellCurve extends React.Component {
     super(props)
 
     this.state = {
-      data: []
+      data: [],
+      alertText: null
     }
 
     this.getBellCurve = this.getBellCurve.bind(this)
   }
   getBellCurve (gene) {
     if (!gene) {
+      this.setState({ alertText: 'Please enter a gene name.' })
       return
     }
 
@@ -54,15 +56,27 @@ class BellCurve extends React.Component {
     })
       .then(resp => {
         if (resp.data.length < 1) {
+          this.setState({ alertText: 'Gene not found! Please try another name.' })
           return
         }
 
         resp.data[0].key = this.state.data.length + 1
         this.state.data.push(resp.data[0])
-        this.setState({ data: this.state.data })
+        this.setState({
+          data: this.state.data,
+          alertText: null
+        })
       })
   }
   render () {
+    let alert
+
+    if (this.state.alertText) {
+      alert = <Alert message={this.state.alertText} type='error' style={{ width: '30%' }} />
+    } else {
+      alert = null
+    }
+
     return (
       <Content style={styles.contentStyle}>
         <div style={styles.contentDivStyle}>
