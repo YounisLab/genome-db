@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './styles'
-import { Layout, Input, Table, Alert, Row } from 'antd'
+import Row from './Row'
+import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
 const axios = require('axios')
@@ -83,10 +84,10 @@ class BellCurve extends React.Component {
           <Row>
             <h1>Bell Curve</h1>
           </Row>
-          <Row style={styles.rowStyle}>
+          <Row>
             {alert}
           </Row>
-          <Row style={styles.rowStyle}>
+          <Row>
             <Search
               size='large'
               placeholder='Enter gene name here, eg: MAPK14'
@@ -95,7 +96,7 @@ class BellCurve extends React.Component {
               enterButton
             />
           </Row>
-          <Row style={styles.rowStyle}>
+          <Row>
             <Table
               dataSource={this.state.data}
               columns={columns}
