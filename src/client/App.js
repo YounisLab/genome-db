@@ -1,14 +1,24 @@
+import 'antd/dist/antd.css'
 import React, { Component } from 'react'
-import './app.css'
+import BellCurve from './BellCurve'
+import { Layout } from 'antd'
+const { Header } = Layout
 
-export default class App extends Component {
+class App extends Component {
   render () {
     return (
       <div>
-        <h1>
-          GenomeDB
-        </h1>
+        <Layout>
+          <Header>
+            <h1 style={{ color: 'white' }}>
+              GenomeDB
+            </h1>
+          </Header>
+          <BellCurve />
+        </Layout>
       </div>
     )
   }
 }
+
+export default App
