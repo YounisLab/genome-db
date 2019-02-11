@@ -45,6 +45,7 @@ class BellCurve extends React.Component {
     this.getBellCurve = this.getBellCurve.bind(this)
   }
   getBellCurve (gene) {
+    this.setState({ alertText: null })
     if (!gene) {
       this.setState({ alertText: 'Please enter a gene name.' })
       return
