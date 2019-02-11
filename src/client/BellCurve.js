@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
-import { Layout, Divider, Input, Table } from 'antd'
+import React from 'react'
+import styles from './styles'
+import { Layout, Input, Table, Alert, Row } from 'antd'
 const { Content } = Layout
 const { Search } = Input
 const axios = require('axios')
@@ -63,26 +64,33 @@ class BellCurve extends React.Component {
   }
   render () {
     return (
-      <Content style={{ padding: '20px' }}>
-        <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-          <h1>Bell Curve</h1>
-          <Divider />
-          <Search
-            size='large'
-            placeholder='Enter gene name here, eg: MAPK14'
-            onSearch={this.getBellCurve}
-            style={{ width: 500 }}
-            enterButton
-          />
-          <Table
-            dataSource={this.state.data}
-            columns={columns}
-            size={'small'}
-            style={{ padding: '20px 0' }}
-            bordered
-            pagination={false}
-            locale={{ emptyText: 'Search for gene names to show results' }}
-          />
+      <Content style={styles.contentStyle}>
+        <div style={styles.contentDivStyle}>
+          <Row>
+            <h1>Bell Curve</h1>
+          </Row>
+          <Row style={styles.rowStyle}>
+            {alert}
+          </Row>
+          <Row style={styles.rowStyle}>
+            <Search
+              size='large'
+              placeholder='Enter gene name here, eg: MAPK14'
+              onSearch={this.getBellCurve}
+              style={{ width: '30%' }}
+              enterButton
+            />
+          </Row>
+          <Row style={styles.rowStyle}>
+            <Table
+              dataSource={this.state.data}
+              columns={columns}
+              size={'small'}
+              bordered
+              pagination={false}
+              locale={{ emptyText: 'Search for gene names to show results' }}
+            />
+          </Row>
         </div>
       </Content>
     )
