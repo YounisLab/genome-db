@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from './styles'
 import Row from './Row'
+import BellCurveChart from './BellCurveChart'
 import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
@@ -96,6 +97,9 @@ class BellCurve extends React.Component {
               style={{ width: '30%' }}
               enterButton
             />
+          </Row>
+          <Row>
+            <BellCurveChart />
           </Row>
           <Row>
             <Table
