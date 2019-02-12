@@ -12,6 +12,7 @@
   },
   "author": "Fadhil Abubaker",
   "dependencies": {
+    "@amcharts/amcharts3-react": "^3.1.0",
     "antd": "^3.13.2",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
