@@ -40,6 +40,21 @@ module.exports = {
       })
   },
 
+  vertical: function (gene) {
+    return pool.query(`
+    SELECT
+      mcf10a.gene,
+      mcf10a.fpkm AS mcf10A_fpkm,
+      mcf7.fpkm AS mcf7_fpkm,
+      mcf10a_vs_mcf7.pvalue,
+      mcf10a_vs_mcf7.log2_foldchange
+    FROM mcf10a
+    INNER JOIN mcf7 ON mcf10a.gene = mcf7.gene
+    INNER JOIN mcf10a_vs_mcf7 ON mcf10a.gene = mcf10a_vs_mcf7.gene
+    WHERE mcf10a.gene = $1
+    `, [gene])
+  },
+
   heatMap: function (genes) {
     // Convert genes array to genes list for psql
     genes = _.map(genes, function (gene) {

@@ -37,6 +37,17 @@ app.get('/bellcurve', (req, res) => {
     })
 })
 
+app.get('/vertical', (req, res) => {
+  adapter.bellCurve(req.query.gene)
+    .then(function (results) {
+      res.json(results.rows)
+    })
+    .catch(function (err) {
+      console.log(err)
+      res.status(500).json({ status: 'Error' })
+    })
+})
+
 app.post('/heatmap', (req, res) => {
   adapter.heatMap(req.body.genes)
     .then(function (results) {
