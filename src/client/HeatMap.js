@@ -56,7 +56,7 @@ class HeatMap extends React.Component {
       <Content style={styles.contentStyle}>
         <div style={styles.contentDivStyle}>
           <Row>
-            <h1>HeatMap</h1>
+            <h1>Differential Multi-Gene Expression</h1>
           </Row>
           <Row>
             <TextArea

@@ -10,7 +10,7 @@ class RBP extends React.Component {
       <Content style={styles.contentStyle}>
         <div style={styles.contentDivStyle}>
           <Row>
-            <h1>RBPs List</h1>
+            <h1>Correlations</h1>
           </Row>
         </div>
       </Content>

@@ -84,7 +84,7 @@ class BellCurve extends React.Component {
       <Content style={styles.contentStyle}>
         <div style={styles.contentDivStyle}>
           <Row>
-            <h1>Bell Curve</h1>
+            <h1>Differential Gene Expression</h1>
           </Row>
           <Row>
             {alert}
