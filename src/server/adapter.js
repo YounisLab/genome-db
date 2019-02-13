@@ -50,6 +50,7 @@ module.exports = {
 
     return pool.query(`
     SELECT
+      row_number() OVER () AS key,
       mcf10a.gene,
       mcf10a.fpkm AS mcf10A_fpkm,
       mcf7.fpkm AS mcf7_fpkm
