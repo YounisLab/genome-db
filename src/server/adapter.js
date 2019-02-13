@@ -1,4 +1,5 @@
 const { Pool } = require('pg')
+const _ = require('lodash')
 
 var pool
 
@@ -37,5 +38,27 @@ module.exports = {
       .catch(function (rej) {
         return rej
       })
+  },
+
+  heatMap: function (genes) {
+    // Convert genes array to genes list for psql
+    genes = _.map(genes, function (gene) {
+      return `'${gene}'`
+    })
+    var genesList = _.join(genes, ',')
+    genesList = '(' + genesList + ')'
+
+    return pool.query(`
+    SELECT
+      mcf10a.gene,
+      mcf10a.fpkm AS mcf10A_fpkm,
+      mcf7.fpkm AS mcf7_fpkm
+    FROM
+      mcf10a
+    INNER JOIN mcf7
+    ON mcf10a.gene = mcf7.gene
+    WHERE
+      mcf10a.gene IN ${genesList}
+    `)
   }
 }
