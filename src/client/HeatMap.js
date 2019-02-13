@@ -59,9 +59,6 @@ class HeatMap extends React.Component {
             <h1>HeatMap</h1>
           </Row>
           <Row>
-            <HeatMapChart />
-          </Row>
-          <Row>
             <TextArea
               rows={4}
               placeholder='Enter newline separated list of genes here.'
@@ -70,6 +67,9 @@ class HeatMap extends React.Component {
           </Row>
           <Row>
             <Button type='primary' icon='search' onClick={this.getHeatMap}>Search</Button>
+          </Row>
+          <Row>
+            <HeatMapChart />
           </Row>
           <Row>
             <Table
