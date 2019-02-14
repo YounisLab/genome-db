@@ -1,7 +1,62 @@
 const { Pool } = require('pg')
 const _ = require('lodash')
+const d3 = require('d3')
+const math = require('mathjs')
 
 var pool
+
+function NormalDensityZx (x, Mean, StdDev, scaleFactor) {
+  var a = x - Mean
+  return (Math.exp(-(a * a) / (2 * StdDev * StdDev)) / (Math.sqrt(2 * Math.PI) * StdDev)) * scaleFactor
+}
+
+function computeCurve (dataPoints, sample) {
+  var binGenerator = d3.histogram().thresholds(d3.thresholdScott)
+
+  var bins = binGenerator(dataPoints)
+  var mean = math.mean(dataPoints)
+  var stddev = math.std(dataPoints)
+
+  // We use a hash to get O(1) access to x-axis values (categories)
+  var pointsHash = {}
+  _.each(bins, function (bin) {
+    var point = { 'sample': sample, 'category': bin.x0 }
+    point[sample + '_curve'] = NormalDensityZx(bin.x0, mean, stddev, Math.abs(bin.x1 - bin.x0) * dataPoints.length)
+    point[sample + '_hgram'] = bin.length
+    pointsHash[bin.x0] = point
+  })
+
+  return pointsHash
+}
+
+// amcharts requires that multiple graphs
+// contain their values in the same object.
+function mergeSamples (pointsPerSample) {
+  // Merge unique x-axis points across all samples
+  var xPoints = _.reduce(pointsPerSample, function (allPoints, samplePoints) {
+    return allPoints.concat(Object.keys(samplePoints))
+  }, [])
+  xPoints = _.uniq(xPoints)
+
+  // Merge common points
+  var mergedPoints = []
+  _.each(xPoints, function (x) {
+    var mergedPoint = { category: parseFloat(x) }
+    _.each(pointsPerSample, function (p) {
+      // If x-point exists
+      if (p[x]) {
+        var sample = p[x].sample
+        mergedPoint[sample + '_curve'] = p[x][sample + '_curve']
+        mergedPoint[sample + '_hgram'] = p[x][sample + '_hgram']
+      }
+    })
+    mergedPoints.push(mergedPoint)
+  })
+
+  // Sort by category
+  mergedPoints = _.sortBy(mergedPoints, ['category'])
+  return mergedPoints
+}
 
 module.exports = {
   connect: function (urlObject) {
@@ -17,30 +72,27 @@ module.exports = {
       })
   },
 
-  bellCurve: function (gene) {
-    return pool.query(`
-      SELECT
-        mcf10a.gene,
-        mcf10a.fpkm AS mcf10A_fpkm,
-        mcf7.fpkm AS mcf7_fpkm,
-        mcf10a_vs_mcf7.pvalue,
-        mcf10a_vs_mcf7.log2_foldchange
-      FROM
-        mcf10a, mcf7, mcf10a_vs_mcf7
-      WHERE
-        mcf10a.gene=$1 AND
-        mcf7.gene=$1 AND
-        mcf10a_vs_mcf7.gene=$1
-    `, [gene])
-      .then(function (res) {
-        return res
-      })
-      .catch(function (rej) {
-        return rej
+  bellCurve: function (samples) {
+    // Computes smooth histogram curve of fpkms
+    console.log(samples)
+    var queries = _.map(samples, (s) => {
+      return pool.query(`SELECT log2 FROM ${s} WHERE log2 != 'Infinity'`)
+    })
+
+    return Promise.all(queries)
+      .then(function (results) {
+        // Accumulate points for all samples
+        var pointsPerSample = _.map(samples, function (sample, index) {
+          var log2fpkms = _.map(results[index].rows, row => row.log2)
+          return computeCurve(log2fpkms, sample)
+        })
+
+        return mergeSamples(pointsPerSample)
       })
   },
 
   vertical: function (gene) {
+    // Computes verticals to display on bellcurve
     return pool.query(`
     SELECT
       mcf10a.gene,

@@ -26,10 +26,10 @@ app.get('/', (req, res) => {
   res.send('Hello world\n')
 })
 
-app.get('/bellcurve', (req, res) => {
-  adapter.bellCurve(req.query.gene)
+app.post('/bellcurve', (req, res) => {
+  adapter.bellCurve(req.body.samples)
     .then(function (results) {
-      res.json(results.rows)
+      res.json(results)
     })
     .catch(function (err) {
       console.log(err)
