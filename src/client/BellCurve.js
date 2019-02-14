@@ -8,11 +8,6 @@ const { Search } = Input
 const axios = require('axios')
 
 const columns = [{
-  title: 'No.',
-  dataIndex: 'key',
-  key: 'key'
-},
-{
   title: 'Gene',
   dataIndex: 'gene',
   key: 'gene'
@@ -52,7 +47,7 @@ class BellCurve extends React.Component {
       return
     }
 
-    axios.get('/api/bellcurve', {
+    axios.get('/api/vertical', {
       params: {
         gene: gene
       }
@@ -63,10 +58,8 @@ class BellCurve extends React.Component {
           return
         }
 
-        resp.data[0].key = this.state.data.length + 1
-        this.state.data.push(resp.data[0])
         this.setState({
-          data: this.state.data,
+          data: resp.data,
           alertText: null
         })
       })
