@@ -38,7 +38,7 @@ app.post('/bellcurve', (req, res) => {
 })
 
 app.get('/vertical', (req, res) => {
-  adapter.bellCurve(req.query.gene)
+  adapter.vertical(req.query.gene)
     .then(function (results) {
       res.json(results.rows)
     })
