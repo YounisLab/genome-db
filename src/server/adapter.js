@@ -74,7 +74,6 @@ module.exports = {
 
   bellCurve: function (samples) {
     // Computes smooth histogram curve of fpkms
-    console.log(samples)
     var queries = _.map(samples, (s) => {
       return pool.query(`SELECT log2 FROM ${s} WHERE log2 != 'Infinity'`)
     })
