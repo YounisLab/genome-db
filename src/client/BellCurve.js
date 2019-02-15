@@ -101,6 +101,7 @@ class BellCurve extends React.Component {
               size={'small'}
               bordered
               pagination={false}
+              style={{ width: '50%' }}
               locale={{ emptyText: 'Search for gene names to show results' }}
             />
           </Row>
