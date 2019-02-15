@@ -35,7 +35,8 @@ class BellCurve extends React.Component {
 
     this.state = {
       data: [],
-      alertText: null
+      alertText: null,
+      samples: ['mcf10a', 'mcf7']
     }
 
     this.getBellCurve = this.getBellCurve.bind(this)
@@ -92,7 +93,10 @@ class BellCurve extends React.Component {
             />
           </Row>
           <Row>
-            <BellCurveChart />
+            <BellCurveChart
+              vertical={this.state.data}
+              samples={this.state.samples}
+            />
           </Row>
           <Row>
             <Table

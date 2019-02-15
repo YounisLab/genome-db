@@ -8,8 +8,6 @@ const colorMaps = {
   mcf7: 'green'
 }
 
-const samples = ['mcf10a', 'mcf7']
-
 function createCurveGraph (sample, color) {
   return {
     'title': `${sample}_curve`,
@@ -42,10 +40,10 @@ class BellCurveChart extends React.Component {
     }
   }
   componentDidMount () {
-    var curveGraphs = _.map(samples, (s) => createCurveGraph(s, colorMaps[s]))
-    var histGraphs = _.map(samples, (s) => createHistogramGraph(s, colorMaps[s]))
+    var curveGraphs = _.map(this.props.samples, (s) => createCurveGraph(s, colorMaps[s]))
+    var histGraphs = _.map(this.props.samples, (s) => createHistogramGraph(s, colorMaps[s]))
 
-    axios.post('/api/bellcurve', { samples: samples })
+    axios.post('/api/bellcurve', { samples: this.props.samples })
       .then((results) => {
         this.setState({
           dataProvider: results.data,
