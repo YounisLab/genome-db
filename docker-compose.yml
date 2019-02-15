@@ -9,6 +9,8 @@ services:
     volumes:
       - ./src/server:/home/src/server
       - ./src/client:/home/src/client
+    depends_on:
+      - postgres
   postgres:
     image: postgres:9.5
     environment:
