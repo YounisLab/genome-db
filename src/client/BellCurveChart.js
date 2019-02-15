@@ -4,7 +4,7 @@ const axios = require('axios')
 const _ = require('lodash')
 
 const colorMaps = {
-  mcf10a: 'red',
+  mcf10a: 'blue',
   mcf7: 'green'
 }
 
@@ -12,22 +12,24 @@ const samples = ['mcf10a', 'mcf7']
 
 function createCurveGraph (sample, color) {
   return {
-    'balloonText': `${sample}_curve [[category]]: <b>[[${sample}_curve]]</b>`,
+    'title': `${sample}_curve`,
     'lineThickness': 3,
     'lineColor': color,
-    'valueField': `${sample}_curve`
+    'valueField': `${sample}_curve`,
+    'showBalloon': false
   }
 }
 
 function createHistogramGraph (sample, color) {
   return {
-    'balloonText': `${sample}_hgram [[category]]: <b>[[${sample}_hgram]]</b>`,
+    'title': `${sample}_hgram`,
     'fillColors': color,
     'fillAlphas': 0.9,
     'lineColor': '#fff',
     'lineAlpha': 0.7,
     'type': 'column',
-    'valueField': `${sample}_hgram`
+    'valueField': `${sample}_hgram`,
+    'showBalloon': false
   }
 }
 
@@ -58,6 +60,7 @@ class BellCurveChart extends React.Component {
           options={{
             'type': 'serial',
             'theme': 'light',
+            'fontFamily': 'Liberation Sans',
             'dataProvider': this.state.dataProvider,
             'precision': 2,
             'valueAxes': [{
@@ -66,6 +69,12 @@ class BellCurveChart extends React.Component {
               'title': 'Frequency',
               'titleFontSize': '20'
             }],
+            'legend': {
+              'useGraphSettings': true,
+              'fontSize': 15,
+              'position': 'top',
+              'align': 'right'
+            },
             'categoryAxis': {
               'gridAlpha': 0.05,
               'startOnAxis': true,
@@ -79,9 +88,9 @@ class BellCurveChart extends React.Component {
             'startDuration': 1,
             'graphs': this.state.graphs,
             'chartCursor': {
-              'categoryBalloonEnabled': false,
+              'categoryBalloonEnabled': true,
               'cursorAlpha': 0,
-              'zoomable': false
+              'zoomable': true
             },
             'categoryField': 'category'
           }}
