@@ -73,7 +73,8 @@ class BellCurveChart extends React.Component {
               'useGraphSettings': true,
               'fontSize': 15,
               'position': 'top',
-              'align': 'right'
+              'align': 'right',
+              'valueWidth': 70
             },
             'categoryAxis': {
               'gridAlpha': 0.05,
