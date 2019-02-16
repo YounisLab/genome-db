@@ -1,5 +1,7 @@
 import React from 'react'
-import AmCharts from '@amcharts/amcharts3-react'
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
+
 const axios = require('axios')
 const _ = require('lodash')
 
@@ -8,26 +10,24 @@ const colorMaps = {
   mcf7: 'green'
 }
 
-function createCurveGraph (sample, color) {
+function createCurveSeries (sample, data, color) {
   return {
-    'title': `${sample}_curve`,
-    'lineThickness': 3,
-    'lineColor': color,
-    'valueField': `${sample}_curve`,
-    'showBalloon': false
+    name: `${sample} curve`,
+    type: 'line',
+    data: data,
+    color: color,
+    marker: {
+      enabled: false
+    }
   }
 }
 
-function createHistogramGraph (sample, color) {
+function createHistogramSeries (sample, data, color) {
   return {
-    'title': `${sample}_hgram`,
-    'fillColors': color,
-    'fillAlphas': 0.9,
-    'lineColor': '#fff',
-    'lineAlpha': 0.7,
-    'type': 'column',
-    'valueField': `${sample}_hgram`,
-    'showBalloon': false
+    name: `${sample} histogram`,
+    type: 'column',
+    data: data,
+    color: color
   }
 }
 
@@ -36,62 +36,57 @@ class BellCurveChart extends React.Component {
     super(props)
 
     this.state = {
-      dataProvider: []
+      series: []
+    }
+  }
+  componentDidUpdate (prevProps) {
+    if (this.props.vertical && this.props.vertical.length > 0 &&
+       this.props.vertical !== prevProps.vertical) {
+      // Insert vertical into dataProvider
+      console.log('veritcal:', this.props.vertical)
     }
   }
   componentDidMount () {
-    var curveGraphs = _.map(this.props.samples, (s) => createCurveGraph(s, colorMaps[s]))
-    var histGraphs = _.map(this.props.samples, (s) => createHistogramGraph(s, colorMaps[s]))
+    var requests = _.map(this.props.samples, function (sample) {
+      return axios.get('/api/bellcurve', { params: { sample: sample } })
+    })
 
-    axios.post('/api/bellcurve', { samples: this.props.samples })
-      .then((results) => {
-        this.setState({
-          dataProvider: results.data,
-          graphs: _.concat(curveGraphs, histGraphs)
+    var series = []
+    axios.all(requests)
+      .then(axios.spread((...responses) => {
+        _.each(responses, (r) => {
+          var sample = r.config.params.sample
+          var curve = createCurveSeries(sample, r.data.curve, colorMaps[sample])
+          var hgram = createHistogramSeries(sample, r.data.hgram, colorMaps[sample])
+          series.push(curve, hgram)
         })
-      })
+
+        this.setState({ series: series })
+      }))
+      // TODO .catch block
   }
   render () {
+    console.log(this.state.series)
     return (
       <div>
-        <AmCharts.React style={{ width: '100%', height: '500px' }}
+        <HighchartsReact
+          highcharts={Highcharts}
           options={{
-            'type': 'serial',
-            'theme': 'light',
-            'fontFamily': 'Liberation Sans',
-            'dataProvider': this.state.dataProvider,
-            'precision': 2,
-            'valueAxes': [{
-              'gridAlpha': 0.2,
-              'dashLength': 0,
-              'title': 'Frequency',
-              'titleFontSize': '20'
+            chart: {
+              zoomType: 'x'
+            },
+            xAxis: [{
+              title: {
+                text: 'Log2 FPKM'
+              }
             }],
-            'legend': {
-              'useGraphSettings': true,
-              'fontSize': 15,
-              'position': 'top',
-              'align': 'right',
-              'valueWidth': 70
-            },
-            'categoryAxis': {
-              'gridAlpha': 0.05,
-              'startOnAxis': true,
-              'tickLength': 1,
-              'labelFunction': function (label, item) {
-                return '' + Math.round(item.dataContext.category * 10) / 10
-              },
-              'title': 'log2 FPKM',
-              'titleFontSize': '20'
-            },
-            'startDuration': 1,
-            'graphs': this.state.graphs,
-            'chartCursor': {
-              'categoryBalloonEnabled': true,
-              'cursorAlpha': 0,
-              'zoomable': true
-            },
-            'categoryField': 'category'
+            yAxis: [{
+              title: {
+                text: 'Frequency'
+              }
+            }],
+            series: this.state.series,
+            title: '' // No title needed, overrides default
           }}
         />
       </div>
