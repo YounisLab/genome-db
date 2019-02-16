@@ -38,12 +38,30 @@ class BellCurveChart extends React.Component {
     this.state = {
       series: []
     }
+
+    this.plotLines = false
   }
   componentDidUpdate (prevProps) {
     if (this.props.vertical && this.props.vertical.length > 0 &&
        this.props.vertical !== prevProps.vertical) {
-      // Insert vertical into dataProvider
-      console.log('veritcal:', this.props.vertical)
+      var vertical = this.props.vertical[0]
+
+      var newSeries = this.state.series
+      // Remove previous plotLines if they exist
+      if (this.plotLines) {
+        _.each(this.props.samples, () => newSeries.pop())
+      }
+
+      // always append verticals to the end of the series
+      newSeries.push(createHistogramSeries(
+        `${vertical.gene}  mcf10a`, [[vertical.mcf10a_log2, 2000]], 'black'
+      ))
+      newSeries.push(createHistogramSeries(
+        `${vertical.gene}  mcf7`, [[vertical.mcf7_log2, 2000]], 'black'
+      ))
+
+      this.plotLines = true
+      this.setState({ series: newSeries })
     }
   }
   componentDidMount () {
@@ -66,7 +84,6 @@ class BellCurveChart extends React.Component {
       // TODO .catch block
   }
   render () {
-    console.log(this.state.series)
     return (
       <div>
         <HighchartsReact
