@@ -10,6 +10,8 @@ function NormalDensityZx (x, Mean, StdDev, scaleFactor) {
   return (Math.exp(-(a * a) / (2 * StdDev * StdDev)) / (Math.sqrt(2 * Math.PI) * StdDev)) * scaleFactor
 }
 
+// Return points adjusted to normal curve
+// and histogram
 function computeCurve (dataPoints, sample) {
   var binGenerator = d3.histogram().thresholds(d3.thresholdScott)
 
@@ -17,45 +19,17 @@ function computeCurve (dataPoints, sample) {
   var mean = math.mean(dataPoints)
   var stddev = math.std(dataPoints)
 
-  // We use a hash to get O(1) access to x-axis values (categories)
-  var pointsHash = {}
+  var points = { curve: [], hgram: [] }
+
   _.each(bins, function (bin) {
-    var point = { 'sample': sample, 'category': bin.x0 }
-    point[sample + '_curve'] = NormalDensityZx(bin.x0, mean, stddev, Math.abs(bin.x1 - bin.x0) * dataPoints.length)
-    point[sample + '_hgram'] = bin.length
-    pointsHash[bin.x0] = point
+    var curvePoint = NormalDensityZx(bin.x0, mean, stddev, Math.abs(bin.x1 - bin.x0) * dataPoints.length)
+    var hgramPoint = bin.length
+
+    points.curve.push([bin.x0, curvePoint])
+    points.hgram.push([bin.x0, hgramPoint])
   })
 
-  return pointsHash
-}
-
-// amcharts requires that multiple graphs
-// contain their values in the same object.
-function mergeSamples (pointsPerSample) {
-  // Merge unique x-axis points across all samples
-  var xPoints = _.reduce(pointsPerSample, function (allPoints, samplePoints) {
-    return allPoints.concat(Object.keys(samplePoints))
-  }, [])
-  xPoints = _.uniq(xPoints)
-
-  // Merge common points
-  var mergedPoints = []
-  _.each(xPoints, function (x) {
-    var mergedPoint = { category: parseFloat(x) }
-    _.each(pointsPerSample, function (p) {
-      // If x-point exists
-      if (p[x]) {
-        var sample = p[x].sample
-        mergedPoint[sample + '_curve'] = p[x][sample + '_curve']
-        mergedPoint[sample + '_hgram'] = p[x][sample + '_hgram']
-      }
-    })
-    mergedPoints.push(mergedPoint)
-  })
-
-  // Sort by category
-  mergedPoints = _.sortBy(mergedPoints, ['category'])
-  return mergedPoints
+  return points
 }
 
 module.exports = {
@@ -72,21 +46,12 @@ module.exports = {
       })
   },
 
-  bellCurve: function (samples) {
+  bellCurve: function (sample) {
     // Computes smooth histogram curve of fpkms
-    var queries = _.map(samples, (s) => {
-      return pool.query(`SELECT log2 FROM ${s} WHERE log2 != 'Infinity'`)
-    })
-
-    return Promise.all(queries)
-      .then(function (results) {
-        // Accumulate points for all samples
-        var pointsPerSample = _.map(samples, function (sample, index) {
-          var log2fpkms = _.map(results[index].rows, row => row.log2)
-          return computeCurve(log2fpkms, sample)
-        })
-
-        return mergeSamples(pointsPerSample)
+    return pool.query(`SELECT log2 FROM ${sample} WHERE log2 != 'Infinity'`)
+      .then(function (result) {
+        var log2fpkms = _.map(result.rows, (r) => r.log2)
+        return computeCurve(log2fpkms, sample)
       })
   },
 

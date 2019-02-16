@@ -26,8 +26,8 @@ app.get('/', (req, res) => {
   res.send('Hello world\n')
 })
 
-app.post('/bellcurve', (req, res) => {
-  adapter.bellCurve(req.body.samples)
+app.get('/bellcurve', (req, res) => {
+  adapter.bellCurve(req.query.sample)
     .then(function (results) {
       res.json(results)
     })
