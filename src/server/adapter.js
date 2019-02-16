@@ -97,6 +97,8 @@ module.exports = {
       mcf10a.gene,
       mcf10a.fpkm AS mcf10A_fpkm,
       mcf7.fpkm AS mcf7_fpkm,
+      mcf10a.log2 AS mcf10A_log2,
+      mcf7.log2 AS mcf7_log2,
       mcf10a_vs_mcf7.pvalue,
       mcf10a_vs_mcf7.log2_foldchange
     FROM mcf10a
