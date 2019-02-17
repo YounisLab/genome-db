@@ -4,6 +4,7 @@ const d3 = require('d3')
 const math = require('mathjs')
 
 var pool
+var binsHash = {} // To compute height of verticals
 
 function NormalDensityZx (x, Mean, StdDev, scaleFactor) {
   var a = x - Mean
@@ -18,11 +19,26 @@ function computeCurve (dataPoints, sample) {
   var bins = binGenerator(dataPoints)
   var mean = math.mean(dataPoints)
   var stddev = math.std(dataPoints)
+  // Take average width of bins
+  var avgBinWidth = _.reduce(bins, function (sum, bin) {
+    return sum + Math.abs(bin.x1 - bin.x0)
+  }, 0)
+  avgBinWidth = avgBinWidth / bins.length
+  var scaleFactor = avgBinWidth * dataPoints.length
+
+  // Store for computing height of vertical later
+  if (!binsHash[sample]) {
+    binsHash[sample] = {
+      mean: mean,
+      stddev: stddev,
+      scaleFactor: scaleFactor
+    }
+  }
 
   var points = { curve: [], hgram: [] }
 
   _.each(bins, function (bin) {
-    var curvePoint = NormalDensityZx(bin.x0, mean, stddev, Math.abs(bin.x1 - bin.x0) * dataPoints.length)
+    var curvePoint = NormalDensityZx(bin.x0, mean, stddev, scaleFactor)
     var hgramPoint = bin.length
 
     points.curve.push([bin.x0, curvePoint])
@@ -58,19 +74,32 @@ module.exports = {
   vertical: function (gene) {
     // Computes verticals to display on bellcurve
     return pool.query(`
-    SELECT
-      mcf10a.gene,
-      mcf10a.fpkm AS mcf10A_fpkm,
-      mcf7.fpkm AS mcf7_fpkm,
-      mcf10a.log2 AS mcf10A_log2,
-      mcf7.log2 AS mcf7_log2,
-      mcf10a_vs_mcf7.pvalue,
-      mcf10a_vs_mcf7.log2_foldchange
-    FROM mcf10a
-    INNER JOIN mcf7 ON mcf10a.gene = mcf7.gene
-    INNER JOIN mcf10a_vs_mcf7 ON mcf10a.gene = mcf10a_vs_mcf7.gene
-    WHERE mcf10a.gene = $1
+      SELECT
+        mcf10a.gene,
+        mcf10a.fpkm AS mcf10a_fpkm,
+        mcf7.fpkm AS mcf7_fpkm,
+        mcf10a.log2 AS mcf10a_log2,
+        mcf7.log2 AS mcf7_log2,
+        mcf10a_vs_mcf7.pvalue,
+        mcf10a_vs_mcf7.log2_foldchange
+      FROM mcf10a
+      INNER JOIN mcf7 ON mcf10a.gene = mcf7.gene
+      INNER JOIN mcf10a_vs_mcf7 ON mcf10a.gene = mcf10a_vs_mcf7.gene
+      WHERE mcf10a.gene = $1
     `, [gene])
+      .then(function (results) {
+        _.each(['mcf10a', 'mcf7'], function (sample) {
+          if (binsHash[sample]) {
+            results.rows[0][`${sample}_height`] = NormalDensityZx(
+              results.rows[0][`${sample}_log2`],
+              binsHash[sample].mean,
+              binsHash[sample].stddev,
+              binsHash[sample].scaleFactor
+            )
+          }
+        })
+        return results
+      })
   },
 
   heatMap: function (genes) {
