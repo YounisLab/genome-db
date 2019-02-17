@@ -54,10 +54,14 @@ class BellCurveChart extends React.Component {
 
       // always append verticals to the end of the series
       newSeries.push(createHistogramSeries(
-        `${vertical.gene}  mcf10a`, [[vertical.mcf10a_log2, 2000]], 'black'
+        `${vertical.gene}  mcf10a`,
+        [[vertical.mcf10a_log2, vertical.mcf10a_height || 2000]],
+        colorMaps['mcf10a']
       ))
       newSeries.push(createHistogramSeries(
-        `${vertical.gene}  mcf7`, [[vertical.mcf7_log2, 2000]], 'black'
+        `${vertical.gene}  mcf7`,
+        [[vertical.mcf7_log2, vertical.mcf7_height || 2000]],
+        colorMaps['mcf7']
       ))
 
       this.plotLines = true
