@@ -38,6 +38,7 @@ class HeatMap extends React.Component {
 
     this.updateText = this.updateText.bind(this)
     this.getHeatMap = this.getHeatMap.bind(this)
+    this.doSearch = this.doSearch.bind(this)
   }
   updateText (evt) {
     this.setState({ text: evt.target.value })
@@ -51,6 +52,11 @@ class HeatMap extends React.Component {
         this.setState({ data: resp.data })
       })
   }
+  doSearch (evt) {
+    if (evt.key === 'Enter' && evt.ctrlKey) {
+      this.getHeatMap()
+    }
+  }
   render () {
     return (
       <Content style={styles.contentStyle}>
@@ -59,10 +65,14 @@ class HeatMap extends React.Component {
             <h1>Differential Multi-Gene Expression</h1>
           </Row>
           <Row>
+            Enter a gene in each line. Press Ctrl + Enter or click on the search button to search.
+          </Row>
+          <Row>
             <TextArea
               rows={4}
               placeholder='Enter newline separated list of genes here.'
               onChange={this.updateText}
+              onKeyUp={this.doSearch}
               style={{ width: '50%' }} />
           </Row>
           <Row>
