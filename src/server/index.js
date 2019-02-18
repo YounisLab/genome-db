@@ -3,7 +3,7 @@ const { URL } = require('url')
 const adapter = require('./adapter')
 const bodyParser = require('body-parser')
 const app = express()
-const port = 8080
+const port = process.env.PORT || 8080
 const dbURL = (new URL('postgres://genomedb:genomedb@postgres:5432/genomedb'))
 
 app.use(bodyParser.json({ limit: '5mb' }))
@@ -22,11 +22,9 @@ adapter.connect(dbURL)
     process.exit(1)
   })
 
-app.get('/', (req, res) => {
-  res.send('Hello world\n')
-})
+app.use(express.static('dist'))
 
-app.get('/bellcurve', (req, res) => {
+app.get('/api/bellcurve', (req, res) => {
   adapter.bellCurve(req.query.sample)
     .then(function (results) {
       res.json(results)
@@ -37,7 +35,7 @@ app.get('/bellcurve', (req, res) => {
     })
 })
 
-app.get('/vertical', (req, res) => {
+app.get('/api/vertical', (req, res) => {
   adapter.vertical(req.query.gene)
     .then(function (results) {
       res.json(results.rows)
@@ -48,7 +46,7 @@ app.get('/vertical', (req, res) => {
     })
 })
 
-app.post('/heatmap', (req, res) => {
+app.post('/api/heatmap', (req, res) => {
   adapter.heatMap(req.body.genes)
     .then(function (results) {
       res.json(results.rows)
