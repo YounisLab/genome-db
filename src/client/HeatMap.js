@@ -33,7 +33,8 @@ class HeatMap extends React.Component {
 
     this.state = {
       text: '',
-      data: []
+      data: [],
+      dataChanged: false
     }
 
     this.updateText = this.updateText.bind(this)
@@ -44,18 +45,22 @@ class HeatMap extends React.Component {
     this.setState({ text: evt.target.value })
   }
   getHeatMap () {
-    console.log('>>', _.split(this.state.text, '\n'))
     axios.post('/api/heatmap', {
       genes: _.split(this.state.text, '\n')
     })
       .then(resp => {
-        this.setState({ data: resp.data })
+        this.setState({ data: resp.data, dataChanged: !this.state.dataChanged })
       })
   }
   doSearch (evt) {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       this.getHeatMap()
     }
+  }
+  shouldComponentUpdate (_, nextState) {
+    // Only update component if this.state.dataChanged differs
+    // This is to prevent rendering on every keystroke in TextArea
+    return this.state.dataChanged !== nextState.dataChanged
   }
   render () {
     return (
