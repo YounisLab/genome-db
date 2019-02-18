@@ -46,7 +46,7 @@ class HeatMap extends React.Component {
   }
   getHeatMap () {
     axios.post('/api/heatmap', {
-      genes: _.split(this.state.text, '\n')
+      genes: _.map(_.split(this.state.text, '\n'), (t) => _.trim(t))
     })
       .then(resp => {
         this.setState({ data: resp.data, dataChanged: !this.state.dataChanged })
