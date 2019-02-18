@@ -56,7 +56,7 @@ class HeatMapChart extends React.Component {
               borderWidth: 1,
               data: this.state.data,
               dataLabels: {
-                enabled: true,
+                enabled: false,
                 color: '#000000'
               }
             }],
@@ -82,13 +82,13 @@ class HeatMapChart extends React.Component {
               verticalAlign: 'top',
               y: 25,
               symbolHeight: 280
-            },
-            tooltip: {
-              formatter: function () {
-                return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-                    this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>'
-              }
             }
+            // tooltip: {
+            //   formatter: function () {
+            //     return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
+            //         this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>'
+            //   }
+            // }
           }}
         />
       </div>
