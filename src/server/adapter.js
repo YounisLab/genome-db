@@ -111,17 +111,19 @@ module.exports = {
     genesList = '(' + genesList + ')'
 
     return pool.query(`
-    SELECT
-      row_number() OVER () AS key,
-      mcf10a.gene,
-      mcf10a.fpkm AS mcf10A_fpkm,
-      mcf7.fpkm AS mcf7_fpkm
-    FROM
-      mcf10a
-    INNER JOIN mcf7
-    ON mcf10a.gene = mcf7.gene
-    WHERE
-      mcf10a.gene IN ${genesList}
+      SELECT
+        row_number() OVER () AS key,
+        mcf10a.gene,
+        mcf10a.fpkm AS mcf10a_fpkm,
+        mcf7.fpkm AS mcf7_fpkm,
+        mcf10a.log2 AS mcf10a_log2,
+        mcf7.log2 AS mcf7_log2
+      FROM
+        mcf10a
+      INNER JOIN mcf7
+      ON mcf10a.gene = mcf7.gene
+      WHERE
+        mcf10a.gene IN ${genesList}
     `)
   }
 }
