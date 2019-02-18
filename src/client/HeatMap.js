@@ -84,7 +84,11 @@ class HeatMap extends React.Component {
             <Button type='primary' icon='search' onClick={this.getHeatMap}>Search</Button>
           </Row>
           <Row>
-            <HeatMapChart />
+            <HeatMapChart
+              data={_.map(this.state.data, (d) => {
+                return _.pick(d, ['gene', 'mcf10a_log2', 'mcf7_log2'])
+              })}
+            />
           </Row>
           <Row>
             <Table

@@ -1,78 +1,96 @@
 import React from 'react'
-import AmCharts from '@amcharts/amcharts3-react'
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
+require('highcharts/modules/heatmap')(Highcharts)
+const _ = require('lodash')
 
-// generate random data
-var sourceData = []
-var firstDate = new Date()
-firstDate.setDate(firstDate.getDate() - 28)
-firstDate.setHours(0, 0, 0, 0)
+const samples = ['mcf10a', 'mcf7']
 
-for (var i = 0; i < 28; i++) {
-  var newDate = new Date(firstDate)
-  newDate.setDate(newDate.getDate() + i)
-  var dataPoint = {
-    date: newDate
-  }
-
-  // generate value for each hour
-  for (var h = 0; h <= 23; h++) {
-    dataPoint['value' + h] = Math.round(Math.random() * 4)
-  }
-
-  sourceData.push(dataPoint)
-}
-
-// now let's populate the source data with the colors based on the value
-// as well as replace the original value with 1
-var colors = ['#FF0000', '#FF9100', '#F2FF00', '#9DFF00', '#00FF00']
-for (i in sourceData) {
-  for (var h = 0; h <= 23; h++) {
-    sourceData[i]['color' + h] = colors[sourceData[i]['value' + h]]
-    sourceData[i]['hour' + h] = 1
-  }
-}
-
-// define graph objects for each hour
-var graphs = []
-for (var h = 0; h <= 23; h++) {
-  graphs.push({
-    'balloonText': 'Original value: [[value' + h + ']]',
-    'fillAlphas': 1,
-    'lineAlpha': 0,
-    'type': 'column',
-    'colorField': 'color' + h,
-    'valueField': 'hour' + h
+function createHeatMapSeries (data, samples) {
+  var series = []
+  _.each(samples, function (sample, xIndex) {
+    _.each(data, function (datum, yIndex) {
+      // Heatmap data schema [x-index, y-index, gradient value]
+      series.push([
+        xIndex,
+        yIndex,
+        datum[`${sample}_log2`]
+      ])
+    })
   })
-}
 
-var chartConfig = {
-  'type': 'serial',
-  'dataProvider': sourceData,
-  'valueAxes': [{
-    'stackType': 'regular',
-    'axisAlpha': 0.3,
-    'gridAlpha': 0,
-    'maximum': 24,
-    'duration': 'mm',
-    'unit': ':00'
-  }],
-  'graphs': graphs,
-  'columnWidth': 1,
-  'categoryField': 'date',
-  'categoryAxis': {
-    'parseDates': true,
-    'gridPosition': 'start',
-    'axisAlpha': 0,
-    'gridAlpha': 0,
-    'position': 'left'
-  }
+  return series
 }
 
 class HeatMapChart extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      yAxisCategories: [],
+      xAxisCategories: samples,
+      data: []
+    }
+  }
+  componentDidUpdate (prevProps) {
+    if (this.props.data && this.props.data.length > 0 &&
+        this.props.data !== prevProps.data) {
+      var data = createHeatMapSeries(this.props.data, this.state.xAxisCategories)
+      var yAxisCategories = _.map(this.props.data, (d) => d.gene)
+      this.setState({ data: data, yAxisCategories: yAxisCategories })
+    }
+  }
   render () {
     return (
       <div>
-        <AmCharts.React style={{ width: '50%', height: '500px' }} options={chartConfig} />
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={{
+            chart: {
+              type: 'heatmap',
+              marginTop: 40,
+              marginBottom: 80,
+              plotBorderWidth: 1
+            },
+            series: [{
+              borderWidth: 1,
+              data: this.state.data,
+              dataLabels: {
+                enabled: true,
+                color: '#000000'
+              }
+            }],
+            title: {
+              text: null
+            },
+            xAxis: {
+              categories: this.state.xAxisCategories
+            },
+            yAxis: {
+              categories: this.state.yAxisCategories,
+              title: 'Genes'
+            },
+            colorAxis: {
+              min: 0,
+              minColor: '#FFFFFF',
+              maxColor: Highcharts.getOptions().colors[0]
+            },
+            legend: {
+              align: 'right',
+              layout: 'vertical',
+              margin: 0,
+              verticalAlign: 'top',
+              y: 25,
+              symbolHeight: 280
+            },
+            tooltip: {
+              formatter: function () {
+                return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
+                    this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>'
+              }
+            }
+          }}
+        />
       </div>
     )
   }
