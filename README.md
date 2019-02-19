@@ -2,7 +2,11 @@
 
 ## Building
 
-Install Docker & docker-compose. Then
+Install Docker & docker-compose.
+
+Get the datasets in .csv and copy it into `src/server/seed/data`.
+
+Then,
 
 ```
 cd GenomeDB
