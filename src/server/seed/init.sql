@@ -15,8 +15,8 @@ CREATE TABLE MCF7
 CREATE TABLE MCF10A_vs_MCF7
 (
     gene VARCHAR,
-    pvalue FLOAT,
-    log2_foldchange FLOAT
+    log2_foldchange FLOAT,
+    pvalue FLOAT
 );
 
 COPY MCF10A FROM PROGRAM 'cut -f 1,2,6 /docker-entrypoint-initdb.d/data/MCF10A_MCF7_gene_exp.csv' DELIMITER E'\t' CSV HEADER;
