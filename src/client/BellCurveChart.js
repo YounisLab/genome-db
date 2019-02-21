@@ -7,7 +7,7 @@ const _ = require('lodash')
 
 const colorMaps = {
   mcf10a: 'blue',
-  mcf7: 'green'
+  mcf7: 'red'
 }
 
 function createCurveSeries (sample, data, color) {
