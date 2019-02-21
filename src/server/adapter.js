@@ -88,6 +88,9 @@ module.exports = {
       WHERE mcf10a.gene = $1
     `, [gene])
       .then(function (results) {
+        if (results.rows.length < 1) {
+          return [] // gene not found
+        }
         _.each(['mcf10a', 'mcf7'], function (sample) {
           if (binsHash[sample]) {
             results.rows[0][`${sample}_height`] = NormalDensityZx(

@@ -55,7 +55,7 @@ class BellCurve extends React.Component {
     })
       .then(resp => {
         if (resp.data.length < 1) {
-          this.setState({ alertText: 'Gene not found! Please try another name.' })
+          this.setState({ alertText: `${gene} not found! Please try another name.` })
           return
         }
 
