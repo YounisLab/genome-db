@@ -4,7 +4,7 @@ const adapter = require('./adapter')
 const bodyParser = require('body-parser')
 const app = express()
 const port = process.env.PORT || 8080
-const dbURL = (new URL(process.env.PG_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'))
+const dbURL = (new URL(process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'))
 
 app.use(bodyParser.json({ limit: '5mb' }))
 
