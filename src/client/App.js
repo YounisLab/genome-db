@@ -1,4 +1,3 @@
-import 'antd/dist/antd.css'
 import React, { Component } from 'react'
 import BellCurve from './BellCurve'
 import HeatMap from './HeatMap'
