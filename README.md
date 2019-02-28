@@ -2,19 +2,18 @@
 
 ## Building
 
-Install Docker & docker-compose.
-
-Get the datasets in .csv and copy it into `src/server/seed/data`.
+Install [git](https://git-scm.com/), [git-lfs](https://git-lfs.github.com/), [Docker](https://docs.docker.com/install/) & [Docker Compose](https://docs.docker.com/compose/install/).
 
 Then,
 
 ```
+git clone git@github.com:YounisLab/GenomeDB.git
 cd GenomeDB
 docker-compose build
 docker-compose up
 ```
 
-This will start GenomeDB on localhost:3000.
+This will start GenomeDB on port 3000. Navigate to http://localhost:3000.
 
 Any changes made inside `src/client` or `src/server` will be captured by the containers and
 reflected in the browser.
