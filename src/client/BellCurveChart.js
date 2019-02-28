@@ -31,6 +31,16 @@ function createHistogramSeries (sample, data, color) {
   }
 }
 
+function createVerticalSeries (sample, data, color) {
+  return {
+    name: `${sample} histogram`,
+    type: 'column',
+    data: data,
+    color: color,
+    pointWidth: 20
+  }
+}
+
 class BellCurveChart extends React.Component {
   constructor (props) {
     super(props)
@@ -53,16 +63,17 @@ class BellCurveChart extends React.Component {
       }
 
       // always append verticals to the end of the series
-      newSeries.push(createHistogramSeries(
+      var v1 = createVerticalSeries(
         `${vertical.gene}  mcf10a`,
         [[vertical.mcf10a_log2, vertical.mcf10a_height || 2000]],
         colorMaps['mcf10a']
-      ))
-      newSeries.push(createHistogramSeries(
+      )
+      var v2 = createVerticalSeries(
         `${vertical.gene}  mcf7`,
         [[vertical.mcf7_log2, vertical.mcf7_height || 2000]],
         colorMaps['mcf7']
-      ))
+      )
+      newSeries.push(v1, v2)
 
       this.plotLines = true
       this.setState({ series: newSeries })
