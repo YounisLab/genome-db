@@ -15,6 +15,7 @@ Computes and appends to <output.csv> the log2 of the values specified in <column
 if len(sys.argv) != 4:
   print('Incorrect number of arguments')
   print(helper)
+  exit(1)
 
 fpkmcol = int(sys.argv[2])
 
