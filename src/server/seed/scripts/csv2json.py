@@ -28,7 +28,7 @@ with open(sys.argv[1]) as in_file, open(sys.argv[4], mode='w') as out_file:
   # Append new log2 column to header
   headers = next(csv_reader, None)
   col_names = headers[from_col:to_col + 1]
-  csv_writer.writerow(['gene', 'pvalue'])
+  csv_writer.writerow(['gene', 'rvalue'])
   for row in csv_reader:
     json_cell = {}
 
