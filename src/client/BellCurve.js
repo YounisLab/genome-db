@@ -61,13 +61,20 @@ class BellCurve extends React.Component {
           return
         }
 
+        // Check if any FPKMs are zero
         var zeroSamples = []
         _.each(this.state.samples, function (sample) {
           if (resp.data[0][`${sample}_fpkm`] === 0) {
             zeroSamples.push(sample.toUpperCase())
           }
+
           alertText = zeroSamples.length > 0 ? `${gene} has FPKM of zero for ${zeroSamples}.` : ''
         })
+
+        // Check if log2_foldchange is null
+        if (resp.data[0].log2_foldchange == null) {
+          resp.data[0].log2_foldchange = 'Infinity'
+        }
 
         this.setState({
           data: resp.data,
