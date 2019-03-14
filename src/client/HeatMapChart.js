@@ -72,6 +72,7 @@ class HeatMapChart extends React.Component {
             },
             colorAxis: {
               min: -2,
+              max: 2,
               stops: [
                 [0, 'red'],
                 [0.5, 'white'],
