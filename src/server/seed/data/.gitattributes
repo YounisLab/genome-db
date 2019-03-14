@@ -1,4 +1,2 @@
-MCF10A_vs_MCF7.csv filter=lfs diff=lfs merge=lfs -text
-MCF7.csv filter=lfs diff=lfs merge=lfs -text
-MCF10A.csv filter=lfs diff=lfs merge=lfs -text
 RBP_rvalues.csv filter=lfs diff=lfs merge=lfs -text
+mcf10a_vs_mcf7.csv filter=lfs diff=lfs merge=lfs -text

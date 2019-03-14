@@ -64,9 +64,10 @@ module.exports = {
 
   bellCurve: function (sample) {
     // Computes smooth histogram curve of fpkms
-    return pool.query(`SELECT log2 FROM ${sample} WHERE log2 != 'Infinity'`)
+    // TODO: sanitize 'sample' before it gets frisky
+    return pool.query(`SELECT ${sample}_log2 FROM mcf10a_vs_mcf7 WHERE ${sample}_log2 != 'Infinity'`)
       .then(function (result) {
-        var log2fpkms = _.map(result.rows, (r) => r.log2)
+        var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
         return computeCurve(log2fpkms, sample)
       })
   },
@@ -75,17 +76,15 @@ module.exports = {
     // Computes verticals to display on bellcurve
     return pool.query(`
       SELECT
-        mcf10a.gene,
-        mcf10a.fpkm AS mcf10a_fpkm,
-        mcf7.fpkm AS mcf7_fpkm,
-        mcf10a.log2 AS mcf10a_log2,
-        mcf7.log2 AS mcf7_log2,
-        mcf10a_vs_mcf7.pvalue,
-        mcf10a_vs_mcf7.log2_foldchange
-      FROM mcf10a
-      INNER JOIN mcf7 ON mcf10a.gene = mcf7.gene
-      INNER JOIN mcf10a_vs_mcf7 ON mcf10a.gene = mcf10a_vs_mcf7.gene
-      WHERE mcf10a.gene = $1
+        gene,
+        mcf10a_fpkm,
+        mcf7_fpkm,
+        mcf10a_log2,
+        mcf7_log2,
+        pvalue,
+        log2_foldchange
+      FROM mcf10a_vs_mcf7
+      WHERE gene = $1
     `, [gene])
       .then(function (results) {
         if (results.rows.length < 1) {
@@ -116,17 +115,15 @@ module.exports = {
     return pool.query(`
       SELECT
         row_number() OVER () AS key,
-        mcf10a.gene,
-        mcf10a.fpkm AS mcf10a_fpkm,
-        mcf7.fpkm AS mcf7_fpkm,
-        mcf10a.log2 AS mcf10a_log2,
-        mcf7.log2 AS mcf7_log2
+        gene,
+        mcf10a_fpkm,
+        mcf7_fpkm,
+        mcf10a_log2,
+        mcf7_log2
       FROM
-        mcf10a
-      INNER JOIN mcf7
-      ON mcf10a.gene = mcf7.gene
+        mcf10a_vs_mcf7
       WHERE
-        mcf10a.gene IN ${genesList}
+        gene IN ${genesList}
     `)
   }
 }
