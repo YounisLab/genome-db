@@ -6,6 +6,7 @@ import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
 const axios = require('axios')
+const _ = require('lodash')
 
 const columns = [{
   title: 'Gene',
@@ -54,14 +55,23 @@ class BellCurve extends React.Component {
       }
     })
       .then(resp => {
+        var alertText = null
         if (resp.data.length < 1) {
           this.setState({ alertText: `${gene} not found! Please try another name.` })
           return
         }
 
+        var zeroSamples = []
+        _.each(this.state.samples, function (sample) {
+          if (resp.data[0][`${sample}_fpkm`] === 0) {
+            zeroSamples.push(sample.toUpperCase())
+          }
+          alertText = zeroSamples.length > 0 ? `${gene} has FPKM of zero for ${zeroSamples}.` : ''
+        })
+
         this.setState({
           data: resp.data,
-          alertText: null
+          alertText: alertText
         })
       })
   }

@@ -65,12 +65,12 @@ class BellCurveChart extends React.Component {
       // always append verticals to the end of the series
       var v1 = createVerticalSeries(
         `${vertical.gene}  mcf10a`,
-        [[vertical.mcf10a_log2, vertical.mcf10a_height || 2000]],
+        [[vertical.mcf10a_log2, vertical.mcf10a_height]],
         colorMaps['mcf10a']
       )
       var v2 = createVerticalSeries(
         `${vertical.gene}  mcf7`,
-        [[vertical.mcf7_log2, vertical.mcf7_height || 2000]],
+        [[vertical.mcf7_log2, vertical.mcf7_height]],
         colorMaps['mcf7']
       )
       newSeries.push(v1, v2)
