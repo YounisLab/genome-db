@@ -93,12 +93,6 @@ class BellCurve extends React.Component {
             />
           </Row>
           <Row>
-            <BellCurveChart
-              vertical={this.state.data}
-              samples={this.state.samples}
-            />
-          </Row>
-          <Row>
             <Table
               dataSource={this.state.data}
               columns={columns}
@@ -107,6 +101,12 @@ class BellCurve extends React.Component {
               pagination={false}
               style={{ width: '50%' }}
               locale={{ emptyText: 'Search for gene names to show results' }}
+            />
+          </Row>
+          <Row>
+            <BellCurveChart
+              vertical={this.state.data}
+              samples={this.state.samples}
             />
           </Row>
         </div>
