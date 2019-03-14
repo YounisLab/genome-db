@@ -11,16 +11,19 @@ const { TextArea } = Input
 const columns = [{
   title: 'No.',
   dataIndex: 'key',
-  key: 'key'
+  key: 'key',
+  width: 200
 },
 {
   title: 'Gene',
   dataIndex: 'gene',
-  key: 'gene'
+  key: 'gene',
+  width: 200
 }, {
   title: 'MCF10A FPKM',
   dataIndex: 'mcf10a_fpkm',
-  key: 'mcf10a_fpkm'
+  key: 'mcf10a_fpkm',
+  width: 200
 }, {
   title: 'MCF7 FPKM',
   dataIndex: 'mcf7_fpkm',
@@ -99,6 +102,7 @@ class HeatMap extends React.Component {
               pagination={false}
               style={{ width: '50%' }}
               locale={{ emptyText: 'Enter list of genes to show results' }}
+              scroll={{ y: 240 }}
             />
           </Row>
         </div>
