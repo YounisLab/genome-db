@@ -117,16 +117,13 @@ module.exports = {
   },
 
   heatMap: function (genes) {
-    // Convert genes array to genes list for psql
-    genes = _.map(genes, function (gene) {
-      return `'${gene}'`
-    })
+    // Convert genes array to genes array for psql
     var genesList = _.join(genes, ',')
-    genesList = '(' + genesList + ')'
+    genesList = `'{` + genesList + `}'`
 
     return pool.query(`
       SELECT
-        row_number() OVER () AS key,
+        key,
         gene,
         mcf10a_fpkm,
         mcf7_fpkm,
@@ -134,8 +131,9 @@ module.exports = {
         mcf7_log2
       FROM
         mcf10a_vs_mcf7
-      WHERE
-        gene IN ${genesList}
+      JOIN
+        unnest(${genesList}::varchar[]) WITH ORDINALITY t(gene, key) USING (gene)
+      ORDER BY t.key
     `)
   },
 
