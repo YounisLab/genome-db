@@ -48,8 +48,10 @@ class HeatMap extends React.Component {
     this.setState({ text: evt.target.value })
   }
   getHeatMap () {
+    var newlineTokens = _.split(this.state.text, '\n') // Split newline tokens
+    var trimmedTokens = _.map(newlineTokens, (t) => _.trim(t)) // Trim whitespaces
     axios.post('/api/heatmap', {
-      genes: _.map(_.split(this.state.text, '\n'), (t) => _.trim(t))
+      genes: _.filter(trimmedTokens, (t) => t !== '') // Filter out empty strings
     })
       .then(resp => {
         this.setState({ data: resp.data, dataChanged: !this.state.dataChanged })
@@ -88,9 +90,12 @@ class HeatMap extends React.Component {
           </Row>
           <Row>
             <HeatMapChart
-              data={_.map(this.state.data, (d) => {
-                return _.pick(d, ['gene', 'mcf10a_log2', 'mcf7_log2'])
-              })}
+              // _.reverse to maintain input order when displaying in Heatmap Chart
+              data={_.reverse(
+                _.map(this.state.data, (d) => {
+                  return _.pick(d, ['gene', 'mcf10a_log2', 'mcf7_log2'])
+                })
+              )}
             />
           </Row>
           <Row>
