@@ -71,12 +71,12 @@ class HeatMapChart extends React.Component {
               title: 'Genes'
             },
             colorAxis: {
-              min: -2,
-              max: 2,
+              min: -10,
+              max: 10,
               stops: [
-                [0, 'red'],
-                [0.5, 'white'],
-                [0.9, 'blue']
+                [0, '#FF0000'],
+                [0.5, '#FFFFFF'],
+                [0.9, '#0000FF']
               ]
             },
             legend: {
