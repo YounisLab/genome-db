@@ -56,3 +56,14 @@ app.post('/api/heatmap', (req, res) => {
       res.status(500).json({ status: 'Error' })
     })
 })
+
+app.get('/api/rbprvalue', (req, res) => {
+  adapter.rbpRvalues(req.query.gene, req.query.min, req.query.max)
+    .then(function (results) {
+      res.json(results)
+    })
+    .catch(function (err) {
+      console.log(err)
+      res.status(500).json({ status: 'Error' })
+    })
+})

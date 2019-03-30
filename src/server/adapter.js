@@ -48,6 +48,18 @@ function computeCurve (dataPoints, sample) {
   return points
 }
 
+// Return RBP json filtered to remove 'NA'
+// and match range
+function rangeFilter (rvals, min, max) {
+  return _.pickBy(rvals, function (value) {
+    return value !== 'N/A' &&
+    // If either min or max defined make
+    // appropriate comparison
+    (min == null || value > min) &&
+    (max == null || value < max)
+  })
+}
+
 module.exports = {
   connect: function (urlObject) {
     var host = urlObject.host
@@ -125,5 +137,17 @@ module.exports = {
       WHERE
         gene IN ${genesList}
     `)
+  },
+
+  rbpRvalues: function (gene, min, max) {
+    // Returns RBP names with corresponing Rvalue for gene
+    return pool.query(`SELECT rvalue FROM rbp_rvalues WHERE gene = '${gene}'`)
+      .then(function (results) {
+        if (results.rows.length < 1) {
+          return {} // gene not found
+        }
+        // Pass just json with gene:correlation
+        return rangeFilter(results.rows[0].rvalue, min, max)
+      })
   }
 }
