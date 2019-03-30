@@ -37,7 +37,7 @@ function createVerticalSeries (sample, data, color) {
     type: 'column',
     data: data,
     color: color,
-    pointWidth: 20
+    pointWidth: 5
   }
 }
 
