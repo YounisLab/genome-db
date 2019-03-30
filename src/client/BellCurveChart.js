@@ -6,8 +6,18 @@ const axios = require('axios')
 const _ = require('lodash')
 
 const colorMaps = {
-  mcf10a: 'blue',
-  mcf7: 'red'
+  curve: {
+    mcf10a: 'blue',
+    mcf7: 'red'
+  },
+  histogram: {
+    mcf10a: 'blue',
+    mcf7: 'red'
+  },
+  vertical: {
+    mcf10a: 'purple',
+    mcf7: 'green'
+  }
 }
 
 function createCurveSeries (sample, data, color) {
@@ -66,12 +76,12 @@ class BellCurveChart extends React.Component {
       var v1 = createVerticalSeries(
         `${vertical.gene}  mcf10a`,
         [[vertical.mcf10a_log2, vertical.mcf10a_height]],
-        colorMaps['mcf10a']
+        colorMaps.vertical['mcf10a']
       )
       var v2 = createVerticalSeries(
         `${vertical.gene}  mcf7`,
         [[vertical.mcf7_log2, vertical.mcf7_height]],
-        colorMaps['mcf7']
+        colorMaps.vertical['mcf7']
       )
       newSeries.push(v1, v2)
 
@@ -89,8 +99,8 @@ class BellCurveChart extends React.Component {
       .then(axios.spread((...responses) => {
         _.each(responses, (r) => {
           var sample = r.config.params.sample
-          var curve = createCurveSeries(sample, r.data.curve, colorMaps[sample])
-          var hgram = createHistogramSeries(sample, r.data.hgram, colorMaps[sample])
+          var curve = createCurveSeries(sample, r.data.curve, colorMaps.curve[sample])
+          var hgram = createHistogramSeries(sample, r.data.hgram, colorMaps.histogram[sample])
           series.push(curve, hgram)
         })
 
