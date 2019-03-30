@@ -86,13 +86,13 @@ class HeatMapChart extends React.Component {
               verticalAlign: 'top',
               y: 25,
               symbolHeight: 280
+            },
+            tooltip: {
+              formatter: function () {
+                return `Log2 FPKM for <b>${this.series.yAxis.categories[this.point.y]}</b>
+                  in <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${this.point.value}</b>`
+              }
             }
-            // tooltip: {
-            //   formatter: function () {
-            //     return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-            //         this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>'
-            //   }
-            // }
           }}
         />
       </div>
