@@ -10,24 +10,19 @@ const _ = require('lodash')
 
 const columns = [{
   title: 'Gene',
-  dataIndex: 'gene',
-  key: 'gene'
+  dataIndex: 'gene'
 }, {
   title: 'MCF10A FPKM',
-  dataIndex: 'mcf10a_fpkm',
-  key: 'mcf10a_fpkm'
+  dataIndex: 'mcf10a_fpkm'
 }, {
   title: 'MCF7 FPKM',
-  dataIndex: 'mcf7_fpkm',
-  key: 'mcf7_fpkm'
+  dataIndex: 'mcf7_fpkm'
 }, {
   title: 'p-value',
-  dataIndex: 'pvalue',
-  key: 'pvalue'
+  dataIndex: 'pvalue'
 }, {
   title: 'log2 Foldchange',
-  dataIndex: 'log2_foldchange',
-  key: 'log2_foldchange'
+  dataIndex: 'log2_foldchange'
 }]
 
 class BellCurve extends React.Component {

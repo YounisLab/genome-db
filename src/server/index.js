@@ -60,6 +60,7 @@ app.post('/api/heatmap', (req, res) => {
 app.get('/api/rbprvalue', (req, res) => {
   adapter.rbpRvalues(req.query.gene, req.query.min, req.query.max)
     .then(function (results) {
+      console.log(typeof (results))
       res.json(results)
     })
     .catch(function (err) {

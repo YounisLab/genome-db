@@ -10,24 +10,20 @@ const { TextArea } = Input
 
 const columns = [{
   title: 'No.',
-  dataIndex: 'key',
-  key: 'key',
-  width: 200
+  dataIndex: 'key'
 },
 {
   title: 'Gene',
   dataIndex: 'gene',
-  key: 'gene',
-  width: 200
+  width: '25%'
 }, {
   title: 'MCF10A FPKM',
   dataIndex: 'mcf10a_fpkm',
-  key: 'mcf10a_fpkm',
-  width: 200
+  width: '25%'
 }, {
   title: 'MCF7 FPKM',
   dataIndex: 'mcf7_fpkm',
-  key: 'mcf7_fpkm'
+  width: '25%'
 }]
 
 class HeatMap extends React.Component {

@@ -138,14 +138,21 @@ module.exports = {
   },
 
   rbpRvalues: function (gene, min, max) {
-    // Returns RBP names with corresponing Rvalue for gene
+    // Returns RBP names with corresponing Rvalue for gene in sorted order
     return pool.query(`SELECT rvalue FROM rbp_rvalues WHERE gene = '${gene}'`)
       .then(function (results) {
         if (results.rows.length < 1) {
-          return {} // gene not found
+          return [] // gene not found
         }
         // Pass just json with gene:correlation
-        return rangeFilter(results.rows[0].rvalue, min, max)
+        var filteredRvals = rangeFilter(results.rows[0].rvalue, min, max)
+        // Map to object with gene and rvals as keys
+        var mappedRvals = _.map(filteredRvals, function (value, gene) {
+          return { RBP: gene, Rvalue: value }
+        })
+        return _.reverse(_.sortBy(mappedRvals, function (o) {
+          return o.Rvalue // We use reciprocal to achieve descending sort
+        }))
       })
   }
 }
