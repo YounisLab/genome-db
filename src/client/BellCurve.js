@@ -81,7 +81,7 @@ class BellCurve extends React.Component {
     let alert
 
     if (this.state.alertText) {
-      alert = <Alert message={this.state.alertText} type='error' style={{ width: '30%' }} />
+      alert = <Alert message={this.state.alertText} type='error' style={{ width: '30%' }} showIcon />
     } else {
       alert = null
     }
