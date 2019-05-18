@@ -15,5 +15,14 @@ CREATE TABLE RBP_rvalues
     rvalue JSONB
 );
 
+CREATE TABLE mcf_intron_psi
+(
+    gene VARCHAR,
+    intron_number INT CHECK (intron_number > 0),
+    mcf10a_psi FLOAT,
+    mcf7_psi FLOAT
+);
+
 COPY MCF10A_vs_MCF7 FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/mcf10a_vs_mcf7.csv' DELIMITER E'\t' CSV HEADER;
 COPY RBP_rvalues FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/RBP_rvalues.csv' DELIMITER E'\t' CSV HEADER QUOTE '"' ESCAPE '\';
+COPY mcf_intron_psi FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/mcf_intron_psi.csv' DELIMITER E'\t' CSV HEADER;
