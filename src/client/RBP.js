@@ -14,7 +14,8 @@ const columns = [{
   width: '40%'
 }, {
   title: 'Rvalue',
-  dataIndex: 'Rvalue'
+  dataIndex: 'Rvalue',
+  sorter: (a,b) => a.Rvalue - b.Rvalue
 }]
 
 const headers = [

@@ -74,9 +74,9 @@ class HeatMapChart extends React.Component {
               min: -10,
               max: 10,
               stops: [
-                [0, '#FF0000'],
+                [0, '#0000FF'],
                 [0.5, '#FFFFFF'],
-                [0.9, '#0000FF']
+                [0.9, '#FF0000']
               ]
             },
             legend: {

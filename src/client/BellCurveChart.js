@@ -15,8 +15,8 @@ const colorMaps = {
     mcf7: 'red'
   },
   vertical: {
-    mcf10a: 'purple',
-    mcf7: 'green'
+    mcf10a: 'blue',
+    mcf7: 'red'
   }
 }
 
@@ -45,10 +45,11 @@ function createHistogramSeries (sample, data, color) {
 function createVerticalSeries (sample, data, color) {
   return {
     name: `${sample}`,
-    type: 'column',
+    type: 'line',
     data: data,
     color: color,
-    pointWidth: 5
+    pointWidth: 5,
+    dashStyle: 'Dash'
   }
 }
 
@@ -76,12 +77,12 @@ class BellCurveChart extends React.Component {
       // always append verticals to the end of the series
       var v1 = createVerticalSeries(
         `${vertical.gene} fpkm in mcf10a`,
-        [[vertical.mcf10a_log2, vertical.mcf10a_height]],
+        [[vertical.mcf10a_log2, vertical.mcf10a_height], [vertical.mcf10a_log2, 0]],
         colorMaps.vertical['mcf10a']
       )
       var v2 = createVerticalSeries(
         `${vertical.gene} fpkm in mcf7`,
-        [[vertical.mcf7_log2, vertical.mcf7_height]],
+        [[vertical.mcf7_log2, vertical.mcf7_height], [vertical.mcf7_log2,0]],
         colorMaps.vertical['mcf7']
       )
       newSeries.push(v1, v2)

@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './styles'
 import Row from './Row'
 import HeatMapChart from './HeatMapChart'
+import { CSVLink } from 'react-csv'
 import { Layout, Input, Button, Table } from 'antd'
 const axios = require('axios')
 const _ = require('lodash')
@@ -26,6 +27,12 @@ const columns = [{
   width: '25%'
 }]
 
+const headers = [
+  { label: 'Gene', key: 'gene' },
+  { label: 'MCF10A FPKM', key: 'mcf10a_fpkm' },
+  { label: 'MCF7 FPKM', key: 'mcf7_fpkm' }
+]
+
 class HeatMap extends React.Component {
   constructor (props) {
     super(props)
@@ -44,7 +51,7 @@ class HeatMap extends React.Component {
   }
   getHeatMap () {
     var newlineTokens = _.split(this.text, '\n') // Split newline tokens
-    var trimmedTokens = _.map(newlineTokens, (t) => _.trim(t)) // Trim whitespaces
+    var trimmedTokens = _.map(newlineTokens, (t) => _.trim(t).toUpperCase()) // Trim whitespaces
     axios.post('/api/heatmap', {
       genes: _.filter(trimmedTokens, (t) => t !== '') // Filter out empty strings
     })
@@ -99,6 +106,20 @@ class HeatMap extends React.Component {
               locale={{ emptyText: 'Enter list of genes to show results' }}
               scroll={{ y: 240 }}
             />
+          </Row>
+          <Row>
+            <CSVLink
+              data={this.state.data}
+              headers={headers}
+              filename={'heatmapData.csv'}>
+              <Button
+                type='primary'
+                icon='download'
+                size={'large'}
+              >
+                  Export as .csv
+              </Button>
+            </CSVLink>
           </Row>
         </div>
       </Content>
