@@ -16,21 +16,31 @@ const columns = [{
 {
   title: 'Gene',
   dataIndex: 'gene',
-  width: '25%'
+  width: '20%'
 }, {
   title: 'MCF10A FPKM',
   dataIndex: 'mcf10a_fpkm',
-  width: '25%'
+  width: '20%'
 }, {
   title: 'MCF7 FPKM',
   dataIndex: 'mcf7_fpkm',
-  width: '25%'
+  width: '20%'
+}, {
+  title: 'MCF10A LOG2 FPKM',
+  dataIndex: 'mcf10a_log2',
+  width: '20%'
+}, {
+  title: 'MCF7 LOG2 FPKM',
+  dataIndex: 'mcf7_log2',
+  width: '20%'
 }]
 
 const headers = [
   { label: 'Gene', key: 'gene' },
   { label: 'MCF10A FPKM', key: 'mcf10a_fpkm' },
-  { label: 'MCF7 FPKM', key: 'mcf7_fpkm' }
+  { label: 'MCF7 FPKM', key: 'mcf7_fpkm' },
+  { label: 'MCF10A LOG2 FPKM', key: 'mcf10a_log2' },
+  { label: 'MCF7 LOG2 FPKM', key: 'mcf7_log2' }
 ]
 
 class HeatMap extends React.Component {
@@ -102,7 +112,7 @@ class HeatMap extends React.Component {
               size={'small'}
               bordered
               pagination={false}
-              style={{ width: '50%' }}
+              style={{ width: '75%' }}
               locale={{ emptyText: 'Enter list of genes to show results' }}
               scroll={{ y: 240 }}
             />

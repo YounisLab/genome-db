@@ -50,9 +50,12 @@ class HeatMapChart extends React.Component {
               type: 'heatmap',
               marginTop: 40,
               marginBottom: 80,
-              plotBorderWidth: 1
+              plotBorderWidth: 1,
+              zoomType: 'y',
+              height: this.state.data.length < 100 ? 500 : 1500
             },
             series: [{
+              turboThreshold: 0,
               borderWidth: 1,
               data: this.state.data,
               dataLabels: {
