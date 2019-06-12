@@ -1,3 +1,4 @@
 RBP_rvalues.csv filter=lfs diff=lfs merge=lfs -text
 mcf10a_vs_mcf7.csv filter=lfs diff=lfs merge=lfs -text
 mcf_intron_psi.csv filter=lfs diff=lfs merge=lfs -text
+mcf_avg_psi.csv filter=lfs diff=lfs merge=lfs -text
