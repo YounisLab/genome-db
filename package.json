@@ -44,6 +44,7 @@
     "react": "^16.5.2",
     "react-csv": "^1.1.1",
     "react-dom": "^16.5.2",
+    "standard": "^12.0.1",
     "style-loader": "^0.23.0",
     "url-loader": "^1.0.1",
     "webpack": "^4.5.0",

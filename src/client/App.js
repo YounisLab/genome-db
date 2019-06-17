@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import BellCurve from './BellCurve'
 import HeatMap from './HeatMap'
 import RBP from './RBP'
+import IntronAnalysis from './IntronAnalysis'
 import { Layout } from 'antd'
 const { Header } = Layout
 
@@ -18,6 +19,7 @@ class App extends Component {
           <BellCurve />
           <HeatMap />
           <RBP />
+          <IntronAnalysis />
         </Layout>
       </div>
     )

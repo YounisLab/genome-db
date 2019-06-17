@@ -154,5 +154,15 @@ module.exports = {
           return o.Rvalue // We use reciprocal to achieve descending sort
         }))
       })
+  },
+
+  intronAnalysisHeatmap: function (gene) {
+    return pool.query(`SELECT * FROM mcf_intron_psi WHERE gene = '${gene}' ORDER BY intron_number`)
+      .then(function (results) {
+        if (results.rows.length < 1) {
+          return [] // gene not found
+        }
+        return results
+      })
   }
 }

@@ -67,3 +67,14 @@ app.get('/api/rbprvalue', (req, res) => {
       res.status(500).json({ status: 'Error' })
     })
 })
+
+app.get('/api/intron-analysis-heatmap', (req, res) => {
+  adapter.intronAnalysisHeatmap(req.query.gene)
+    .then(function (results) {
+      res.json(results.rows)
+    })
+    .catch(function (err) {
+      console.log(err)
+      res.status(500).json({ status: 'Error' })
+    })
+})
