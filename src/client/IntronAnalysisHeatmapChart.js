@@ -14,7 +14,7 @@ function createHeatMapSeries (data, samples) {
       series.push([
         xIndex,
         yIndex,
-        datum[`${sample}_psi`]
+        datum[`${sample}_log2_psi`]
       ])
     })
   })
@@ -39,7 +39,7 @@ class IntronAnalysisHeatmapChart extends React.Component {
       var data = createHeatMapSeries(this.props.data, this.state.yAxisCategories)
       var xAxisCategories = _.map(this.props.data, (d) => d.intron_number)
       // Extract psi values to get max and min
-      var psiVals = _.flatMap(data, (d) => [d.mcf10a_psi, d.mcf7_psi])
+      var psiVals = _.flatMap(data, (d) => [d.mcf10a_log2_psi, d.mcf7_log2_psi])
       this.setState({
         data: data,
         xAxisCategories: xAxisCategories,

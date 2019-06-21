@@ -157,7 +157,11 @@ module.exports = {
   },
 
   intronAnalysisHeatmap: function (gene) {
-    return pool.query(`SELECT * FROM mcf_intron_psi WHERE gene = '${gene}' ORDER BY intron_number`)
+    return pool.query(`
+      SELECT intron_number,
+      mcf10a_log2_psi, mcf7_log2_psi
+      FROM mcf_intron_psi WHERE gene = '${gene}' ORDER BY intron_number
+    `)
       .then(function (results) {
         if (results.rows.length < 1) {
           return [] // gene not found

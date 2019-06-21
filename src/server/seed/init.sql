@@ -20,7 +20,9 @@ CREATE TABLE mcf_intron_psi
     gene VARCHAR,
     intron_number INT CHECK (intron_number > 0),
     mcf10a_psi FLOAT,
-    mcf7_psi FLOAT
+    mcf7_psi FLOAT,
+    mcf10a_log2_psi FLOAT,
+    mcf7_log2_psi FLOAT
 );
 
 CREATE TABLE mcf_avg_psi
