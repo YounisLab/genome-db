@@ -32,7 +32,13 @@ CREATE TABLE mcf_avg_psi
     mcf7_avg_psi FLOAT
 );
 
+CREATE TABLE U12_genes
+(
+    gene VARCHAR
+);
+
 COPY MCF10A_vs_MCF7 FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/mcf10a_vs_mcf7.csv' DELIMITER E'\t' CSV HEADER;
 COPY RBP_rvalues FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/RBP_rvalues.csv' DELIMITER E'\t' CSV HEADER QUOTE '"' ESCAPE '\';
 COPY mcf_intron_psi FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/mcf_intron_psi.csv' DELIMITER E'\t' CSV HEADER;
 COPY mcf_avg_psi FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/mcf_avg_psi.csv' DELIMITER E',' CSV HEADER;
+COPY U12_genes FROM PROGRAM 'cat /docker-entrypoint-initdb.d/data/U12_genes.csv' DELIMITER E',' CSV HEADER;
