@@ -26,9 +26,9 @@ class App extends Component {
     let components = []
 
     if (this.state.study === 'mcf') {
-      components.push(<RBP />)
-    } else {
       components.push(<BellCurve />, <HeatMap />, <IntronAnalysis />)
+    } else {
+      components.push(<RBP />)
     }
 
     return (
