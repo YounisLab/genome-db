@@ -3,11 +3,34 @@ import BellCurve from './BellCurve'
 import HeatMap from './HeatMap'
 import RBP from './RBP'
 import IntronAnalysis from './IntronAnalysis'
+import StudySelector from './StudySelector'
 import { Layout } from 'antd'
 const { Header } = Layout
 
 class App extends Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      study: 'mcf'
+    }
+
+    this.onSelection = this.onSelection.bind(this)
+  }
+
+  onSelection (selection) {
+    this.setState({ study: selection })
+  }
+
   render () {
+    let components = []
+
+    if (this.state.study === 'mcf') {
+      components.push(<RBP />)
+    } else {
+      components.push(<BellCurve />, <HeatMap />, <IntronAnalysis />)
+    }
+
     return (
       <div>
         <Layout>
@@ -16,10 +39,16 @@ class App extends Component {
               GenomeDB
             </h1>
           </Header>
-          <BellCurve />
-          <HeatMap />
-          <RBP />
-          <IntronAnalysis />
+          <StudySelector onSelection={this.onSelection} />
+          {
+            components.map(cmp => {
+              return (
+                <span>
+                  { cmp }
+                </span>
+              )
+            })
+          }
         </Layout>
       </div>
     )
