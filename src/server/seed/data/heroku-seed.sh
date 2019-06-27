@@ -12,7 +12,7 @@ psql `heroku config:get DATABASE_URL` -c \
 "CREATE TABLE MCF_INTRON_PSI ( gene VARCHAR, intron_number INT CHECK (intron_number > 0), mcf10a_psi FLOAT, mcf7_psi FLOAT );"
 
 psql `heroku config:get DATABASE_URL` -c \
-"CREATE TABLE MCF_AVG_PSI ( gene VARCHAR, mcf10a_avg_psi FLOAT, mcf7_avg_psi FLOAT );"
+"CREATE TABLE mcf_avg_psi ( gene VARCHAR, mcf10a_avg_psi FLOAT, mcf7_avg_psi FLOAT, mcf10a_avg_log2_psi FLOAT, mcf7_avg_log2_psi FLOAT );"
 
 psql `heroku config:get DATABASE_URL` -c \
 "CREATE TABLE U12_GENES ( gene VARCHAR );"

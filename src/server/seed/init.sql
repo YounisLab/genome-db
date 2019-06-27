@@ -29,7 +29,9 @@ CREATE TABLE mcf_avg_psi
 (
     gene VARCHAR,
     mcf10a_avg_psi FLOAT,
-    mcf7_avg_psi FLOAT
+    mcf7_avg_psi FLOAT,
+    mcf10a_avg_log2_psi FLOAT,
+    mcf7_avg_log2_psi FLOAT
 );
 
 CREATE TABLE U12_genes
