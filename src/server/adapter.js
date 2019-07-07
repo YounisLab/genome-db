@@ -34,8 +34,7 @@ function computeCurve (dataPoints, sample) {
       scaleFactor: scaleFactor
     }
   }
-
-  var points = { curve: [], hgram: [] }
+  var points = { curve: [], hgram: [], median: null }
 
   _.each(bins, function (bin) {
     var curvePoint = NormalDensityZx(bin.x0, mean, stddev, scaleFactor)
@@ -43,6 +42,7 @@ function computeCurve (dataPoints, sample) {
 
     points.curve.push([bin.x0, curvePoint])
     points.hgram.push([bin.x0, hgramPoint])
+    points.median = math.median(dataPoints)
   })
 
   return points
@@ -167,6 +167,64 @@ module.exports = {
           return [] // gene not found
         }
         return results
+      })
+  },
+
+  intronAnalysisBellCurve: function (sample) {
+    // Computes smooth histogram curve of fpkms
+    // TODO: sanitize 'sample' before it gets frisky
+    var fullDataLine = pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi WHERE ${sample}_avg_log2_psi is not null`)
+      .then(function (result) {
+        var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
+        return computeCurve(avgPsiVals, sample + '_ia')
+      })
+    var limitedDataLine = pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi INNER JOIN u12_genes ON mcf_avg_psi.gene = u12_genes.gene WHERE ${sample}_avg_log2_psi is not null`)
+      .then(function (result) {
+        var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
+        return computeCurve(avgPsiVals, sample + '_u12_ia')
+      })
+    return Promise.all([fullDataLine, limitedDataLine])
+      .then(function (values) {
+        return values
+      })
+  },
+
+  intronAnalysisVertical: function (gene) {
+    // Computes verticals to display on bellcurve
+    return pool.query(`
+      SELECT
+        gene,
+        mcf10a_avg_log2_psi,
+        mcf7_avg_log2_psi
+      FROM mcf_avg_psi
+      WHERE gene = $1
+    `, [gene])
+      .then(function (results) {
+        if (results.rows.length < 1) {
+          return [] // gene not found
+        }
+        // Check if gene is in the u12 dataset
+        return pool.query(`
+          SELECT 1 FROM u12_genes WHERE gene= '${gene}'
+        `)
+          .then(function (u12Results) {
+            var u12 = u12Results.rows.length > 0
+            _.each(['mcf10a', 'mcf7'], function (sample) {
+              _.each(u12 ? [sample, sample + '_u12'] : [sample],
+                function (key) {
+                  if (binsHash[key + '_ia']) {
+                    results.rows[0][`${key}_height`] = NormalDensityZx(
+                      results.rows[0][`${sample}_avg_log2_psi`],
+                      binsHash[key + '_ia'].mean,
+                      binsHash[key + '_ia'].stddev,
+                      binsHash[key + '_ia'].scaleFactor
+                    )
+                  }
+                })
+              results.rows[0].u12 = u12
+            })
+            return results
+          })
       })
   }
 }

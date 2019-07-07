@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official'
 require('highcharts/modules/heatmap')(Highcharts)
 const _ = require('lodash')
 
-const samples = ['mcf10a', 'mcf7']
+const samples = ['mcf7', 'mcf10a']
 
 function createHeatMapSeries (data, samples) {
   var series = []
@@ -74,13 +74,26 @@ class IntronAnalysisHeatmapChart extends React.Component {
             xAxis: {
               categories: this.state.xAxisCategories,
               title: {
-                text: 'Intron Number'
+                text: 'Intron Number',
+                style: {
+                  fontSize: '15px'
+                }
+              },
+              labels: {
+                style: {
+                  fontSize: '15px'
+                }
               }
             },
             yAxis: {
               categories: this.state.yAxisCategories,
               title: {
                 text: null
+              },
+              labels: {
+                style: {
+                  fontSize: '15px'
+                }
               }
             },
             colorAxis: {
@@ -90,7 +103,12 @@ class IntronAnalysisHeatmapChart extends React.Component {
                 [0, '#0000FF'],
                 [0.5, '#FFFFFF'],
                 [0.9, '#FF0000']
-              ]
+              ],
+              labels: {
+                style: {
+                  fontSize: '12px'
+                }
+              }
             },
             legend: {
               align: 'right',

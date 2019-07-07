@@ -98,11 +98,21 @@ class HeatMapChart extends React.Component {
               text: null
             },
             xAxis: {
-              categories: this.state.xAxisCategories
+              categories: this.state.xAxisCategories,
+              labels: {
+                style: {
+                  fontSize: '15px'
+                }
+              }
             },
             yAxis: {
               categories: this.state.yAxisCategories,
-              title: 'Genes'
+              title: 'Genes',
+              labels: {
+                style: {
+                  fontSize: '15px'
+                }
+              }
             },
             colorAxis: {
               min: this.state.min,
@@ -111,7 +121,12 @@ class HeatMapChart extends React.Component {
                 [0, '#0000FF'],
                 [0.5, '#FFFFFF'],
                 [0.9, '#FF0000']
-              ]
+              ],
+              labels: {
+                style: {
+                  fontSize: '12px'
+                }
+              }
             },
             legend: {
               align: 'right',
