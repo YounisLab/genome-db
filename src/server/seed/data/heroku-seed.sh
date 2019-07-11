@@ -23,6 +23,12 @@ psql `heroku config:get DATABASE_URL` -c \
 psql `heroku config:get DATABASE_URL` -c \
 "CREATE TABLE TCGA_BRCA_U12_exons ( gene VARCHAR, exon INT, log2_rpkm_plus_1 JSONB );"
 
+psql `heroku config:get DATABASE_URL` -c \
+"CREATE TABLE U12_rvalues ( gene VARCHAR, rvalue JSONB );"
+
+psql `heroku config:get DATABASE_URL` -c \
+"CREATE TABLE RBP_genes ( gene VARCHAR );"
+
 # UPLOAD DATA
 
 cat mcf10a_vs_mcf7.csv | \
@@ -44,4 +50,10 @@ cat TCGA_BRCA_genes_median.csv | \
 psql `heroku config:get DATABASE_URL` -c "COPY TCGA_BRCA_genes_median FROM STDIN DELIMITER E',' CSV HEADER;"
 
 cat TCGA_BRCA_U12_exons.csv | \
-psql `heroku config:get DATABASE_URL` -c "COPY TCGA_BRCA_U12_exons FROM STDIN DELIMITER E'\t' CSV HEADER QUOTE '\"' ESCAPE '\'"
+psql `heroku config:get DATABASE_URL` -c "COPY TCGA_BRCA_U12_exons FROM STDIN DELIMITER E'\t' CSV HEADER QUOTE '\"' ESCAPE '\';"
+
+cat U12_rvalues.csv | \
+psql `heroku config:get DATABASE_URL` -c "COPY U12_rvalues FROM STDIN DELIMITER E'\t' CSV HEADER QUOTE '\"' ESCAPE '\';"
+
+cat RBP_genes.csv | \
+psql `heroku config:get DATABASE_URL` -c "COPY RBP_genes FROM STDIN DELIMITER E',' CSV HEADER;"

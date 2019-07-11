@@ -5,3 +5,5 @@ mcf_avg_psi.csv filter=lfs diff=lfs merge=lfs -text
 U12_genes.csv filter=lfs diff=lfs merge=lfs -text
 TCGA_BRCA_U12_exons.csv filter=lfs diff=lfs merge=lfs -text
 TCGA_BRCA_genes_median.csv filter=lfs diff=lfs merge=lfs -text
+RBP_genes.csv filter=lfs diff=lfs merge=lfs -text
+U12_rvalues.csv filter=lfs diff=lfs merge=lfs -text
