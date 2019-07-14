@@ -8,17 +8,17 @@ const colorMaps = {
   curve: {
     tcga: '#77a1e5',
     tcga_rbp: 'green',
-    tcga_u12: '#f28f43',
+    tcga_u12: '#f28f43'
   },
   histogram: {
     tcga: '#77a1e5',
     tcga_rbp: 'green',
-    tcga_u12: '#f28f43',
+    tcga_u12: '#f28f43'
   },
   vertical: {
     tcga: '#77a1e5',
     tcga_rbp: 'green',
-    tcga_u12: '#f28f43',
+    tcga_u12: '#f28f43'
   }
 }
 
@@ -76,7 +76,7 @@ class BellCurveChartTCGA extends React.Component {
       var newSeries = this.state.series
 
       // Remove previous plotLines if they exist
-      _.each([this.plotLines, this.rbpPlotLines, this.u12PlotLines], function(line) {
+      _.each([this.plotLines, this.rbpPlotLines, this.u12PlotLines], function (line) {
         if (line) {
           newSeries.pop()
         }
@@ -120,7 +120,7 @@ class BellCurveChartTCGA extends React.Component {
   componentDidMount () {
     var series = []
     axios.get('api/bellcurve-tcga', { params: { sample: this.props.sample } })
-      .then( (response) => {
+      .then((response) => {
         let medianVals = {}
         // full dataset graph
         var sample = response.config.params.sample

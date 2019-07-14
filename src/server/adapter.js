@@ -148,7 +148,7 @@ module.exports = {
         })
         return computeCurve(medianCounts, sample + '_u12')
       })
-      return Promise.all([fullDataLine, rbpDataLine, u12DataLine])
+    return Promise.all([fullDataLine, rbpDataLine, u12DataLine])
       .then(function (values) {
         return values
       })
@@ -165,7 +165,8 @@ module.exports = {
     `, [gene])
       .then(function (results) {
         results.rows.u12 = false
-        results.rows.rbp - false
+        results.rows.rbp = false
+        console.log(JSON.stringify(results))
         if (results.rows.length < 1) {
           return [] // gene not found
         }
@@ -183,23 +184,23 @@ module.exports = {
             return pool.query(`
               SELECT 1 FROM rbp_genes WHERE gene= '${gene}'
             `)
-            .then(function (rbpResults) {
-              if (rbpResults.rows.length > 0) {
-                samples.push('tcga_rbp')
-                results.rows[0].rbp = true
-              }
-              _.each(samples, function (sample) {
-                if (binsHash[sample]) {
-                  results.rows[0][`${sample}_height`] = NormalDensityZx(
-                    results.rows[0][`median_log2_norm_count_plus_1`],
-                    binsHash[sample].mean,
-                    binsHash[sample].stddev,
-                    binsHash[sample].scaleFactor
-                  )
+              .then(function (rbpResults) {
+                if (rbpResults.rows.length > 0) {
+                  samples.push('tcga_rbp')
+                  results.rows[0].rbp = true
                 }
+                _.each(samples, function (sample) {
+                  if (binsHash[sample]) {
+                    results.rows[0][`${sample}_height`] = NormalDensityZx(
+                      results.rows[0][`median_log2_norm_count_plus_1`],
+                      binsHash[sample].mean,
+                      binsHash[sample].stddev,
+                      binsHash[sample].scaleFactor
+                    )
+                  }
+                })
+                return results
               })
-              return results
-            })
           })
       })
   },

@@ -3,7 +3,7 @@ import BellCurve from './BellCurve'
 import HeatMap from './HeatMap'
 import Correlations from './Correlations'
 import IntronAnalysis from './IntronAnalysis'
-import BellCurveTCGA from './BellCurveTCGA';
+import BellCurveTCGA from './BellCurveTCGA'
 import StudySelector from './StudySelector'
 import { Layout } from 'antd'
 const { Header } = Layout

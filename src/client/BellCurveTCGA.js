@@ -6,7 +6,6 @@ import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
 const axios = require('axios')
-const _ = require('lodash')
 
 const columns = [{
   title: 'TCGA median',
@@ -55,13 +54,13 @@ class BellCurveTCGA extends React.Component {
           this.setState({ alertText: `${gene} not found! Please try another name.` })
           return
         }
-        
+
         // Check if median value is zero
         if (resp.median_log2_norm_count_plus_1 === -1) {
           alertText = `${gene} has median log2 norm count plus one of -1`
         }
 
-        this.setState({ 
+        this.setState({
           data: resp.data,
           alertText: alertText
         })
@@ -70,7 +69,7 @@ class BellCurveTCGA extends React.Component {
 
   setMedianVals (medianVals) {
     // key parameter expected by antd
-    medianVals['key'] = 1;
+    medianVals['key'] = 1
     // We need to put it in an array to make table work
     this.setState({ medianVals: [medianVals] })
   }

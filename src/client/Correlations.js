@@ -16,15 +16,16 @@ function columns (title) {
   }, {
     title: 'Rvalue',
     dataIndex: 'Rvalue',
-    sorter: (a,b) => a.Rvalue - b.Rvalue
+    sorter: (a, b) => a.Rvalue - b.Rvalue
   }]
 }
 
-function headers(label) {
+function headers (label) {
   return [
-  { label: label, key: 'gene' },
-  { label: 'Rvalue', key: 'Rvalue' }
-]}
+    { label: label, key: 'gene' },
+    { label: 'Rvalue', key: 'Rvalue' }
+  ]
+}
 
 function isWhiteString (str) {
   return (isNaN(parseInt(str))) && str !== null
@@ -60,7 +61,7 @@ class Correlations extends React.Component {
   updateVal (evt, key) {
     this.input[key] = evt.target.value
   }
-  setDataset = e  => {
+  setDataset (e) {
     this.setState({ dataset: e.target.value })
   }
   getRvals (gene) {

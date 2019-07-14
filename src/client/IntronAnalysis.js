@@ -63,7 +63,7 @@ class IntronAnalysis extends React.Component {
   // Called by IntronAnalysisBellcurve component to get median values
   setMedianPsi (medianPsi) {
     // key parameter expected by antd
-    medianPsi['key'] = 1;
+    medianPsi['key'] = 1
     // We need to put it in an array to make table work
     this.setState({ medianPsi: [medianPsi] })
   }
