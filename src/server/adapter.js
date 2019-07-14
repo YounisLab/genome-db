@@ -116,6 +116,94 @@ module.exports = {
       })
   },
 
+  bellCurveTCGA: function (sample) {
+    // Computes smooth histogram curve of fpkms
+    // TODO: sanitize 'sample' before it gets frisky
+    var fullDataLine = pool.query(
+      `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median`)
+      .then(function (result) {
+        var medianCounts = _.map(result.rows, (r) => {
+          return r['median_log2_norm_count_plus_1']
+        })
+        return computeCurve(medianCounts, sample)
+      })
+
+    var rbpDataLine = pool.query(
+      `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median
+      INNER JOIN rbp_genes
+      ON tcga_brca_genes_median.gene = rbp_genes.gene`)
+      .then(function (result) {
+        var medianCounts = _.map(result.rows, (r) => {
+          return r['median_log2_norm_count_plus_1']
+        })
+        return computeCurve(medianCounts, sample + '_rbp')
+      })
+    var u12DataLine = pool.query(
+      `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median
+      INNER JOIN u12_genes
+      ON tcga_brca_genes_median.gene = u12_genes.gene`)
+      .then(function (result) {
+        var medianCounts = _.map(result.rows, (r) => {
+          return r['median_log2_norm_count_plus_1']
+        })
+        return computeCurve(medianCounts, sample + '_u12')
+      })
+      return Promise.all([fullDataLine, rbpDataLine, u12DataLine])
+      .then(function (values) {
+        return values
+      })
+  },
+
+  verticalTCGA: function (gene) {
+    // Computes verticals to display on bellcurve
+    return pool.query(`
+      SELECT
+        gene,
+        median_log2_norm_count_plus_1
+      FROM tcga_brca_genes_median
+      WHERE gene = $1
+    `, [gene])
+      .then(function (results) {
+        results.rows.u12 = false
+        results.rows.rbp - false
+        if (results.rows.length < 1) {
+          return [] // gene not found
+        }
+        let samples = ['tcga']
+        // Check if gene is in the u12 dataset
+        return pool.query(`
+          SELECT 1 FROM u12_genes WHERE gene= '${gene}'
+        `)
+          .then(function (u12Results) {
+            if (u12Results.rows.length > 0) {
+              samples.push('tcga_u12')
+              results.rows[0].u12 = true
+            }
+            // Check if gene is in rbp dataaset
+            return pool.query(`
+              SELECT 1 FROM rbp_genes WHERE gene= '${gene}'
+            `)
+            .then(function (rbpResults) {
+              if (rbpResults.rows.length > 0) {
+                samples.push('tcga_rbp')
+                results.rows[0].rbp = true
+              }
+              _.each(samples, function (sample) {
+                if (binsHash[sample]) {
+                  results.rows[0][`${sample}_height`] = NormalDensityZx(
+                    results.rows[0][`median_log2_norm_count_plus_1`],
+                    binsHash[sample].mean,
+                    binsHash[sample].stddev,
+                    binsHash[sample].scaleFactor
+                  )
+                }
+              })
+              return results
+            })
+          })
+      })
+  },
+
   heatMap: function (genes) {
     // Convert genes array to genes array for psql
     var genesList = _.join(genes, ',')

@@ -3,6 +3,7 @@ import BellCurve from './BellCurve'
 import HeatMap from './HeatMap'
 import RBP from './RBP'
 import IntronAnalysis from './IntronAnalysis'
+import BellCurveTCGA from './BellCurveTCGA';
 import StudySelector from './StudySelector'
 import { Layout } from 'antd'
 const { Header } = Layout
@@ -28,7 +29,7 @@ class App extends Component {
     if (this.state.study === 'mcf') {
       components.push(<BellCurve />, <HeatMap />, <IntronAnalysis />)
     } else {
-      components.push(<RBP />)
+      components.push(<BellCurveTCGA />, <RBP />)
     }
 
     return (
