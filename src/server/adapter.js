@@ -166,7 +166,6 @@ module.exports = {
       .then(function (results) {
         results.rows.u12 = false
         results.rows.rbp = false
-        console.log(JSON.stringify(results))
         if (results.rows.length < 1) {
           return [] // gene not found
         }
