@@ -79,8 +79,8 @@ app.post('/api/heatmap', (req, res) => {
     })
 })
 
-app.get('/api/rbprvalue', (req, res) => {
-  adapter.rbpRvalues(req.query.gene, req.query.min, req.query.max)
+app.get('/api/correlations', (req, res) => {
+  adapter.correlations(req.query.table, req.query.gene, req.query.min, req.query.max)
     .then(function (results) {
       res.json(results)
     })

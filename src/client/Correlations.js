@@ -1,35 +1,41 @@
 import React from 'react'
 import styles from './styles'
 import Row from './Row'
-import { Button, Layout, Input, Table, Alert } from 'antd'
+import { Button, Layout, Input, Table, Alert, Radio } from 'antd'
 import { CSVLink } from 'react-csv'
 const { Content } = Layout
 const { Search } = Input
 const { Group } = Input
 const axios = require('axios')
 
-const columns = [{
-  title: 'RBP',
-  dataIndex: 'RBP',
-  width: '40%'
-}, {
-  title: 'Rvalue',
-  dataIndex: 'Rvalue',
-  sorter: (a,b) => a.Rvalue - b.Rvalue
-}]
+function columns (title) {
+  return [{
+    title: title,
+    dataIndex: 'gene',
+    width: '40%'
+  }, {
+    title: 'Rvalue',
+    dataIndex: 'Rvalue',
+    sorter: (a,b) => a.Rvalue - b.Rvalue
+  }]
+}
 
-const headers = [
-  { label: 'RBP', key: 'RBP' },
+function headers(label) {
+  return [
+  { label: label, key: 'gene' },
   { label: 'Rvalue', key: 'Rvalue' }
-]
+]}
 
 function isWhiteString (str) {
   return (isNaN(parseInt(str))) && str !== null
 }
 
-class RBP extends React.Component {
+class Correlations extends React.Component {
   constructor (props) {
     super(props)
+
+    this.columns = columns('RBP')
+    this.headers = columns('RBP')
 
     this.input = {
       gene: '',
@@ -37,11 +43,13 @@ class RBP extends React.Component {
       Maximum: null
     }
     this.state = {
+      dataset: 'RBP',
       data: [],
       alertText: null
     }
     this.getRvals = this.getRvals.bind(this)
     this.updateVal = this.updateVal.bind(this)
+    this.setDataset = this.setDataset.bind(this)
     this.doSearch = this.doSearch.bind(this)
   }
   doSearch (evt) {
@@ -51,6 +59,9 @@ class RBP extends React.Component {
   }
   updateVal (evt, key) {
     this.input[key] = evt.target.value
+  }
+  setDataset = e  => {
+    this.setState({ dataset: e.target.value })
   }
   getRvals (gene) {
     let min = this.input.Minimum
@@ -74,8 +85,9 @@ class RBP extends React.Component {
     } else if (isNaN(max) || isWhiteString(max)) {
       this.setState({ alertText: 'Please enter numerical Maximum value.' })
     } else {
-      axios.get('/api/rbprvalue', {
+      axios.get('/api/correlations', {
         params: {
+          table: this.state.dataset.toLowerCase() + '_rvalues',
           gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE
           min: min,
           max: max
@@ -90,6 +102,9 @@ class RBP extends React.Component {
             }
             return
           }
+          // If request goes through update header and column
+          this.columns = columns(this.state.dataset)
+          this.headers = headers(this.state.dataset)
           this.setState({
             data: resp.data,
             alertText: null
@@ -112,6 +127,15 @@ class RBP extends React.Component {
         <div style={styles.contentDivStyle}>
           <Row>
             <h1>Correlations</h1>
+          </Row>
+          <Row>
+            Select desired data for correlation analysis
+          </Row>
+          <Row>
+            <Radio.Group onChange={this.setDataset} defaultValue={'RBP'}>
+              <Radio value={'RBP'}>RBP</Radio>
+              <Radio value={'U12'}>U12</Radio>
+            </Radio.Group>
           </Row>
           <Row>
             {alert}
@@ -160,7 +184,7 @@ class RBP extends React.Component {
           <Row>
             <Table
               dataSource={this.state.data}
-              columns={columns}
+              columns={this.columns}
               size={'medium'}
               bordered
               pagination={false}
@@ -172,7 +196,7 @@ class RBP extends React.Component {
           <Row>
             <CSVLink
               data={this.state.data}
-              headers={headers}
+              headers={this.header}
               filename={`${this.input.gene}.csv`}>
               <Button
                 type='primary'
@@ -189,4 +213,4 @@ class RBP extends React.Component {
   }
 }
 
-export default RBP
+export default Correlations

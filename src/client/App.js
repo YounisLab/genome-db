@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import BellCurve from './BellCurve'
 import HeatMap from './HeatMap'
-import RBP from './RBP'
+import Correlations from './Correlations'
 import IntronAnalysis from './IntronAnalysis'
 import BellCurveTCGA from './BellCurveTCGA';
 import StudySelector from './StudySelector'
@@ -29,7 +29,7 @@ class App extends Component {
     if (this.state.study === 'mcf') {
       components.push(<BellCurve />, <HeatMap />, <IntronAnalysis />)
     } else {
-      components.push(<BellCurveTCGA />, <RBP />)
+      components.push(<BellCurveTCGA />, <Correlations />)
     }
 
     return (
