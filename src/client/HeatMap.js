@@ -56,9 +56,11 @@ class HeatMap extends React.Component {
     this.getHeatMap = this.getHeatMap.bind(this)
     this.doSearch = this.doSearch.bind(this)
   }
+
   updateText (evt) {
     this.text = evt.target.value
   }
+
   getHeatMap () {
     var newlineTokens = _.split(this.text, '\n') // Split newline tokens
     var trimmedTokens = _.map(newlineTokens, (t) => _.trim(t).toUpperCase()) // Trim whitespaces
@@ -69,11 +71,13 @@ class HeatMap extends React.Component {
         this.setState({ data: resp.data })
       })
   }
+
   doSearch (evt) {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       this.getHeatMap()
     }
   }
+
   render () {
     return (
       <Content style={styles.contentStyle}>

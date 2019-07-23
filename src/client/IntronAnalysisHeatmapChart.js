@@ -33,6 +33,7 @@ class IntronAnalysisHeatmapChart extends React.Component {
       max_psi: 0
     }
   }
+
   componentDidUpdate (prevProps) {
     if (this.props.data && this.props.data.length > 0 &&
         this.props.data !== prevProps.data) {
@@ -48,6 +49,7 @@ class IntronAnalysisHeatmapChart extends React.Component {
       })
     }
   }
+
   render () {
     return (
       <div>

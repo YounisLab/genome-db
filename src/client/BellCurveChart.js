@@ -63,6 +63,7 @@ class BellCurveChart extends React.Component {
 
     this.plotLines = false
   }
+
   componentDidUpdate (prevProps) {
     if (this.props.vertical && this.props.vertical.length > 0 &&
        this.props.vertical !== prevProps.vertical) {
@@ -92,6 +93,7 @@ class BellCurveChart extends React.Component {
       this.setState({ series: newSeries })
     }
   }
+
   componentDidMount () {
     var requests = _.map(this.props.samples, function (sample) {
       return axios.get('/api/bellcurve', { params: { sample: sample } })
@@ -111,6 +113,7 @@ class BellCurveChart extends React.Component {
       }))
       // TODO .catch block
   }
+
   render () {
     return (
       <div>

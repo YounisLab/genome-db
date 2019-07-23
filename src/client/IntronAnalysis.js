@@ -40,6 +40,7 @@ class IntronAnalysis extends React.Component {
     this.getBellCurve = this.getBellCurve.bind(this)
     this.setMedianPsi = this.setMedianPsi.bind(this)
   }
+
   getHeatMap (gene) {
     axios.get('/api/intron-analysis-heatmap', {
       params: {
@@ -50,6 +51,7 @@ class IntronAnalysis extends React.Component {
         this.setState({ heatmapData: resp.data })
       })
   }
+
   getBellCurve (gene) {
     axios.get('/api/intron-analysis-vertical', {
       params: {
@@ -60,6 +62,7 @@ class IntronAnalysis extends React.Component {
         this.setState({ bellcurveData: resp.data })
       })
   }
+
   // Called by IntronAnalysisBellcurve component to get median values
   setMedianPsi (medianPsi) {
     // key parameter expected by antd

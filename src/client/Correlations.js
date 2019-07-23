@@ -53,17 +53,21 @@ class Correlations extends React.Component {
     this.setDataset = this.setDataset.bind(this)
     this.doSearch = this.doSearch.bind(this)
   }
+
   doSearch (evt) {
     if (evt.key === 'Enter') {
       this.getRvals(this.input.gene)
     }
   }
+
   updateVal (evt, key) {
     this.input[key] = evt.target.value
   }
+
   setDataset (e) {
     this.setState({ dataset: e.target.value })
   }
+
   getRvals (gene) {
     let min = this.input.Minimum
     let max = this.input.Maximum

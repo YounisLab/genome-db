@@ -24,7 +24,7 @@ class App extends Component {
   }
 
   render () {
-    let components = []
+    const components = []
 
     if (this.state.study === 'mcf') {
       components.push(<BellCurve />, <HeatMap />, <IntronAnalysis />)

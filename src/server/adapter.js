@@ -169,7 +169,7 @@ module.exports = {
         if (results.rows.length < 1) {
           return [] // gene not found
         }
-        let samples = ['tcga']
+        const samples = ['tcga']
         // Check if gene is in the u12 dataset
         return pool.query(`
           SELECT 1 FROM u12_genes WHERE gene= '${gene}'

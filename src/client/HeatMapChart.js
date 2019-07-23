@@ -57,6 +57,7 @@ class HeatMapChart extends React.Component {
       max: 0
     }
   }
+
   componentDidUpdate (prevProps) {
     if (this.props.data && this.props.data.length > 0 &&
         this.props.data !== prevProps.data) {
@@ -71,6 +72,7 @@ class HeatMapChart extends React.Component {
       })
     }
   }
+
   render () {
     return (
       <div>

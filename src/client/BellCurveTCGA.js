@@ -36,6 +36,7 @@ class BellCurveTCGA extends React.Component {
     this.getBellCurve = this.getBellCurve.bind(this)
     this.setMedianVals = this.setMedianVals.bind(this)
   }
+
   getBellCurve (gene) {
     this.setState({ alertText: null })
     if (!gene) {

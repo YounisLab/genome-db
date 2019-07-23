@@ -121,7 +121,7 @@ class BellCurveChartTCGA extends React.Component {
     var series = []
     axios.get('api/bellcurve-tcga', { params: { sample: this.props.sample } })
       .then((response) => {
-        let medianVals = {}
+        const medianVals = {}
         // full dataset graph
         var sample = response.config.params.sample
         var curve = createCurveSeries(sample, response.data[0].curve, colorMaps.curve[sample])

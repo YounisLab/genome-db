@@ -37,6 +37,7 @@ class BellCurve extends React.Component {
 
     this.getBellCurve = this.getBellCurve.bind(this)
   }
+
   getBellCurve (gene) {
     this.setState({ alertText: null })
     if (!gene) {
@@ -77,6 +78,7 @@ class BellCurve extends React.Component {
         })
       })
   }
+
   render () {
     let alert
 

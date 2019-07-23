@@ -69,6 +69,7 @@ class IntronAnalysisBellCurveChart extends React.Component {
     this.plotLines = false
     this.u12PlotLines = false
   }
+
   componentDidUpdate (prevProps) {
     if (this.props.vertical && this.props.vertical.length > 0 &&
        this.props.vertical !== prevProps.vertical) {
@@ -116,6 +117,7 @@ class IntronAnalysisBellCurveChart extends React.Component {
       this.setState({ series: newSeries })
     }
   }
+
   componentDidMount () {
     var requests = _.map(this.props.samples, function (sample) {
       return axios.get('api/intron-analysis-bellcurve', { params: { sample: sample } })
@@ -125,7 +127,7 @@ class IntronAnalysisBellCurveChart extends React.Component {
     axios.all(requests)
       .then(axios.spread((...responses) => {
         // key parameter expected by antd
-        let medianPsi = {}
+        const medianPsi = {}
         _.each(_.flatten(responses), (r) => {
           // full dataset graph
           var sample = r.config.params.sample
@@ -148,6 +150,7 @@ class IntronAnalysisBellCurveChart extends React.Component {
       }))
       // TODO .catch block
   }
+
   render () {
     return (
       <div>
