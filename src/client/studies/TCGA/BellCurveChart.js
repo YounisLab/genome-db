@@ -81,8 +81,7 @@ class BellCurveChart extends React.Component {
       // Remove previous plotLines if they exist
       _.each(plotLines, function (value) {
         if (value) {
-          console.log(value)
-          newSeries.pop()
+          _.each(this.props.samples, () => newSeries.pop())
         }
       })
 
