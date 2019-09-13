@@ -29,7 +29,7 @@ class BellCurve extends React.Component {
     this.state = {
       data: [],
       alertText: null,
-      sample: 'tcga',
+      samples: ['tcga'],
       medianValsP: []
     }
 
@@ -117,7 +117,7 @@ class BellCurve extends React.Component {
           <Row>
             <BellCurveChart
               vertical={this.state.data}
-              sample={this.state.sample}
+              samples={this.state.samples}
               setMedianVals={this.setMedianVals}
             />
           </Row>

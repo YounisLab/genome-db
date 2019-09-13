@@ -129,7 +129,7 @@ class BellCurveChart extends React.Component {
 
   componentDidMount () {
     var series = []
-    axios.get('api/bellcurve', { params: { study: 'tcga', sample: this.props.sample } })
+    axios.get('api/bellcurve', { params: { study: 'tcga', sample: this.props.samples } })
       .then((response) => {
         const medianVals = {}
         // full dataset graph
