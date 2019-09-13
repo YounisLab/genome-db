@@ -63,9 +63,11 @@ class BellCurveChart extends React.Component {
       series: []
     }
 
-    this.plotLines = false
-    this.rbpPlotLines = false
-    this.u12PlotLines = false
+    this.plotLines = {
+      main: false,
+      rbp: false,
+      u12: false
+    }
   }
 
   componentDidUpdate (prevProps) {
@@ -74,10 +76,12 @@ class BellCurveChart extends React.Component {
       var vertical = this.props.vertical[0]
 
       var newSeries = this.state.series
+      var plotLines = this.plotLines
 
       // Remove previous plotLines if they exist
-      _.each([this.plotLines, this.rbpPlotLines, this.u12PlotLines], function (line) {
-        if (line) {
+      _.each(plotLines, function (value) {
+        if (value) {
+          console.log(value)
           newSeries.pop()
         }
       })
@@ -110,9 +114,16 @@ class BellCurveChart extends React.Component {
         newSeries.push(vU12)
       }
 
-      this.plotLines = true
-      this.rbpPlotLines = vertical.rbp || false
-      this.u12PlotLines = vertical.u12 || false
+      // set flags to indicate if plotlines exist
+      _.each(_.keys(plotLines), function (plot) {
+        if (plot == 'main') {
+          plotLines[plot] = true
+        }
+        else {
+          plotLines[plot] = vertical[plot] || false
+        }
+      })
+      this.plotLines = plotLines
       this.setState({ series: newSeries })
     }
   }
