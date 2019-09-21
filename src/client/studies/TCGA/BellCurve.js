@@ -1,7 +1,7 @@
 import React from 'react'
-import styles from './styles'
-import Row from './Row'
-import BellCurveChartTCGA from './BellCurveChartTCGA'
+import styles from '../../shared/styles'
+import Row from '../../shared/Row'
+import BellCurveChart from './BellCurveChart'
 import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
@@ -22,7 +22,7 @@ const columns = [{
   width: '20%'
 }]
 
-class BellCurveTCGA extends React.Component {
+class BellCurve extends React.Component {
   constructor (props) {
     super(props)
 
@@ -114,7 +114,7 @@ class BellCurveTCGA extends React.Component {
             />
           </Row>
           <Row>
-            <BellCurveChartTCGA
+            <BellCurveChart
               vertical={this.state.data}
               sample={this.state.sample}
               setMedianVals={this.setMedianVals}
@@ -126,4 +126,4 @@ class BellCurveTCGA extends React.Component {
   }
 }
 
-export default BellCurveTCGA
+export default BellCurve

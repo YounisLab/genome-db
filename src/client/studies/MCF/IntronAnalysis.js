@@ -1,6 +1,6 @@
 import React from 'react'
-import styles from './styles'
-import Row from './Row'
+import styles from '../../shared/styles'
+import Row from '../../shared/Row'
 import IntronAnalysisHeatmapChart from './IntronAnalysisHeatmapChart'
 import IntronAnalysisBellCurveChart from './IntronAnalysisBellCurveChart'
 import { Layout, Input, Table } from 'antd'

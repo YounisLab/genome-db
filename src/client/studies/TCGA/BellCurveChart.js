@@ -55,7 +55,7 @@ function createVerticalSeries (sample, data, color) {
   }
 }
 
-class BellCurveChartTCGA extends React.Component {
+class BellCurveChart extends React.Component {
   constructor (props) {
     super(props)
 
@@ -205,4 +205,4 @@ class BellCurveChartTCGA extends React.Component {
   }
 }
 
-export default BellCurveChartTCGA
+export default BellCurveChart

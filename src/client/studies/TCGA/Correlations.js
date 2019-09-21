@@ -1,6 +1,6 @@
 import React from 'react'
-import styles from './styles'
-import Row from './Row'
+import styles from '../../shared/styles'
+import Row from '../../shared/Row'
 import { Button, Layout, Input, Table, Alert, Radio } from 'antd'
 import { CSVLink } from 'react-csv'
 const { Content } = Layout

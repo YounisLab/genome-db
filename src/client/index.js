@@ -1,5 +1,52 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+
+import ComponentMCF from './studies/MCF/ComponentMCF'
+import ComponentTCGA from './studies/TCGA/ComponentTCGA'
+import StudySelector from './StudySelector'
+import { Layout } from 'antd'
+const { Header } = Layout
+
+class App extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      study: 'mcf'
+    }
+
+    this.onSelection = this.onSelection.bind(this)
+  }
+
+  onSelection (selection) {
+    this.setState({ study: selection })
+  }
+
+  render () {
+    let component
+
+    if (this.state.study === 'mcf') {
+      component = <ComponentMCF />
+    } else {
+      component = <ComponentTCGA />
+    }
+
+    return (
+      <div>
+        <Layout>
+          <Header>
+            <h1 style={{ color: 'white' }}>
+              GenomeDB
+            </h1>
+          </Header>
+          <StudySelector onSelection={this.onSelection} />
+          {
+            component
+          }
+        </Layout>
+      </div>
+    )
+  }
+}
 
 ReactDOM.render(<App />, document.getElementById('root'))

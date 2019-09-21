@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './styles'
+import styles from './shared/styles'
 import { Layout, Select } from 'antd'
 const { Option } = Select
 const { Content } = Layout

@@ -1,6 +1,6 @@
 import React from 'react'
-import styles from './styles'
-import Row from './Row'
+import styles from '../../shared/styles'
+import Row from '../../shared/Row'
 import HeatMapChart from './HeatMapChart'
 import { CSVLink } from 'react-csv'
 import { Layout, Input, Button, Table } from 'antd'
