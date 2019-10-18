@@ -1,15 +1,22 @@
 const express = require('express')
 const { URL } = require('url')
-const adapter = require('./adapter')
+const MCFadapter = require('./MCFadapter')
+const TCGAadapter = require('./TCGAadapter')
 const bodyParser = require('body-parser')
 const app = express()
 const port = process.env.PORT || 8080
 const dbURL = (new URL(process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'))
 
+var adapter = MCFadapter //set by middleware
+
 app.use(bodyParser.json({ limit: '5mb' }))
 
 app.use(function (req, res, next) {
   console.log('Incoming request:', req.url)
+  next()
+})
+
+app.use(function (req, res, next) {
   next()
 })
 
