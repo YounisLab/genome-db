@@ -96,7 +96,7 @@ class BellCurveChart extends React.Component {
 
   componentDidMount () {
     var requests = _.map(this.props.samples, function (sample) {
-      return axios.get('/api/bellcurve', { params: { sample: sample } })
+      return axios.get('/api/bellcurve', { params: { study: 'mcf', sample: sample } })
     })
 
     var series = []

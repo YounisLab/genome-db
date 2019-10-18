@@ -46,6 +46,7 @@ class BellCurve extends React.Component {
 
     axios.get('/api/vertical-tcga', {
       params: {
+        study: 'tcga',
         gene: gene.toUpperCase() // DB stores gene names in UPPERCASE
       }
     })

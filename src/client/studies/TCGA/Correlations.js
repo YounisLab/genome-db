@@ -92,6 +92,7 @@ class Correlations extends React.Component {
     } else {
       axios.get('/api/correlations', {
         params: {
+          study: 'tcga',
           table: this.state.dataset.toLowerCase() + '_rvalues',
           gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE
           min: min,

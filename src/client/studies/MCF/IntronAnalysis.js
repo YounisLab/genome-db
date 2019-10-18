@@ -44,6 +44,7 @@ class IntronAnalysis extends React.Component {
   getHeatMap (gene) {
     axios.get('/api/intron-analysis-heatmap', {
       params: {
+        study: 'mcf',
         gene: gene.toUpperCase()
       }
     })
@@ -55,6 +56,7 @@ class IntronAnalysis extends React.Component {
   getBellCurve (gene) {
     axios.get('/api/intron-analysis-vertical', {
       params: {
+        study: 'mcf',
         gene: gene.toUpperCase() // DB stores gene names in UPPERCASE
       }
     })

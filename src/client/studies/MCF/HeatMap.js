@@ -65,6 +65,7 @@ class HeatMap extends React.Component {
     var newlineTokens = _.split(this.text, '\n') // Split newline tokens
     var trimmedTokens = _.map(newlineTokens, (t) => _.trim(t).toUpperCase()) // Trim whitespaces
     axios.post('/api/heatmap', {
+      study: 'mcf',
       genes: _.filter(trimmedTokens, (t) => t !== '') // Filter out empty strings
     })
       .then(resp => {
