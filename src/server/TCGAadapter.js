@@ -1,4 +1,3 @@
-const { Pool } = require('pg')
 const _ = require('lodash')
 const d3 = require('d3')
 const math = require('mathjs')
@@ -61,17 +60,9 @@ function rangeFilter (rvals, min, max) {
 }
 
 module.exports = {
-  connect: function (urlObject) {
-    var host = urlObject.host
-    console.log('Connecting to postgres at', host)
-    pool = new Pool({
-      connectionString: urlObject.href
-    })
-
-    return pool.query('SELECT NOW() as now')
-      .then(function (res) {
-        console.log('Connected to postgres on', res.rows[0].now)
-      })
+  setPool: function (dbObj) {
+    pool = dbObj
+    return 0
   },
 
   bellCurve: function (sample) {
