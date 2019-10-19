@@ -65,7 +65,7 @@ module.exports = {
     return 0
   },
 
-  bellCurveTCGA: function (sample) {
+  bellCurve: function (sample) {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
     var fullDataLine = pool.query(
@@ -103,7 +103,7 @@ module.exports = {
       })
   },
 
-  verticalTCGA: function (gene) {
+  vertical: function (gene) {
     // Computes verticals to display on bellcurve
     return pool.query(`
       SELECT

@@ -83,28 +83,6 @@ app.get('/api/vertical', (req, res) => {
     })
 })
 
-app.get('/api/bellcurve-tcga', (req, res) => {
-  adapter.bellCurveTCGA(req.query.sample)
-    .then(function (results) {
-      res.json(results)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
-
-app.get('/api/vertical-tcga', (req, res) => {
-  adapter.verticalTCGA(req.query.gene)
-    .then(function (results) {
-      res.json(results.rows)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
-
 app.post('/api/heatmap', (req, res) => {
   adapter.heatMap(req.body.genes)
     .then(function (results) {
