@@ -1,51 +1,8 @@
 const _ = require('lodash')
-const d3 = require('d3')
-const math = require('mathjs')
+const util = require('./utility')
 
 var pool
 var binsHash = {} // To compute height of verticals
-
-function NormalDensityZx (x, Mean, StdDev, scaleFactor) {
-  var a = x - Mean
-  return (Math.exp(-(a * a) / (2 * StdDev * StdDev)) / (Math.sqrt(2 * Math.PI) * StdDev)) * scaleFactor
-}
-
-// Return points adjusted to normal curve
-// and histogram
-function computeCurve (dataPoints, sample) {
-  var binGenerator = d3.histogram().thresholds(d3.thresholdScott)
-
-  var bins = binGenerator(dataPoints)
-  var mean = math.mean(dataPoints)
-  var stddev = math.std(dataPoints)
-  // Take average width of bins
-  var avgBinWidth = _.reduce(bins, function (sum, bin) {
-    return sum + Math.abs(bin.x1 - bin.x0)
-  }, 0)
-  avgBinWidth = avgBinWidth / bins.length
-  var scaleFactor = avgBinWidth * dataPoints.length
-
-  // Store for computing height of vertical later
-  if (!binsHash[sample]) {
-    binsHash[sample] = {
-      mean: mean,
-      stddev: stddev,
-      scaleFactor: scaleFactor
-    }
-  }
-  var points = { curve: [], hgram: [], median: null }
-
-  _.each(bins, function (bin) {
-    var curvePoint = NormalDensityZx(bin.x0, mean, stddev, scaleFactor)
-    var hgramPoint = bin.length
-
-    points.curve.push([bin.x0, curvePoint])
-    points.hgram.push([bin.x0, hgramPoint])
-    points.median = math.median(dataPoints)
-  })
-
-  return points
-}
 
 module.exports = {
   setPool: function (dbObj) {
@@ -59,7 +16,7 @@ module.exports = {
     return pool.query(`SELECT ${sample}_log2 FROM mcf10a_vs_mcf7 WHERE ${sample}_log2 != 'Infinity'`)
       .then(function (result) {
         var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
-        return computeCurve(log2fpkms, sample)
+        return util.computeCurve(binsHash, log2fpkms, sample)
       })
   },
 
@@ -83,7 +40,7 @@ module.exports = {
         }
         _.each(['mcf10a', 'mcf7'], function (sample) {
           if (binsHash[sample]) {
-            results.rows[0][`${sample}_height`] = NormalDensityZx(
+            results.rows[0][`${sample}_height`] = util.NormalDensityZx(
               results.rows[0][`${sample}_log2`],
               binsHash[sample].mean,
               binsHash[sample].stddev,
@@ -136,12 +93,12 @@ module.exports = {
     var fullDataLine = pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi WHERE ${sample}_avg_log2_psi is not null`)
       .then(function (result) {
         var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
-        return computeCurve(avgPsiVals, sample + '_ia')
+        return util.computeCurve(binsHash, avgPsiVals, sample + '_ia')
       })
     var limitedDataLine = pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi INNER JOIN u12_genes ON mcf_avg_psi.gene = u12_genes.gene WHERE ${sample}_avg_log2_psi is not null`)
       .then(function (result) {
         var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
-        return computeCurve(avgPsiVals, sample + '_u12_ia')
+        return util.computeCurve(binsHash, avgPsiVals, sample + '_u12_ia')
       })
     return Promise.all([fullDataLine, limitedDataLine])
       .then(function (values) {
@@ -173,7 +130,7 @@ module.exports = {
               _.each(u12 ? [sample, sample + '_u12'] : [sample],
                 function (key) {
                   if (binsHash[key + '_ia']) {
-                    results.rows[0][`${key}_height`] = NormalDensityZx(
+                    results.rows[0][`${key}_height`] = util.NormalDensityZx(
                       results.rows[0][`${sample}_avg_log2_psi`],
                       binsHash[key + '_ia'].mean,
                       binsHash[key + '_ia'].stddev,
