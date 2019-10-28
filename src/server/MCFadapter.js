@@ -1,6 +1,11 @@
 const _ = require('lodash')
 const util = require('./utility')
 
+const queryParams = {'fpkm': {'mcf7': ['mcf10a_vs_mcf7', 'mcf7_log2'],
+                              'mcf10a': ['mcf10a_vs_mcf7', 'mcf10a_log2']},
+                     'psi': {'mcf7': ['mcf_avg_psi', 'mcf7_avg_log2_psi'],
+                              'mcf10a': ['mcf_avg_psi', 'mcf10a_avg_log2_psi']}}
+
 var pool
 var binsHash = {} // To compute height of verticals
 
@@ -10,10 +15,12 @@ module.exports = {
     return 0
   },
 
-  bellCurve: function (sample) {
+  bellCurve: function (sample, subsets, type) {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
-    return pool.query(`SELECT ${sample}_log2 FROM mcf10a_vs_mcf7 WHERE ${sample}_log2 != 'Infinity'`)
+    [tableName, columnName] = queryParams[type][sample]
+    // var [tableName, columnName] = queryParams[type][subsets]
+    return pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'`)
       .then(function (result) {
         var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
         return util.computeCurve(binsHash, log2fpkms, sample)

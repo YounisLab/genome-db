@@ -62,7 +62,7 @@ app.use(function (req, res, next) {
 app.use(express.static('dist'))
 
 app.get('/api/bellcurve', (req, res) => {
-  adapter.bellCurve(req.query.sample)
+  adapter.bellCurve(req.query.sample, req.query.subsets, req.query.type)
     .then(function (results) {
       res.json(results)
     })

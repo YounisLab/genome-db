@@ -22,7 +22,7 @@ module.exports = {
     return 0
   },
 
-  bellCurve: function (sample) {
+  bellCurve: function (sample, subsets, type) {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
     var fullDataLine = pool.query(
