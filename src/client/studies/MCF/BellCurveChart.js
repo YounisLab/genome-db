@@ -95,13 +95,14 @@ class BellCurveChart extends React.Component {
   }
 
   componentDidMount () {
-    var requests = _.map(this.props.samples, function (sample) {
+    var props = this.props
+    var requests = _.map(props.samples, function (sample) {
       return axios.get('/api/bellcurve',
       { params: {
           study: 'mcf',
           sample: sample,
-          subsets: [],
-          type: 'fpkm'
+          subsets: props.subsets,
+          type: props.type
         }})
     })
 
@@ -109,12 +110,26 @@ class BellCurveChart extends React.Component {
     axios.all(requests)
       .then(axios.spread((...responses) => {
         _.each(responses, (r) => {
+          // full data line
           var sample = r.config.params.sample
-          var curve = createCurveSeries(sample, r.data.curve, colorMaps.curve[sample])
-          var hgram = createHistogramSeries(sample, r.data.hgram, colorMaps.histogram[sample])
+          var curve = createCurveSeries(sample,
+             r.data[0].curve, colorMaps.curve[sample])
+          var hgram = createHistogramSeries(sample,
+             r.data[0].hgram, colorMaps.histogram[sample])
           series.push(curve, hgram)
-        })
 
+          // subset lines
+          _.each(props.subsets, function (subset) {
+            var index = 1
+            var subsetSample = sample + subset
+            var curve = createCurveSeries(subsetSample,
+               r.data[index].curve, colorMaps.curve[subsetSample])
+            var hgram = createHistogramSeries(subsetSample,
+               r.data[index].hgram, colorMaps.histogram[subsetSample])
+            series.push(curve, hgram)
+            index++
+          })
+        })
         this.setState({ series: series })
       }))
       // TODO .catch block
