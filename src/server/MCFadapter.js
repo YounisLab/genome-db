@@ -5,7 +5,8 @@ const queryParams = {'fpkm': {'mcf7': ['mcf10a_vs_mcf7', 'mcf7_log2'],
                               'mcf10a': ['mcf10a_vs_mcf7', 'mcf10a_log2']},
                      'psi': {'mcf7': ['mcf_avg_psi', 'mcf7_avg_log2_psi'],
                               'mcf10a': ['mcf_avg_psi', 'mcf10a_avg_log2_psi']}}
-
+const subsetParams = {'rbp': 'rbp_genes',
+                      'u12': 'u12_genes'}
 var pool
 var binsHash = {} // To compute height of verticals
 
@@ -19,11 +20,29 @@ module.exports = {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
     [tableName, columnName] = queryParams[type][sample]
+    var lines = []
     // var [tableName, columnName] = queryParams[type][subsets]
-    return pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'`)
+    var line = pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'`)
       .then(function (result) {
         var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
         return util.computeCurve(binsHash, log2fpkms, sample)
+      })
+    lines.push(line)
+    // add each subset line
+    _.each(subsets, function(subset) {
+      var subsetTable = subsetParams[subset]
+      line = pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'
+                          INNER JOIN ${subsetTable}
+                          ON ${tableName}.gene = ${subsetTable}.gene`)
+        .then(function (result) {
+          var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
+          return util.computeCurve(binsHash, log2fpkms, sample)
+        })
+        lines.push(line)
+    })
+    return Promise.all(lines)
+      .then(function (values) {
+        return values
       })
   },
 
