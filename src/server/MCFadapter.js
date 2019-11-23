@@ -19,13 +19,13 @@ module.exports = {
   bellCurve: function (sample, subsets, type) {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
-    var [tableName, columnName] = queryParams[type][sample]
+    var [tableName, columnName] = queryParams['bellcurve'][type][sample]
     var lines = []
     // var [tableName, columnName] = queryParams[type][subsets]
     var line = pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'`)
       .then(function (result) {
         var log2fpkms = _.map(result.rows, (r) => r[columnName])
-        return util.computeCurve(binsHash, log2fpkms, sample + type)
+        return util.computeCurve(binsHash, log2fpkms, `${sample}_${type}`)
       })
     lines.push(line)
     // add each subset line
@@ -37,7 +37,7 @@ module.exports = {
                           WHERE ${columnName} is not null`)
         .then(function (result) {
           var log2fpkms = _.map(result.rows, (r) => r[columnName])
-          return util.computeCurve(binsHash, log2fpkms, sample + type + subset)
+          return util.computeCurve(binsHash, log2fpkms, `${sample}_${subset}_${type}`)
         })
         lines.push(line)
     })

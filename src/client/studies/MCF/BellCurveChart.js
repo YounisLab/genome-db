@@ -109,6 +109,7 @@ class BellCurveChart extends React.Component {
     var series = []
     axios.all(requests)
       .then(axios.spread((...responses) => {
+        const medianPsi = {}
         _.each(responses, (r) => {
           // full data line
           var sample = r.config.params.sample
@@ -117,6 +118,9 @@ class BellCurveChart extends React.Component {
           var hgram = createHistogramSeries(sample,
              r.data[0].hgram, colorMaps.histogram[sample])
           series.push(curve, hgram)
+          if (props.setMedinPsi) {
+            medianPsi[sample] = r.data[0].median
+          }
 
           // subset lines
           _.each(props.subsets, function (subset) {
@@ -127,10 +131,16 @@ class BellCurveChart extends React.Component {
             var hgram = createHistogramSeries(subsetSample,
                r.data[index].hgram, colorMaps.histogram[subsetSample])
             series.push(curve, hgram)
+            if (props.setMedinPsi) {
+              medianPsi[subsetSample] = r.data[index].median
+            }
             index++
           })
         })
         this.setState({ series: series })
+        if (props.setMedinPsi) {
+          props.setMedinPsi(medianPsi)
+        }
       }))
       // TODO .catch block
   }
