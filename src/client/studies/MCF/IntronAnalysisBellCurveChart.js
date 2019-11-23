@@ -119,8 +119,15 @@ class IntronAnalysisBellCurveChart extends React.Component {
   }
 
   componentDidMount () {
-    var requests = _.map(this.props.samples, function (sample) {
-      return axios.get('api/intron-analysis-bellcurve', { params: { study: 'mcf', sample: sample } })
+    var props = this.props
+    var requests = _.map(props.samples, function (sample) {
+      return axios.get('/api/bellcurve',
+      { params: {
+          study: 'mcf',
+          sample: sample,
+          subsets: props.subsets,
+          type: props.type
+        }})
     })
 
     var series = []

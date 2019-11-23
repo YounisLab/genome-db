@@ -19,24 +19,25 @@ module.exports = {
   bellCurve: function (sample, subsets, type) {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
-    [tableName, columnName] = queryParams[type][sample]
+    var [tableName, columnName] = queryParams[type][sample]
     var lines = []
     // var [tableName, columnName] = queryParams[type][subsets]
     var line = pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'`)
       .then(function (result) {
-        var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
-        return util.computeCurve(binsHash, log2fpkms, sample)
+        var log2fpkms = _.map(result.rows, (r) => r[columnName])
+        return util.computeCurve(binsHash, log2fpkms, sample + type)
       })
     lines.push(line)
     // add each subset line
     _.each(subsets, function(subset) {
       var subsetTable = subsetParams[subset]
-      line = pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'
+      line = pool.query(`SELECT ${columnName} FROM ${tableName}
                           INNER JOIN ${subsetTable}
-                          ON ${tableName}.gene = ${subsetTable}.gene`)
+                          ON ${tableName}.gene = ${subsetTable}.gene
+                          WHERE ${columnName} is not null`)
         .then(function (result) {
-          var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
-          return util.computeCurve(binsHash, log2fpkms, sample)
+          var log2fpkms = _.map(result.rows, (r) => r[columnName])
+          return util.computeCurve(binsHash, log2fpkms, sample + type + subset)
         })
         lines.push(line)
     })
@@ -68,9 +69,9 @@ module.exports = {
           if (binsHash[sample]) {
             results.rows[0][`${sample}_height`] = util.NormalDensityZx(
               results.rows[0][`${sample}_log2`],
-              binsHash[sample].mean,
-              binsHash[sample].stddev,
-              binsHash[sample].scaleFactor
+              binsHash[`${sample}_fpkm`].mean,
+              binsHash[`${sample}_fpkm`].stddev,
+              binsHash[`${sample}_fpkm`].scaleFactor
             )
           }
         })
@@ -110,25 +111,6 @@ module.exports = {
           return [] // gene not found
         }
         return results
-      })
-  },
-
-  intronAnalysisBellCurve: function (sample) {
-    // Computes smooth histogram curve of fpkms
-    // TODO: sanitize 'sample' before it gets frisky
-    var fullDataLine = pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi WHERE ${sample}_avg_log2_psi is not null`)
-      .then(function (result) {
-        var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
-        return util.computeCurve(binsHash, avgPsiVals, sample + '_ia')
-      })
-    var limitedDataLine = pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi INNER JOIN u12_genes ON mcf_avg_psi.gene = u12_genes.gene WHERE ${sample}_avg_log2_psi is not null`)
-      .then(function (result) {
-        var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
-        return util.computeCurve(binsHash, avgPsiVals, sample + '_u12_ia')
-      })
-    return Promise.all([fullDataLine, limitedDataLine])
-      .then(function (values) {
-        return values
       })
   },
 

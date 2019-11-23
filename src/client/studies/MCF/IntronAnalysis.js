@@ -34,7 +34,9 @@ class IntronAnalysis extends React.Component {
       heatmapData: [],
       bellcurveData: [],
       samples: ['mcf10a', 'mcf7'],
-      medianPsi: []
+      medianPsi: [],
+      subsets: ['u12'],
+      type: 'psi'
     }
     this.getHeatMap = this.getHeatMap.bind(this)
     this.getBellCurve = this.getBellCurve.bind(this)
@@ -119,6 +121,8 @@ class IntronAnalysis extends React.Component {
               vertical={this.state.bellcurveData}
               samples={this.state.samples}
               setMedianPsi={this.setMedianPsi}
+              subsets={this.state.subsets}
+              type={this.state.type}
             />
           </Row>
         </div>
