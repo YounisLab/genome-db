@@ -73,7 +73,7 @@ app.get('/api/bellcurve', (req, res) => {
 })
 
 app.get('/api/vertical', (req, res) => {
-  adapter.vertical(req.query.gene)
+  adapter.vertical(req.query.gene, req.query.subsets, req.query.type)
     .then(function (results) {
       res.json(results.rows)
     })

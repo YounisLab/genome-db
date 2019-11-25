@@ -1,10 +1,12 @@
 const _ = require('lodash')
 const util = require('./utility')
 
-const queryParams = {'fpkm': {'mcf7': ['mcf10a_vs_mcf7', 'mcf7_log2'],
-                              'mcf10a': ['mcf10a_vs_mcf7', 'mcf10a_log2']},
-                     'psi': {'mcf7': ['mcf_avg_psi', 'mcf7_avg_log2_psi'],
-                              'mcf10a': ['mcf_avg_psi', 'mcf10a_avg_log2_psi']}}
+const queryParams = {'bellcurve': {'fpkm': {'mcf7': ['mcf10a_vs_mcf7', 'mcf7_log2'],
+                                            'mcf10a': ['mcf10a_vs_mcf7', 'mcf10a_log2']},
+                                  'psi': {'mcf7': ['mcf_avg_psi', 'mcf7_avg_log2_psi'],
+                                          'mcf10a': ['mcf_avg_psi', 'mcf10a_avg_log2_psi']}},
+                      'vertical': {'fpkm': ['mcf10a_vs_mcf7', 'gene, mcf10a_fpkm, mcf7_fpkm, mcf10a_log2, mcf7_log2, pvalue, log2_foldchange', 'log2'],
+                                  'psi': ['mcf_avg_psi', 'gene, mcf10a_avg_log2_psi, mcf7_avg_log2_psi', 'avg_log2_psi']}}
 const subsetParams = {'rbp': 'rbp_genes',
                       'u12': 'u12_genes'}
 var pool
@@ -47,35 +49,51 @@ module.exports = {
       })
   },
 
-  vertical: function (gene) {
+  vertical: function (gene, subsets, type) {
     // Computes verticals to display on bellcurve
+    var [tableName, columnNames, dataType] = queryParams['vertical'][type]
     return pool.query(`
-      SELECT
-        gene,
-        mcf10a_fpkm,
-        mcf7_fpkm,
-        mcf10a_log2,
-        mcf7_log2,
-        pvalue,
-        log2_foldchange
-      FROM mcf10a_vs_mcf7
+      SELECT ${columnNames}
+      FROM ${tableName}
       WHERE gene = $1
     `, [gene])
       .then(function (results) {
         if (results.rows.length < 1) {
           return [] // gene not found
         }
-        _.each(['mcf10a', 'mcf7'], function (sample) {
-          if (binsHash[sample]) {
+        var verticals = _.map(['mcf10a', 'mcf7'], function (sample) {
+          // find vertical for sample
+          if (binsHash[`${sample}_${type}`]) {
             results.rows[0][`${sample}_height`] = util.NormalDensityZx(
-              results.rows[0][`${sample}_log2`],
-              binsHash[`${sample}_fpkm`].mean,
-              binsHash[`${sample}_fpkm`].stddev,
-              binsHash[`${sample}_fpkm`].scaleFactor
-            )
+              results.rows[0][`${sample}_${dataType}`],
+              binsHash[`${sample}_${type}`].mean,
+              binsHash[`${sample}_${type}`].stddev,
+              binsHash[`${sample}_${type}`].scaleFactor)
           }
+          // return a promise for each subset
+          return _.map(subsets, function (subset) {
+            var subsetTable = subsetParams[subset]
+            // check if gene is in subset dataset
+            return pool.query(`
+              SELECT 1 FROM ${subsetTable} WHERE gene= '${gene}'
+            `)
+              .then(function (subsetResults) {
+                if (subsetResults.rows.length > 0 && binsHash[`${sample}_${subset}_${type}`]) {
+                  results.rows[0][`${sample}_${subset}`] = true
+                  results.rows[0][`${sample}_${subset}_height`] = util.NormalDensityZx(
+                    results.rows[0][`${sample}_${dataType}`],
+                    binsHash[`${sample}_${subset}_${type}`].mean,
+                    binsHash[`${sample}_${subset}_${type}`].stddev,
+                    binsHash[`${sample}_${subset}_${type}`].scaleFactor)
+                }
+              })
+          })
         })
-        return results
+        // wait for all promises to execute
+        return Promise.all(_.flatten(verticals))
+          .then(function () {
+            return results
+          })
       })
   },
 

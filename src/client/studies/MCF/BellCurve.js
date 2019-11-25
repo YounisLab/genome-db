@@ -50,7 +50,9 @@ class BellCurve extends React.Component {
     axios.get('/api/vertical', {
       params: {
         study: 'mcf',
-        gene: gene.toUpperCase() // DB stores gene names in UPPERCASE
+        gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE,
+        subsets: this.state.subsets,
+        type: this.state.type
       }
     })
       .then(resp => {
