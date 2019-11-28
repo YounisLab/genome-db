@@ -99,7 +99,7 @@ class IntronAnalysisBellCurveChart extends React.Component {
       newSeries.push(v1, v2)
 
       // create u12 counterparts if they exist
-      if (vertical.u12) {
+      if (vertical.mcf10a_u12 && vertical.mcf7_u12) {
         var v1u12 = createVerticalSeries(
           `${vertical.gene} avg_psi in mcf10a_u12`,
           [[vertical.mcf10a_avg_log2_psi || 0, vertical.mcf10a_u12_height], [vertical.mcf10a_avg_log2_psi || 0, 0]],
