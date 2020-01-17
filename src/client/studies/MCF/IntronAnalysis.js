@@ -146,7 +146,7 @@ class IntronAnalysis extends React.Component {
             <BellCurveChart
               vertical={this.state.bellcurveData}
               samples={this.state.samples}
-              setMedianPsi={this.setMedianPsi}
+              setMedianVals={this.setMedianPsi}
               subsets={this.state.subsets}
               type={this.state.type}
               bcType={this.state.bcType}
