@@ -58,38 +58,48 @@ class BellCurveChart extends React.Component {
     super(props)
 
     this.state = {
+      xLabel: this.props.xLabel,
+      yLabel: this.props.yLabel,
       series: []
     }
 
-    this.plotLines = false
+    this.plotLines = 0
   }
 
   componentDidUpdate (prevProps) {
     if (this.props.vertical && this.props.vertical.length > 0 &&
        this.props.vertical !== prevProps.vertical) {
       var vertical = this.props.vertical[0]
-
+      var props = this.props
       var newSeries = this.state.series
+      var plotLines = 0 // defined to allow edit within lodash functions
       // Remove previous plotLines if they exist
-      if (this.plotLines) {
-        _.each(this.props.samples, () => newSeries.pop())
-      }
+      _.times(this.plotLines, () => newSeries.pop())
 
-      // always append verticals to the end of the series
-      var v1 = createVerticalSeries(
-        `${vertical.gene} fpkm in mcf10a`,
-        // Set to 0 when log2 values are infinity
-        [[vertical.mcf10a_log2 || 0, vertical.mcf10a_height], [vertical.mcf10a_log2 || 0, 0]],
-        colorMaps.vertical['mcf10a']
-      )
-      var v2 = createVerticalSeries(
-        `${vertical.gene} fpkm in mcf7`,
-        [[vertical.mcf7_log2 || 0, vertical.mcf7_height], [vertical.mcf7_log2 || 0, 0]],
-        colorMaps.vertical['mcf7']
-      )
-      newSeries.push(v1, v2)
-
-      this.plotLines = true
+      // create verticals for each sample
+      _.each(props.samples, function (sample) {
+        var vert = createVerticalSeries(
+          `${vertical.gene} ${props.type} in ${sample}`,
+          // Set to 0 when log2 values are infinity
+          [[vertical[`${sample}_${props.bcType}`] || 0, vertical[`${sample}_height`]], [vertical[`${sample}_${props.bcType}`] || 0, 0]],
+          colorMaps.vertical[sample]
+        )
+        newSeries.push(vert)
+        plotLines++
+        // add a vertical for each subset if it exists
+        _.each(props.subsets, function (subset) {
+          if (vertical[`${sample}_${subset}`]) {
+            var vert = createCurveSeries(
+              `${vertical.gene} ${props.type} in ${sample}_${subset}`,
+              [[vertical[`${sample}_${props.bcType}`] || 0, vertical[`${sample}_${subset}_height`]], [vertical[`${sample}_${props.bcType}`] || 0, 0]],
+              colorMaps.vertical[`${sample}_${subset}`]
+            )
+            plotLines++
+            newSeries.push(vert)
+          }
+        })
+      })
+      this.plotLines = plotLines
       this.setState({ series: newSeries })
     }
   }
@@ -124,7 +134,7 @@ class BellCurveChart extends React.Component {
 
           // subset lines
           _.each(props.subsets, function (subset) {
-            var index = 1
+            var index = 1 // each subset follows main line in array of results
             var subsetSample = sample + subset
             var curve = createCurveSeries(subsetSample,
                r.data[index].curve, colorMaps.curve[subsetSample])

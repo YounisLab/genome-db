@@ -34,7 +34,10 @@ class BellCurve extends React.Component {
       alertText: null,
       samples: ['mcf10a', 'mcf7'],
       subsets: [],
-      type: 'fpkm'
+      type: 'fpkm',
+      bcType: 'log2', // data type on bellcurve
+      xLabel: 'Log2 FPKM',
+      yLabel: 'Frequency'
     }
 
     this.getBellCurve = this.getBellCurve.bind(this)
@@ -128,6 +131,8 @@ class BellCurve extends React.Component {
               samples={this.state.samples}
               subsets={this.state.subsets}
               type={this.state.type}
+              bcType={this.state.bcType}
+              xLabel={this.xLabel}
             />
           </Row>
         </div>
