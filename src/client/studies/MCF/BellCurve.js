@@ -132,7 +132,8 @@ class BellCurve extends React.Component {
               subsets={this.state.subsets}
               type={this.state.type}
               bcType={this.state.bcType}
-              xLabel={this.xLabel}
+              xLabel={this.state.xLabel}
+              yLabel={this.state.yLabel}
             />
           </Row>
         </div>

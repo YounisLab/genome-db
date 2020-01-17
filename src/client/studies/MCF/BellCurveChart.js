@@ -176,7 +176,7 @@ class BellCurveChart extends React.Component {
             },
             xAxis: [{
               title: {
-                text: 'Log2 FPKM',
+                text: this.state.xLabel,
                 style: {
                   fontSize: '15px'
                 }
@@ -189,7 +189,7 @@ class BellCurveChart extends React.Component {
             }],
             yAxis: [{
               title: {
-                text: 'Frequency',
+                text: this.state.yLabel,
                 style: {
                   fontSize: '15px'
                 }
