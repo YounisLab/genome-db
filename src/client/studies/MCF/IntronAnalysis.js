@@ -2,7 +2,7 @@ import React from 'react'
 import styles from '../../shared/styles'
 import Row from '../../shared/Row'
 import IntronAnalysisHeatmapChart from './IntronAnalysisHeatmapChart'
-import IntronAnalysisBellCurveChart from './IntronAnalysisBellCurveChart'
+import BellCurveChart from '../../shared/BellCurveChart'
 import { Layout, Input, Table } from 'antd'
 const axios = require('axios')
 const { Content } = Layout
@@ -27,6 +27,27 @@ const columns = [{
   width: '20%'
 }]
 
+const colorMaps = {
+  curve: {
+    mcf10a: 'blue',
+    mcf7: 'red',
+    mcf10a_u12: 'purple',
+    mcf7_u12: 'green'
+  },
+  histogram: {
+    mcf10a: 'blue',
+    mcf7: 'red',
+    mcf10a_u12: 'purple',
+    mcf7_u12: 'green'
+  },
+  vertical: {
+    mcf10a: 'blue',
+    mcf7: 'red',
+    mcf10a_u12: 'purple',
+    mcf7_u12: 'green'
+  }
+}
+
 class IntronAnalysis extends React.Component {
   constructor (props) {
     super(props)
@@ -36,7 +57,10 @@ class IntronAnalysis extends React.Component {
       samples: ['mcf10a', 'mcf7'],
       medianPsi: [],
       subsets: ['u12'],
-      type: 'psi'
+      type: 'psi',
+      bcType: 'avg_log2_psi',
+      xLabel: 'Log2 Psi',
+      yLabel: 'Frequency',
     }
     this.getHeatMap = this.getHeatMap.bind(this)
     this.getBellCurve = this.getBellCurve.bind(this)
@@ -119,12 +143,16 @@ class IntronAnalysis extends React.Component {
             />
           </Row>
           <Row>
-            <IntronAnalysisBellCurveChart
+            <BellCurveChart
               vertical={this.state.bellcurveData}
               samples={this.state.samples}
               setMedianPsi={this.setMedianPsi}
               subsets={this.state.subsets}
               type={this.state.type}
+              bcType={this.state.bcType}
+              xLabel={this.state.xLabel}
+              yLabel={this.state.yLabel}
+              colorMaps={colorMaps}
             />
           </Row>
         </div>

@@ -4,6 +4,17 @@ import HighchartsReact from 'highcharts-react-official'
 const axios = require('axios')
 const _ = require('lodash')
 
+/* To use this chart pass in the following through props:
+      vertical: the actual data
+      samples: the samples being used
+      subsets: the subsets being used
+      type: type of data
+      bcType: type of data displayed on BellCurve
+      xLabel: label for xAxis
+      yLabel: label for yAxis
+      colorMap: color for each expected chart
+*/
+
 function createCurveSeries (sample, data, color) {
   return {
     name: `${sample} distribution`,
@@ -112,28 +123,28 @@ class BellCurveChart extends React.Component {
           var hgram = createHistogramSeries(sample,
              r.data[0].hgram, props.colorMaps.histogram[sample])
           series.push(curve, hgram)
-          if (props.setMedinPsi) {
+          if (props.setMedianPsi) {
             medianPsi[sample] = r.data[0].median
           }
 
           // subset lines
           _.each(props.subsets, function (subset) {
             var index = 1 // each subset follows main line in array of results
-            var subsetSample = sample + subset
+            var subsetSample = `${sample}_${subset}`
             var curve = createCurveSeries(subsetSample,
                r.data[index].curve, props.colorMaps.curve[subsetSample])
             var hgram = createHistogramSeries(subsetSample,
                r.data[index].hgram, props.colorMaps.histogram[subsetSample])
             series.push(curve, hgram)
-            if (props.setMedinPsi) {
+            if (props.setMedianPsi) {
               medianPsi[subsetSample] = r.data[index].median
             }
             index++
           })
         })
         this.setState({ series: series })
-        if (props.setMedinPsi) {
-          props.setMedinPsi(medianPsi)
+        if (props.setMedianPsi) {
+          props.setMedianPsi(medianPsi)
         }
       }))
       // TODO .catch block

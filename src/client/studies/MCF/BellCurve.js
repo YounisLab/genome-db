@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from '../../shared/styles'
 import Row from '../../shared/Row'
-import BellCurveChart from './BellCurveChart'
+import BellCurveChart from '../../shared/BellCurveChart'
 import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
