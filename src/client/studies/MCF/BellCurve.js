@@ -25,6 +25,21 @@ const columns = [{
   dataIndex: 'log2_foldchange'
 }]
 
+const colorMaps = {
+  curve: {
+    mcf10a: 'blue',
+    mcf7: 'red'
+  },
+  histogram: {
+    mcf10a: 'blue',
+    mcf7: 'red'
+  },
+  vertical: {
+    mcf10a: 'blue',
+    mcf7: 'red'
+  }
+}
+
 class BellCurve extends React.Component {
   constructor (props) {
     super(props)
@@ -134,6 +149,7 @@ class BellCurve extends React.Component {
               bcType={this.state.bcType}
               xLabel={this.state.xLabel}
               yLabel={this.state.yLabel}
+              colorMaps={colorMaps}
             />
           </Row>
         </div>

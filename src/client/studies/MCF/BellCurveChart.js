@@ -1,24 +1,8 @@
 import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-
 const axios = require('axios')
 const _ = require('lodash')
-
-const colorMaps = {
-  curve: {
-    mcf10a: 'blue',
-    mcf7: 'red'
-  },
-  histogram: {
-    mcf10a: 'blue',
-    mcf7: 'red'
-  },
-  vertical: {
-    mcf10a: 'blue',
-    mcf7: 'red'
-  }
-}
 
 function createCurveSeries (sample, data, color) {
   return {
@@ -82,7 +66,7 @@ class BellCurveChart extends React.Component {
           `${vertical.gene} ${props.type} in ${sample}`,
           // Set to 0 when log2 values are infinity
           [[vertical[`${sample}_${props.bcType}`] || 0, vertical[`${sample}_height`]], [vertical[`${sample}_${props.bcType}`] || 0, 0]],
-          colorMaps.vertical[sample]
+          props.colorMaps.vertical[sample]
         )
         newSeries.push(vert)
         plotLines++
@@ -92,7 +76,7 @@ class BellCurveChart extends React.Component {
             var vert = createCurveSeries(
               `${vertical.gene} ${props.type} in ${sample}_${subset}`,
               [[vertical[`${sample}_${props.bcType}`] || 0, vertical[`${sample}_${subset}_height`]], [vertical[`${sample}_${props.bcType}`] || 0, 0]],
-              colorMaps.vertical[`${sample}_${subset}`]
+              props.colorMaps.vertical[`${sample}_${subset}`]
             )
             plotLines++
             newSeries.push(vert)
@@ -124,9 +108,9 @@ class BellCurveChart extends React.Component {
           // full data line
           var sample = r.config.params.sample
           var curve = createCurveSeries(sample,
-             r.data[0].curve, colorMaps.curve[sample])
+             r.data[0].curve, props.colorMaps.curve[sample])
           var hgram = createHistogramSeries(sample,
-             r.data[0].hgram, colorMaps.histogram[sample])
+             r.data[0].hgram, props.colorMaps.histogram[sample])
           series.push(curve, hgram)
           if (props.setMedinPsi) {
             medianPsi[sample] = r.data[0].median
@@ -137,9 +121,9 @@ class BellCurveChart extends React.Component {
             var index = 1 // each subset follows main line in array of results
             var subsetSample = sample + subset
             var curve = createCurveSeries(subsetSample,
-               r.data[index].curve, colorMaps.curve[subsetSample])
+               r.data[index].curve, props.colorMaps.curve[subsetSample])
             var hgram = createHistogramSeries(subsetSample,
-               r.data[index].hgram, colorMaps.histogram[subsetSample])
+               r.data[index].hgram, props.colorMaps.histogram[subsetSample])
             series.push(curve, hgram)
             if (props.setMedinPsi) {
               medianPsi[subsetSample] = r.data[index].median
