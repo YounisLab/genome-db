@@ -8,6 +8,7 @@ const _ = require('lodash')
       vertical: the actual data
       samples: the samples being used
       subsets: the subsets being used
+      setMedianVals: function for setting median values in BellCurve
       type: type of data
       bcType: type of data displayed on BellCurve
       xLabel: label for xAxis
@@ -84,7 +85,7 @@ class BellCurveChart extends React.Component {
         // add a vertical for each subset if it exists
         _.each(props.subsets, function (subset) {
           if (vertical[`${sample}_${subset}`]) {
-            var vert = createCurveSeries(
+            var vert = createVerticalSeries(
               `${vertical.gene} ${props.type} in ${sample}_${subset}`,
               [[vertical[`${sample}_${props.bcType}`] || 0, vertical[`${sample}_${subset}_height`]], [vertical[`${sample}_${props.bcType}`] || 0, 0]],
               props.colorMaps.vertical[`${sample}_${subset}`]
