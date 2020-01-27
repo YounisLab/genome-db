@@ -2,7 +2,7 @@ const _ = require('lodash')
 const util = require('./utility')
 
 const queryParams = {'bellcurve': {'median': {'tcga': ['tcga_brca_genes_median', 'median_log2_norm_count_plus_1']}},
-                      'vertical': {'median': ['mcf10a_vs_mcf7', 'gene, median_log2_norm_count_plus_1', 'median_log2_norm_count_plus_1']}}
+                      'vertical': {'median': ['tcga_brca_genes_median', 'gene, median_log2_norm_count_plus_1', 'median_log2_norm_count_plus_1']}}
 const subsetParams = {'rbp': 'rbp_genes',
                       'u12': 'u12_genes'}
 
@@ -58,7 +58,7 @@ module.exports = {
       })
   },
 
-  vertical: function (gene, subsets, type) {
+  vertical: function (gene, samples, subsets, type) {
     // Computes verticals to display on bellcurve
     var [tableName, columnNames, dataType] = queryParams['vertical'][type]
     return pool.query(`
@@ -83,8 +83,11 @@ module.exports = {
         // wait for all promises to execute
         return Promise.all(subsetVerticals)
           .then(function (values) {
-            _.each(['mcf10a', 'mcf7'], function (sample) {
+            _.each(samples, function (sample) {
+              console.log(binsHash)
               // find vertical for sample
+              console.log(`${sample}_${type}`)
+              console.log(binsHash[`${sample}_${type}`])
               if (binsHash[`${sample}_${type}`]) {
                 results.rows[0][`${sample}_height`] = util.NormalDensityZx(
                   results.rows[0][`${sample}_${dataType}`],

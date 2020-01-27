@@ -83,6 +83,7 @@ class IntronAnalysis extends React.Component {
     axios.get('/api/vertical', {
       params: {
         study: 'mcf',
+        samples: this.state.samples,
         gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE
         subsets: this.state.subsets,
         type: this.state.type

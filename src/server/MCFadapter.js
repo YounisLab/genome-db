@@ -49,7 +49,8 @@ module.exports = {
       })
   },
 
-  vertical: function (gene, subsets, type) {
+  vertical: function (gene, samples, subsets, type) {
+    console.log(gene, samples, subsets, type)
     // Computes verticals to display on bellcurve
     var [tableName, columnNames, dataType] = queryParams['vertical'][type]
     return pool.query(`
@@ -74,7 +75,7 @@ module.exports = {
         // wait for all promises to execute
         return Promise.all(subsetVerticals)
           .then(function (values) {
-            _.each(['mcf10a', 'mcf7'], function (sample) {
+            _.each(samples, function (sample) {
               // find vertical for sample
               if (binsHash[`${sample}_${type}`]) {
                 results.rows[0][`${sample}_height`] = util.NormalDensityZx(
