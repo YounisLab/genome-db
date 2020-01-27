@@ -105,7 +105,7 @@ class BellCurveChart extends React.Component {
     var requests = _.map(props.samples, function (sample) {
       return axios.get('/api/bellcurve',
       { params: {
-          study: 'mcf',
+          study: props.study,
           sample: sample,
           subsets: props.subsets,
           type: props.type
@@ -127,10 +127,9 @@ class BellCurveChart extends React.Component {
           if (props.setMedianVals) {
             medianVals[sample] = r.data[0].median
           }
-
           // subset lines
+          var index = 1 // each subset follows main line in array of results
           _.each(props.subsets, function (subset) {
-            var index = 1 // each subset follows main line in array of results
             var subsetSample = `${sample}_${subset}`
             var curve = createCurveSeries(subsetSample,
                r.data[index].curve, props.colorMaps.curve[subsetSample])
