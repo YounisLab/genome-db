@@ -47,6 +47,7 @@ class BellCurve extends React.Component {
     this.state = {
       data: [],
       alertText: null,
+      study: 'mcf',
       samples: ['mcf10a', 'mcf7'],
       subsets: [],
       type: 'fpkm',
@@ -143,6 +144,7 @@ class BellCurve extends React.Component {
           <Row>
             <BellCurveChart
               vertical={this.state.data}
+              study={this.state.study}
               samples={this.state.samples}
               subsets={this.state.subsets}
               type={this.state.type}

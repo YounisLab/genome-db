@@ -1,6 +1,11 @@
 const _ = require('lodash')
 const util = require('./utility')
 
+const queryParams = {'bellcurve': {'median': {'tcga': ['tcga_brca_genes_median', 'median_log2_norm_count_plus_1']}},
+                      'vertical': {'median': ['mcf10a_vs_mcf7', 'gene, median_log2_norm_count_plus_1', 'median_log2_norm_count_plus_1']}}
+const subsetParams = {'rbp': 'rbp_genes',
+                      'u12': 'u12_genes'}
+
 var pool
 var binsHash = {} // To compute height of verticals
 
@@ -25,87 +30,82 @@ module.exports = {
   bellCurve: function (sample, subsets, type) {
     // Computes smooth histogram curve of fpkms
     // TODO: sanitize 'sample' before it gets frisky
-    var fullDataLine = pool.query(
-      `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median`)
+    var [tableName, columnName] = queryParams['bellcurve'][type][sample]
+    var lines = []
+    // var [tableName, columnName] = queryParams[type][subsets]
+    var line = pool.query(`SELECT ${columnName} FROM ${tableName} WHERE ${columnName} != 'Infinity'`)
       .then(function (result) {
-        var medianCounts = _.map(result.rows, (r) => {
-          return r['median_log2_norm_count_plus_1']
-        })
-        return util.computeCurve(binsHash, medianCounts, sample)
+        var log2fpkms = _.map(result.rows, (r) => r[columnName])
+        return util.computeCurve(binsHash, log2fpkms, `${sample}_${type}`)
       })
-
-    var rbpDataLine = pool.query(
-      `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median
-      INNER JOIN rbp_genes
-      ON tcga_brca_genes_median.gene = rbp_genes.gene`)
-      .then(function (result) {
-        var medianCounts = _.map(result.rows, (r) => {
-          return r['median_log2_norm_count_plus_1']
+    lines.push(line)
+    // add each subset line
+    _.each(subsets, function(subset) {
+      var subsetTable = subsetParams[subset]
+      line = pool.query(`SELECT ${columnName} FROM ${tableName}
+                          INNER JOIN ${subsetTable}
+                          ON ${tableName}.gene = ${subsetTable}.gene
+                          WHERE ${columnName} is not null`)
+        .then(function (result) {
+          var log2fpkms = _.map(result.rows, (r) => r[columnName])
+          return util.computeCurve(binsHash, log2fpkms, `${sample}_${subset}_${type}`)
         })
-        return util.computeCurve(binsHash, medianCounts, sample + '_rbp')
-      })
-    var u12DataLine = pool.query(
-      `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median
-      INNER JOIN u12_genes
-      ON tcga_brca_genes_median.gene = u12_genes.gene`)
-      .then(function (result) {
-        var medianCounts = _.map(result.rows, (r) => {
-          return r['median_log2_norm_count_plus_1']
-        })
-        return util.computeCurve(binsHash, medianCounts, sample + '_u12')
-      })
-    return Promise.all([fullDataLine, rbpDataLine, u12DataLine])
+        lines.push(line)
+    })
+    return Promise.all(lines)
       .then(function (values) {
         return values
       })
   },
 
-  vertical: function (gene) {
+  vertical: function (gene, subsets, type) {
     // Computes verticals to display on bellcurve
+    var [tableName, columnNames, dataType] = queryParams['vertical'][type]
     return pool.query(`
-      SELECT
-        gene,
-        median_log2_norm_count_plus_1
-      FROM tcga_brca_genes_median
+      SELECT ${columnNames}
+      FROM ${tableName}
       WHERE gene = $1
     `, [gene])
       .then(function (results) {
-        results.rows.u12 = false
-        results.rows.rbp = false
         if (results.rows.length < 1) {
           return [] // gene not found
         }
-        const samples = ['tcga']
-        // Check if gene is in the u12 dataset
-        return pool.query(`
-          SELECT 1 FROM u12_genes WHERE gene= '${gene}'
-        `)
-          .then(function (u12Results) {
-            if (u12Results.rows.length > 0) {
-              samples.push('tcga_u12')
-              results.rows[0].u12 = true
-            }
-            // Check if gene is in rbp dataaset
-            return pool.query(`
-              SELECT 1 FROM rbp_genes WHERE gene= '${gene}'
-            `)
-              .then(function (rbpResults) {
-                if (rbpResults.rows.length > 0) {
-                  samples.push('tcga_rbp')
-                  results.rows[0].rbp = true
+        var subsetVerticals = _.map(subsets, function (subset) {
+          var subsetTable = subsetParams[subset]
+          // check if gene is in subset dataset
+          return pool.query(`
+            SELECT 1 FROM ${subsetTable} WHERE gene= '${gene}'
+          `)
+          .then(function (subsetResults) {
+            return (subsetResults.rows.length > 0)
+          })
+        })
+        // wait for all promises to execute
+        return Promise.all(subsetVerticals)
+          .then(function (values) {
+            _.each(['mcf10a', 'mcf7'], function (sample) {
+              // find vertical for sample
+              if (binsHash[`${sample}_${type}`]) {
+                results.rows[0][`${sample}_height`] = util.NormalDensityZx(
+                  results.rows[0][`${sample}_${dataType}`],
+                  binsHash[`${sample}_${type}`].mean,
+                  binsHash[`${sample}_${type}`].stddev,
+                  binsHash[`${sample}_${type}`].scaleFactor)
+              }
+              // get subset verticals
+              _.forEach(subsets, function (subset, index) {
+                if (values[index] && binsHash[`${sample}_${subset}_${type}`]) {
+                  results.rows[0][`${sample}_${subset}`] = true
+                  results.rows[0][`${sample}_${subset}_height`] = util.NormalDensityZx(
+                    results.rows[0][`${sample}_${dataType}`],
+                    binsHash[`${sample}_${subset}_${type}`].mean,
+                    binsHash[`${sample}_${subset}_${type}`].stddev,
+                    binsHash[`${sample}_${subset}_${type}`].scaleFactor)
                 }
-                _.each(samples, function (sample) {
-                  if (binsHash[sample]) {
-                    results.rows[0][`${sample}_height`] = util.NormalDensityZx(
-                      results.rows[0][`median_log2_norm_count_plus_1`],
-                      binsHash[sample].mean,
-                      binsHash[sample].stddev,
-                      binsHash[sample].scaleFactor
-                    )
-                  }
-                })
-                return results
               })
+            })
+            console.log(results)
+            return results
           })
       })
   },

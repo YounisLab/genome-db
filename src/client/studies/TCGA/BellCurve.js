@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from '../../shared/styles'
 import Row from '../../shared/Row'
-import BellCurveChart from './BellCurveChart'
+import BellCurveChart from '../../shared/BellCurveChart'
 import { Layout, Input, Table, Alert } from 'antd'
 const { Content } = Layout
 const { Search } = Input
@@ -22,6 +22,24 @@ const columns = [{
   width: '20%'
 }]
 
+const colorMaps = {
+  curve: {
+    tcga: '#77a1e5',
+    tcga_rbp: 'green',
+    tcga_u12: '#f28f43'
+  },
+  histogram: {
+    tcga: '#77a1e5',
+    tcga_rbp: 'green',
+    tcga_u12: '#f28f43'
+  },
+  vertical: {
+    tcga: '#77a1e5',
+    tcga_rbp: 'green',
+    tcga_u12: '#f28f43'
+  }
+}
+
 class BellCurve extends React.Component {
   constructor (props) {
     super(props)
@@ -29,8 +47,14 @@ class BellCurve extends React.Component {
     this.state = {
       data: [],
       alertText: null,
+      study: 'tcga',
       samples: ['tcga'],
-      medianValsP: []
+      subsets: ['rbp', 'u12'],
+      medianValsP: [],
+      type: 'median',
+      bcType: 'median_log2_norm_count_plus_1',
+      xLabel: 'Log2 Median',
+      yLabel: 'Frequeny'
     }
 
     this.getBellCurve = this.getBellCurve.bind(this)
@@ -47,7 +71,9 @@ class BellCurve extends React.Component {
     axios.get('/api/vertical', {
       params: {
         study: 'tcga',
-        gene: gene.toUpperCase() // DB stores gene names in UPPERCASE
+        gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE,
+        subsets: this.state.subsets,
+        type: this.state.type
       }
     })
       .then(resp => {
@@ -117,8 +143,15 @@ class BellCurve extends React.Component {
           <Row>
             <BellCurveChart
               vertical={this.state.data}
+              study={this.state.study}
               samples={this.state.samples}
+              subsets={this.state.subsets}
               setMedianVals={this.setMedianVals}
+              type={this.state.type}
+              bcType={this.state.bcType}
+              xLabel={this.state.xLabel}
+              yLabel={this.state.yLabel}
+              colorMaps={colorMaps}
             />
           </Row>
         </div>
