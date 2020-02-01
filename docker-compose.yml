@@ -1,4 +1,4 @@
-version: '3'
+version: '3.6'
 services:
   server:
     build:
@@ -22,7 +22,15 @@ services:
     volumes:
       - ./src/server/seed:/docker-entrypoint-initdb.d/
       - genomepg:/var/lib/postgresql/data
+  mongo:
+    image: mongo:4.2.3
+    environment:
+      - MONGO_INITDB_DATABASE=genomedb
+    volumes:
+      - ./src/server/seed:/seed/data
+      - genomemongo:/data/db
+    ports:
+      - "27017:27017"
 volumes:
   genomepg:
-
-
+  genomemongo:
