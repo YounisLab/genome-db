@@ -29,9 +29,9 @@ run_mongoimport () {
     mongoimport -vvv -c $2 --type $extension --file $1 $headerline --uri $MONGO_URI
 }
 
-run_mongoimport "mcf10a_vs_mcf7.csv" "mcf10a_vs_mcf7"
+run_mongoimport "mcf10a_vs_mcf7.tsv" "mcf10a_vs_mcf7"
 run_mongoimport "mcf_avg_psi.csv" "mcf_avg_psi"
-run_mongoimport "mcf_intron_psi.csv" "mcf_intron_psi"
+run_mongoimport "mcf_intron_psi.tsv" "mcf_intron_psi"
 run_mongoimport "RBP_genes.csv" "rbp_genes"
 run_mongoimport "RBP_rvalues.json" "rbp_rvalues"
 run_mongoimport "TCGA_BRCA_genes_median.csv" "tcga_brca_genes_median"
