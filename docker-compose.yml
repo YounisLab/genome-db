@@ -27,7 +27,7 @@ services:
     environment:
       - MONGO_INITDB_DATABASE=genomedb
     volumes:
-      - ./src/server/seed:/seed/data
+      - ./src/server/seed/data:/seed/data
       - genomemongo:/data/db
     ports:
       - "27017:27017"
