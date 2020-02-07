@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Imports all csv files to mongo
 
+set -e
 
 if [ "$#" -ne 1 ]; then
     echo "usage: ./seed-mongo.sh <MONGO_URI>"
