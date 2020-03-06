@@ -6,19 +6,19 @@ class MCFService {
 
   samples = ['mcf10a', 'mcf7']
 
-  subsets = []
+  subsets = ['u12']
 
-  type = 'fpkm'
+  types = ['fpkm', 'psi']
 
-  getBellCurve = () => {
+  getBellCurve = (type, subsets = []) => {
     // Generate requests for each sample
     const requests = _.map(this.samples, sample => {
       return axios.get('/api/bellcurve', {
         params: {
           study: this.study,
           sample: sample,
-          subsets: this.subsets,
-          type: this.type
+          subsets: subsets,
+          type: type
         }
       })
     })
@@ -28,21 +28,21 @@ class MCFService {
       .then(axios.spread((...responses) => {
         _.each(responses, resp => {
           const sample = resp.config.params.sample
-          data.push({ sample: sample, data: resp.data[0] })
+          data.push({ sample: sample, data: resp.data })
         })
 
         return data
       }))
   }
 
-  getVertical = (gene) => {
+  getVertical = (gene, type, subsets = []) => {
     return axios.get('/api/vertical', {
       params: {
         study: this.study,
         samples: this.samples,
         gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE,
-        subsets: this.subsets,
-        type: this.type
+        subsets: subsets,
+        type: type
       }
     })
       .then(resp => {
