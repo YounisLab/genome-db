@@ -60,6 +60,16 @@ class MCFService {
         return data
       })
   }
+
+  getHeatMap = (genes) => {
+    return axios.post('/api/heatmap', {
+      study: this.study,
+      genes: genes
+    })
+      .then(resp => {
+        return resp.data
+      })
+  }
 }
 
 export { MCFService }
