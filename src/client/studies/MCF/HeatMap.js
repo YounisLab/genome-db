@@ -9,31 +9,14 @@ const _ = require('lodash')
 const { Content } = Layout
 const { TextArea } = Input
 
-const columns = [{
-  title: 'No.',
-  dataIndex: 'key'
-},
-{
-  title: 'Gene',
-  dataIndex: 'gene',
-  width: '20%'
-}, {
-  title: 'MCF10A FPKM',
-  dataIndex: 'mcf10a_fpkm',
-  width: '20%'
-}, {
-  title: 'MCF7 FPKM',
-  dataIndex: 'mcf7_fpkm',
-  width: '20%'
-}, {
-  title: 'MCF10A LOG2 FPKM',
-  dataIndex: 'mcf10a_log2',
-  width: '20%'
-}, {
-  title: 'MCF7 LOG2 FPKM',
-  dataIndex: 'mcf7_log2',
-  width: '20%'
-}]
+const columns = [
+  { title: 'No.', dataIndex: 'key' },
+  { title: 'Gene', dataIndex: 'gene', width: '20%' },
+  { title: 'MCF10A FPKM', dataIndex: 'mcf10a_fpkm', width: '20%' },
+  { title: 'MCF7 FPKM', dataIndex: 'mcf7_fpkm', width: '20%' },
+  { title: 'MCF10A LOG2 FPKM', dataIndex: 'mcf10a_log2', width: '20%' },
+  { title: 'MCF7 LOG2 FPKM', dataIndex: 'mcf7_log2', width: '20%' }
+]
 
 const headers = [
   { label: 'Gene', key: 'gene' },

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import { MCF } from './studies'
 import ComponentMCF from './studies/MCF/ComponentMCF'
 import ComponentTCGA from './studies/TCGA/ComponentTCGA'
 import StudySelector from './StudySelector'
@@ -26,7 +27,7 @@ class App extends React.Component {
     let component
 
     if (this.state.study === 'mcf') {
-      component = <ComponentMCF />
+      component = <MCF />
     } else {
       component = <ComponentTCGA />
     }
