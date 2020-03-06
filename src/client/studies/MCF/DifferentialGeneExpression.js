@@ -29,6 +29,8 @@ class DifferentialGeneExpression extends React.Component {
 
   service = new MCFService()
 
+  bellCurveType = 'fpkm'
+
   verticals = false
 
   performSearch = (gene) => {
@@ -39,7 +41,7 @@ class DifferentialGeneExpression extends React.Component {
       return
     }
 
-    this.service.getVertical(gene)
+    this.service.getVertical(gene, this.bellCurveType)
       .then(data => {
         if (!data) {
           this.setState({ alertText: `${gene} not found! Please try another gene.` })
@@ -93,14 +95,14 @@ class DifferentialGeneExpression extends React.Component {
 
   componentDidMount () {
     // Load BellCurveChart data on mount
-    this.service.getBellCurve()
+    this.service.getBellCurve(this.bellCurveType)
       .then(data => {
         const series = []
 
         _.each(data, dataPerSample => {
           const sample = dataPerSample.sample
-          const curve = createCurveSeries(sample, dataPerSample.data.curve, colorMaps.curve[sample])
-          const hgram = createHistogramSeries(sample, dataPerSample.data.hgram, colorMaps.histogram[sample])
+          const curve = createCurveSeries(sample, dataPerSample.data[0].curve, colorMaps.curve[sample])
+          const hgram = createHistogramSeries(sample, dataPerSample.data[0].hgram, colorMaps.histogram[sample])
           series.push(curve, hgram)
         })
 
@@ -153,8 +155,8 @@ class DifferentialGeneExpression extends React.Component {
         <Row>
           <BellCurveChart
             series={this.state.chartData}
-            xLabel={this.state.xLabel}
-            yLabel={this.state.yLabel}
+            xLabel={'Log2 FPKM'}
+            yLabel={'Frequency'}
           />
         </Row>
       </Content>
