@@ -1,7 +1,6 @@
 import React from 'react'
 import DifferentialGeneExpression from './DifferentialGeneExpression'
 import DifferentialMultiGeneExpression from './DifferentialMultiGeneExpression'
-import Heatmap from './HeatMap'
 import IntronAnalysis from './IntronAnalysis'
 
 class MCF extends React.Component {

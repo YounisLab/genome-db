@@ -2,8 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import { MCF, TCGA } from './studies'
-import ComponentMCF from './studies/MCF/ComponentMCF'
-import ComponentTCGA from './studies/TCGA/ComponentTCGA'
 import StudySelector from './StudySelector'
 import { Layout } from 'antd'
 const { Header } = Layout
@@ -41,9 +39,7 @@ class App extends React.Component {
             </h1>
           </Header>
           <StudySelector onSelection={this.onSelection} />
-          {
-            component
-          }
+          { component }
         </Layout>
       </div>
     )

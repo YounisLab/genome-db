@@ -1,17 +1,13 @@
 import React from 'react'
-import styles from './shared/styles'
-import { Layout, Select } from 'antd'
+import { Content } from '../../components/'
+import { Select } from 'antd'
 const { Option } = Select
-const { Content } = Layout
 
 class StudySelector extends React.Component {
   render () {
     return (
-      <Content style={styles.contentStyle}>
-        <div style={{
-          background: '#fff',
-          padding: 24
-        }}>
+      <Content>
+        <div style={{ background: '#fff', padding: 24 }}>
           <h1>Select a study to explore:</h1>
           <Select
             size='large'
