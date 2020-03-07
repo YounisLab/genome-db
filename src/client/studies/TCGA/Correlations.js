@@ -195,4 +195,4 @@ class Correlations extends React.Component {
   }
 }
 
-export default Correlations
+export { Correlations }

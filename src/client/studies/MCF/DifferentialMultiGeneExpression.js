@@ -127,4 +127,4 @@ class DifferentialMultiGeneExpression extends React.Component {
   }
 }
 
-export default DifferentialMultiGeneExpression
+export { DifferentialMultiGeneExpression }

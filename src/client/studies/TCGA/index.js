@@ -1,7 +1,7 @@
 import React from 'react'
 
-import MedianDistribution from './MedianDistribution'
-import Correlations from './Correlations'
+import { MedianDistribution } from './MedianDistribution'
+import { Correlations } from './Correlations'
 
 class TCGA extends React.Component {
   render () {

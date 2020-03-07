@@ -1,7 +1,7 @@
 import React from 'react'
-import DifferentialGeneExpression from './DifferentialGeneExpression'
-import DifferentialMultiGeneExpression from './DifferentialMultiGeneExpression'
-import IntronAnalysis from './IntronAnalysis'
+import { DifferentialGeneExpression } from './DifferentialGeneExpression'
+import { DifferentialMultiGeneExpression } from './DifferentialMultiGeneExpression'
+import { IntronAnalysis } from './IntronAnalysis'
 
 class MCF extends React.Component {
   render () {

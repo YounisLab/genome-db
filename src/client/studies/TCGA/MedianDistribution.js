@@ -171,4 +171,4 @@ class MedianDistribution extends React.Component {
   }
 }
 
-export default MedianDistribution
+export { MedianDistribution }

@@ -189,4 +189,4 @@ class IntronAnalysis extends React.Component {
   }
 }
 
-export default IntronAnalysis
+export { IntronAnalysis }

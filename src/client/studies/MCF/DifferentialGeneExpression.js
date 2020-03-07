@@ -169,4 +169,4 @@ class DifferentialGeneExpression extends React.Component {
   }
 }
 
-export default DifferentialGeneExpression
+export { DifferentialGeneExpression }
