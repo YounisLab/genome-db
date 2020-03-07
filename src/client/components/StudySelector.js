@@ -1,5 +1,5 @@
 import React from 'react'
-import { Content } from '../../components/'
+import { Content } from './Content'
 import { Select } from 'antd'
 const { Option } = Select
 
@@ -27,4 +27,4 @@ class StudySelector extends React.Component {
   }
 }
 
-export default StudySelector
+export { StudySelector }

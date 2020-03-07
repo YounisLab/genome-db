@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import { MCF, TCGA } from './studies'
-import StudySelector from './StudySelector'
+import { StudySelector } from './components/StudySelector'
 import { Layout } from 'antd'
 const { Header } = Layout
 
