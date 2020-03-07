@@ -48,6 +48,11 @@ class DifferentialGeneExpression extends React.Component {
           return
         }
 
+        // If log2_foldchange is null, represent as 'Infinity'
+        if (data.log2_foldchange == null) {
+          data.log2_foldchange = 'Infinity'
+        }
+
         // Display data in table row
         const tableData = [data]
 

@@ -52,11 +52,6 @@ class MCFService {
 
         const data = resp.data[0]
 
-        // If log2_foldchange is null, represent as 'Infinity'
-        if (data.log2_foldchange == null) {
-          data.log2_foldchange = 'Infinity'
-        }
-
         return data
       })
   }
