@@ -46,13 +46,11 @@ class MCFService {
       }
     })
       .then(resp => {
-        if (!resp.data) {
+        if (!resp.data.length) {
           return null
         }
 
-        const data = resp.data[0]
-
-        return data
+        return resp.data[0]
       })
   }
 
