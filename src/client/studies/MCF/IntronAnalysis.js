@@ -95,7 +95,7 @@ class IntronAnalysis extends React.Component {
 
     this.service.getIntronAnalysisHeatMap(gene)
       .then(data => {
-        const series = createHeatMapSeries(data, this.service.samples)
+        const series = createHeatMapSeries(data, this.service.samples, (sample) => `${sample}_log2_psi`, false)
         const xAxisCategories = _.map(data, (d) => d.intron_number)
         const psiVals = _.flatMap(data, (d) => [d.mcf10a_log2_psi, d.mcf7_log2_psi])
 

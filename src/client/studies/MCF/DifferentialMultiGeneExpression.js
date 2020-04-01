@@ -57,7 +57,7 @@ class DifferentialMultiGeneExpression extends React.Component {
     const genes = _.map(filteredTokens, t => _.trim(t).toUpperCase()) // Trim whitespaces and convert to uppercase
     this.service.getHeatMap(genes)
       .then(data => {
-        const series = createHeatMapSeries(data, this.service.samples)
+        const series = createHeatMapSeries(data, this.service.samples, (sample) => `${sample}_log2`, true)
         const range = getQuartiles(series, QUARTILE_FLOAT)
         const yAxisCategories = _.map(data, (d) => d.gene)
 

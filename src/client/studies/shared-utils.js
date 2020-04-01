@@ -33,15 +33,18 @@ export function createVerticalSeries (sample, data, color) {
   }
 }
 
-export function createHeatMapSeries (data, samples) {
+export function createHeatMapSeries (data, samples, dataKey, isSampleOnXAxis) {
   var series = []
-  _.each(samples, function (sample, xIndex) {
-    _.each(data, function (datum, yIndex) {
+  _.each(samples, function (sample, sampleIndex) {
+    _.each(data, function (datum, datumIndex) {
+      let xIndex = isSampleOnXAxis ? sampleIndex : datumIndex
+      let yIndex = isSampleOnXAxis ? datumIndex : sampleIndex
+
       // Heatmap data schema [x-index, y-index, gradient value]
       series.push([
         xIndex,
         yIndex,
-        datum[`${sample}_log2`]
+        datum[dataKey(sample)]
       ])
     })
   })
