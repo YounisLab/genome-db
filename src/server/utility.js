@@ -1,15 +1,15 @@
-const _ = require('lodash')
-const d3 = require('d3')
-const math = require('mathjs')
+import _ from 'lodash'
+import d3 from 'd3'
+import math from 'mathjs'
 
-function NormalDensityZx (x, Mean, StdDev, scaleFactor) {
+export function NormalDensityZx (x, Mean, StdDev, scaleFactor) {
   var a = x - Mean
   return (Math.exp(-(a * a) / (2 * StdDev * StdDev)) / (Math.sqrt(2 * Math.PI) * StdDev)) * scaleFactor
 }
 
 // Return points adjusted to normal curve
 // and histogram
-function computeCurve (binsHash, dataPoints, sample) {
+export function computeCurve (binsHash, dataPoints, sample) {
   var binGenerator = d3.histogram().thresholds(d3.thresholdScott)
 
   var bins = binGenerator(dataPoints)
@@ -43,9 +43,3 @@ function computeCurve (binsHash, dataPoints, sample) {
 
 return points
 }
-
-module.exports = {
-  NormalDensityZx,
-  computeCurve
-}
-

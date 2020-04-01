@@ -1,12 +1,16 @@
-const express = require('express')
-const { URL } = require('url')
-const MCFadapter = require('./MCFadapter')
-const TCGAadapter = require('./TCGAadapter')
-const bodyParser = require('body-parser')
+import express from 'express'
+import { URL } from 'url'
+import { MCFAdapter as MCFAdapterClass } from './MCFadapter'
+import { TCGAAdapter as TCGAAdapterClass } from './TCGAadapter'
+import bodyParser from 'body-parser'
+import Pool from 'pg-pool'
+
 const app = express()
 const port = process.env.PORT || 8080
 const dbURL = (new URL(process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'))
-const { Pool } = require('pg')
+
+var MCFAdapter = new MCFAdapterClass()
+var TCGAAdapter = new TCGAAdapterClass()
 
 var adapter //set by middleware
 var pool
@@ -33,10 +37,10 @@ app.use(function (req, res, next) {
 
 app.use(function (req, res, next) {
   if (req.query.study == 'mcf') {
-    adapter = MCFadapter
+    adapter = MCFAdapter
   }
   else if (req.query.study == 'tcga') {
-    adapter = TCGAadapter
+    adapter = TCGAAdapter
   }
   next()
 })
