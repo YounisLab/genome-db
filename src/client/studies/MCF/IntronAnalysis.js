@@ -6,7 +6,7 @@ import {
 } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
 import { Table } from 'antd'
-const _ = require('lodash')
+import _ from 'lodash'
 
 const columns = [
   { title: 'MCF10A median psi', dataIndex: 'mcf10a', width: '20%' },

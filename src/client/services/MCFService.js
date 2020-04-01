@@ -1,7 +1,7 @@
-const axios = require('axios')
-const _ = require('lodash')
+import axios from 'axios'
+import _ from 'lodash'
 
-class MCFService {
+export class MCFService {
   study = 'mcf'
 
   samples = ['mcf10a', 'mcf7']
@@ -76,5 +76,3 @@ class MCFService {
       })
   }
 }
-
-export { MCFService }

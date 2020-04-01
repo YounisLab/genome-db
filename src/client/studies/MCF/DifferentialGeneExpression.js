@@ -3,8 +3,8 @@ import { MCFService } from '../../services'
 import { Content, Row, BellCurveChart } from '../../components/'
 import { createCurveSeries, createHistogramSeries, createVerticalSeries } from '../shared-utils'
 import { Input, Table, Alert } from 'antd'
+import _ from 'lodash'
 const { Search } = Input
-const _ = require('lodash')
 
 const columns = [
   { title: 'Gene', dataIndex: 'gene' },

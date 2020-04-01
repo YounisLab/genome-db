@@ -4,7 +4,7 @@ import { Table, Alert } from 'antd'
 import { Content, Row, BellCurveChart } from '../../components/'
 import { createCurveSeries, createHistogramSeries, createVerticalSeries } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
-const _ = require('lodash')
+import _ from 'lodash'
 
 const columns = [
   { title: 'TCGA median', dataIndex: 'tcga', width: '20%' },
@@ -28,11 +28,7 @@ class MedianDistribution extends React.Component {
 
   bellCurveType = 'median'
 
-  verticals = {
-    main: false,
-    rbp: false,
-    u12: false
-  }
+  verticals = false
 
   performSearch = (gene) => {
     this.service.getVertical(gene, this.bellCurveType, this.service.subsets)
@@ -49,8 +45,10 @@ class MedianDistribution extends React.Component {
 
         const chartData = this.state.chartData
 
-        // Remove previous verticals
-        // _.each(this.verticals, function ())
+        // Remove any old verticals
+        if (this.verticals) {
+          _.each(this.service.samples, () => chartData.pop())
+        }
 
         const x1 = data.median_log2_norm_count_plus_1 || 0
         // Create vertical for full tcga distribution
@@ -65,22 +63,7 @@ class MedianDistribution extends React.Component {
         )
         chartData.push(vertical)
 
-        // Create verticals for rbp and u12 distributions
-        _.each(['rbp', 'u12'], (subset) => {
-          if (data[`tcga_${subset}`]) {
-            coords = [
-              [x1, data[`tcga_${subset}_height`]],
-              [x1, 0]
-            ]
-            vertical = createVerticalSeries(
-              `${gene} median_${subset}`,
-              coords,
-              colorMaps.vertical[`tcga_${subset}`]
-            )
-            chartData.push(vertical)
-          }
-        })
-
+        this.verticals = true
         this.setState({
           chartData: chartData,
           alertText: alertText

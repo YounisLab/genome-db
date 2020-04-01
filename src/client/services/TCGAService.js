@@ -1,7 +1,7 @@
-const axios = require('axios')
-const _ = require('lodash')
+import axios from 'axios'
+import _ from 'lodash'
 
-class TCGAService {
+export class TCGAService {
   study = 'tcga'
 
   samples = ['tcga']
@@ -73,5 +73,3 @@ class TCGAService {
       })
   }
 }
-
-export { TCGAService }

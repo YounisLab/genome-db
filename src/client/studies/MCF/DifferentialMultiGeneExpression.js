@@ -5,7 +5,7 @@ import { CSVLink } from 'react-csv'
 import { Button, Table } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import { createHeatMapSeries, getQuartiles } from '../shared-utils'
-const _ = require('lodash')
+import _ from 'lodash'
 
 // Columns for table
 const columns = [

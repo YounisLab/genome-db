@@ -3,9 +3,9 @@ import { Content, Row } from '../../components/'
 import { TCGAService } from '../../services/TCGAService'
 import { Button, Input, Table, Alert, Radio } from 'antd'
 import { CSVLink } from 'react-csv'
+import _ from 'lodash'
 const { Search } = Input
 const { Group } = Input
-const _ = require('lodash')
 
 class Correlations extends React.Component {
   state = {

@@ -1,7 +1,9 @@
 import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-require('highcharts/modules/heatmap')(Highcharts)
+import HeatMapFactory from 'highcharts/modules/heatmap'
+
+HeatMapFactory(Highcharts)
 
 /*
   props = {
