@@ -133,7 +133,7 @@ class IntronAnalysis extends React.Component {
         })
 
         // 'key' is expected by antd
-        medianVals['key'] = 1
+        medianVals.key = 1
 
         this.setState({
           bellCurveChartData: series,

@@ -15,20 +15,20 @@ export class MCFAdapter {
     if (type === 'fpkm') {
       return this.pool.query(`SELECT ${sample}_log2 FROM mcf10a_vs_mcf7 WHERE ${sample}_log2 != 'Infinity'`)
         .then(result => {
-          var log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
+          const log2fpkms = _.map(result.rows, (r) => r[`${sample}_log2`])
           return [computeCurve(this.binsHash, log2fpkms, sample)]
         })
     }
 
     // type === 'psi'
-    var fullDataLine = this.pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi WHERE ${sample}_avg_log2_psi is not null`)
+    const fullDataLine = this.pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi WHERE ${sample}_avg_log2_psi is not null`)
       .then(result => {
-        var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
+        const avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
         return computeCurve(this.binsHash, avgPsiVals, sample + '_ia')
       })
-    var limitedDataLine = this.pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi INNER JOIN u12_genes ON mcf_avg_psi.gene = u12_genes.gene WHERE ${sample}_avg_log2_psi is not null`)
+    const limitedDataLine = this.pool.query(`SELECT ${sample}_avg_log2_psi FROM mcf_avg_psi INNER JOIN u12_genes ON mcf_avg_psi.gene = u12_genes.gene WHERE ${sample}_avg_log2_psi is not null`)
       .then(result => {
-        var avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
+        const avgPsiVals = _.map(result.rows, (r) => r[`${sample}_avg_log2_psi`])
         return computeCurve(this.binsHash, avgPsiVals, sample + '_u12_ia')
       })
     return Promise.all([fullDataLine, limitedDataLine])
@@ -88,7 +88,7 @@ export class MCFAdapter {
           SELECT 1 FROM u12_genes WHERE gene= '${gene}'
         `)
           .then(u12Results => {
-            var u12 = u12Results.rows.length > 0
+            const u12 = u12Results.rows.length > 0
             _.each(['mcf10a', 'mcf7'], sample => {
               _.each(u12 ? [sample, sample + '_u12'] : [sample],
                 key => {
@@ -110,8 +110,8 @@ export class MCFAdapter {
 
   heatMap = (genes) => {
     // Convert genes array to genes array for psql
-    var genesList = _.join(genes, ',')
-    genesList = `'{` + genesList + `}'`
+    let genesList = _.join(genes, ',')
+    genesList = '\'{' + genesList + '}\''
 
     return this.pool.query(`
       SELECT

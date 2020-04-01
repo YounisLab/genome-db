@@ -52,14 +52,14 @@ class MedianDistribution extends React.Component {
 
         const x1 = data.median_log2_norm_count_plus_1 || 0
         // Create vertical for full tcga distribution
-        let coords = [
+        const coords = [
           [x1, data.tcga_height],
           [x1, 0]
         ]
-        let vertical = createVerticalSeries(
+        const vertical = createVerticalSeries(
           `${gene} median`,
           coords,
-          colorMaps.vertical['tcga']
+          colorMaps.vertical.tcga
         )
         chartData.push(vertical)
 
@@ -96,7 +96,7 @@ class MedianDistribution extends React.Component {
         })
 
         // 'key' is expected by antd
-        medianVals['key'] = 1
+        medianVals.key = 1
 
         this.setState({
           chartData: series,

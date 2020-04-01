@@ -34,11 +34,11 @@ export function createVerticalSeries (sample, data, color) {
 }
 
 export function createHeatMapSeries (data, samples, dataKey, isSampleOnXAxis) {
-  var series = []
+  const series = []
   _.each(samples, function (sample, sampleIndex) {
     _.each(data, function (datum, datumIndex) {
-      let xIndex = isSampleOnXAxis ? sampleIndex : datumIndex
-      let yIndex = isSampleOnXAxis ? datumIndex : sampleIndex
+      const xIndex = isSampleOnXAxis ? sampleIndex : datumIndex
+      const yIndex = isSampleOnXAxis ? datumIndex : sampleIndex
 
       // Heatmap data schema [x-index, y-index, gradient value]
       series.push([
@@ -57,12 +57,12 @@ export function createHeatMapSeries (data, samples, dataKey, isSampleOnXAxis) {
 // drop bottom 25% and top 25% of all values.
 // Returns min and max after dropping
 export function getQuartiles (data, quartile) {
-  var sortedData = _.orderBy(data, function (datum) {
+  const sortedData = _.orderBy(data, function (datum) {
     return datum[2]
   })
 
-  var numToDrop = Math.floor(sortedData.length * quartile)
-  var dropped = _.dropRight(
+  const numToDrop = Math.floor(sortedData.length * quartile)
+  const dropped = _.dropRight(
     _.drop(sortedData, numToDrop),
     numToDrop
   )
