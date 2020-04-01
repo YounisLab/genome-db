@@ -4,7 +4,7 @@ import { MedianDistribution } from './MedianDistribution'
 import { Correlations } from './Correlations'
 
 class TCGA extends React.Component {
-  render () {
+  render() {
     return (
       <React.Fragment>
         <MedianDistribution />

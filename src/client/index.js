@@ -7,7 +7,7 @@ import { Layout } from 'antd'
 const { Header } = Layout
 
 class App extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -17,11 +17,11 @@ class App extends React.Component {
     this.onSelection = this.onSelection.bind(this)
   }
 
-  onSelection (selection) {
+  onSelection(selection) {
     this.setState({ study: selection })
   }
 
-  render () {
+  render() {
     let component
 
     if (this.state.study === 'mcf') {
@@ -34,12 +34,10 @@ class App extends React.Component {
       <div>
         <Layout>
           <Header>
-            <h1 style={{ color: 'white' }}>
-              GenomeDB
-            </h1>
+            <h1 style={{ color: 'white' }}>GenomeDB</h1>
           </Header>
           <StudySelector onSelection={this.onSelection} />
-          { component }
+          {component}
         </Layout>
       </div>
     )

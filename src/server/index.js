@@ -7,7 +7,9 @@ import Pool from 'pg-pool'
 
 const app = express()
 const port = process.env.PORT || 8080
-const dbURL = (new URL(process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'))
+const dbURL = new URL(
+  process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'
+)
 
 const MCFAdapter = new MCFAdapterClass()
 const TCGAAdapter = new TCGAAdapterClass()
@@ -16,16 +18,15 @@ let adapter // set by middleware
 let pool
 
 // set up db object
-function connect () {
+function connect() {
   const host = dbURL.host
   console.log('Connecting to postgres at', host)
   pool = new Pool({
     connectionString: dbURL.href
   })
-  return pool.query('SELECT NOW() as now')
-    .then(function (res) {
-      console.log('Connected to postgres on', res.rows[0].now)
-    })
+  return pool.query('SELECT NOW() as now').then(function (res) {
+    console.log('Connected to postgres on', res.rows[0].now)
+  })
 }
 
 app.use(bodyParser.json({ limit: '5mb' }))
@@ -65,7 +66,8 @@ app.use(function (req, res, next) {
 app.use(express.static('dist'))
 
 app.get('/api/bellcurve', (req, res) => {
-  adapter.bellCurve(req.query.sample, req.query.subsets, req.query.type)
+  adapter
+    .bellCurve(req.query.sample, req.query.subsets, req.query.type)
     .then(function (results) {
       res.json(results)
     })
@@ -76,7 +78,8 @@ app.get('/api/bellcurve', (req, res) => {
 })
 
 app.get('/api/vertical', (req, res) => {
-  adapter.vertical(req.query.gene, req.query.samples, req.query.subsets, req.query.type)
+  adapter
+    .vertical(req.query.gene, req.query.samples, req.query.subsets, req.query.type)
     .then(function (results) {
       res.json(results.rows)
     })
@@ -87,7 +90,8 @@ app.get('/api/vertical', (req, res) => {
 })
 
 app.post('/api/heatmap', (req, res) => {
-  adapter.heatMap(req.body.genes)
+  adapter
+    .heatMap(req.body.genes)
     .then(function (results) {
       res.json(results.rows)
     })
@@ -98,7 +102,8 @@ app.post('/api/heatmap', (req, res) => {
 })
 
 app.get('/api/correlations', (req, res) => {
-  adapter.correlations(req.query.table, req.query.gene, req.query.min, req.query.max)
+  adapter
+    .correlations(req.query.table, req.query.gene, req.query.min, req.query.max)
     .then(function (results) {
       res.json(results)
     })
@@ -109,7 +114,8 @@ app.get('/api/correlations', (req, res) => {
 })
 
 app.get('/api/intron-analysis-heatmap', (req, res) => {
-  adapter.intronAnalysisHeatmap(req.query.gene)
+  adapter
+    .intronAnalysisHeatmap(req.query.gene)
     .then(function (results) {
       res.json(results.rows)
     })
@@ -120,7 +126,8 @@ app.get('/api/intron-analysis-heatmap', (req, res) => {
 })
 
 app.get('/api/intron-analysis-bellcurve', (req, res) => {
-  adapter.intronAnalysisBellCurve(req.query.sample)
+  adapter
+    .intronAnalysisBellCurve(req.query.sample)
     .then(function (results) {
       res.json(results)
     })
@@ -131,7 +138,8 @@ app.get('/api/intron-analysis-bellcurve', (req, res) => {
 })
 
 app.get('/api/intron-analysis-vertical', (req, res) => {
-  adapter.intronAnalysisVertical(req.query.gene)
+  adapter
+    .intronAnalysisVertical(req.query.gene)
     .then(function (results) {
       res.json(results.rows)
     })

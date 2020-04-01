@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export function createCurveSeries (sample, data, color) {
+export function createCurveSeries(sample, data, color) {
   return {
     name: `${sample} distribution`,
     type: 'line',
@@ -12,7 +12,7 @@ export function createCurveSeries (sample, data, color) {
   }
 }
 
-export function createHistogramSeries (sample, data, color) {
+export function createHistogramSeries(sample, data, color) {
   return {
     name: `${sample} histogram`,
     type: 'column',
@@ -22,7 +22,7 @@ export function createHistogramSeries (sample, data, color) {
   }
 }
 
-export function createVerticalSeries (sample, data, color) {
+export function createVerticalSeries(sample, data, color) {
   return {
     name: `${sample}`,
     type: 'line',
@@ -33,7 +33,7 @@ export function createVerticalSeries (sample, data, color) {
   }
 }
 
-export function createHeatMapSeries (data, samples, dataKey, isSampleOnXAxis) {
+export function createHeatMapSeries(data, samples, dataKey, isSampleOnXAxis) {
   const series = []
   _.each(samples, function (sample, sampleIndex) {
     _.each(data, function (datum, datumIndex) {
@@ -41,11 +41,7 @@ export function createHeatMapSeries (data, samples, dataKey, isSampleOnXAxis) {
       const yIndex = isSampleOnXAxis ? datumIndex : sampleIndex
 
       // Heatmap data schema [x-index, y-index, gradient value]
-      series.push([
-        xIndex,
-        yIndex,
-        datum[dataKey(sample)]
-      ])
+      series.push([xIndex, yIndex, datum[dataKey(sample)]])
     })
   })
 
@@ -56,16 +52,13 @@ export function createHeatMapSeries (data, samples, dataKey, isSampleOnXAxis) {
 // quartile should be a float: eg 0.25 implies
 // drop bottom 25% and top 25% of all values.
 // Returns min and max after dropping
-export function getQuartiles (data, quartile) {
+export function getQuartiles(data, quartile) {
   const sortedData = _.orderBy(data, function (datum) {
     return datum[2]
   })
 
   const numToDrop = Math.floor(sortedData.length * quartile)
-  const dropped = _.dropRight(
-    _.drop(sortedData, numToDrop),
-    numToDrop
-  )
+  const dropped = _.dropRight(_.drop(sortedData, numToDrop), numToDrop)
 
   return {
     min: _.first(dropped)[2],

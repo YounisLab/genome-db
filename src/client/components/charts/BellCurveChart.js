@@ -10,7 +10,7 @@ import HighchartsReact from 'highcharts-react-official'
   }
 */
 class BellCurveChart extends React.Component {
-  render () {
+  render() {
     return (
       <div>
         <HighchartsReact
@@ -29,32 +29,36 @@ class BellCurveChart extends React.Component {
                 fontSize: '15px'
               }
             },
-            xAxis: [{
-              title: {
-                text: this.props.xLabel,
-                style: {
-                  fontSize: '15px'
-                }
-              },
-              labels: {
-                style: {
-                  fontSize: '15px'
-                }
-              }
-            }],
-            yAxis: [{
-              title: {
-                text: this.props.yLabel,
-                style: {
-                  fontSize: '15px'
-                }
-              },
-              labels: {
-                style: {
-                  fontSize: '15px'
+            xAxis: [
+              {
+                title: {
+                  text: this.props.xLabel,
+                  style: {
+                    fontSize: '15px'
+                  }
+                },
+                labels: {
+                  style: {
+                    fontSize: '15px'
+                  }
                 }
               }
-            }],
+            ],
+            yAxis: [
+              {
+                title: {
+                  text: this.props.yLabel,
+                  style: {
+                    fontSize: '15px'
+                  }
+                },
+                labels: {
+                  style: {
+                    fontSize: '15px'
+                  }
+                }
+              }
+            ],
             series: this.props.series,
             title: '' // No title needed, overrides default
           }}

@@ -6,12 +6,8 @@ const rowStyle = {
 }
 
 class Row extends React.Component {
-  render () {
-    return (
-      <AntRow style={rowStyle}>
-        {this.props.children}
-      </AntRow>
-    )
+  render() {
+    return <AntRow style={rowStyle}>{this.props.children}</AntRow>
   }
 }
 

@@ -4,7 +4,7 @@ import { DifferentialMultiGeneExpression } from './DifferentialMultiGeneExpressi
 import { IntronAnalysis } from './IntronAnalysis'
 
 class MCF extends React.Component {
-  render () {
+  render() {
     return (
       <React.Fragment>
         <DifferentialGeneExpression />

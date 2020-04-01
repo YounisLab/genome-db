@@ -33,7 +33,7 @@ class DifferentialGeneExpression extends React.Component {
 
   verticals = false
 
-  performSearch = (gene) => {
+  performSearch = gene => {
     this.setState({ alertText: null })
 
     if (!gene) {
@@ -41,92 +41,95 @@ class DifferentialGeneExpression extends React.Component {
       return
     }
 
-    this.service.getVertical(gene, this.bellCurveType)
-      .then(data => {
-        if (!data) {
-          this.setState({ alertText: `${gene} not found! Please try another gene.` })
-          return
+    this.service.getVertical(gene, this.bellCurveType).then(data => {
+      if (!data) {
+        this.setState({ alertText: `${gene} not found! Please try another gene.` })
+        return
+      }
+
+      // If log2_foldchange is null, represent as 'Infinity'
+      if (data.log2_foldchange == null) {
+        data.log2_foldchange = 'Infinity'
+      }
+
+      // Display data in table row
+      const tableData = [data]
+
+      // Check if any samples have zero FPKM and
+      // generate a warning for them
+      const zeroSamples = []
+      _.each(this.service.samples, sample => {
+        if (data[`${sample}_fpkm`] === 0) {
+          zeroSamples.push(sample.toUpperCase())
         }
-
-        // If log2_foldchange is null, represent as 'Infinity'
-        if (data.log2_foldchange == null) {
-          data.log2_foldchange = 'Infinity'
-        }
-
-        // Display data in table row
-        const tableData = [data]
-
-        // Check if any samples have zero FPKM and
-        // generate a warning for them
-        const zeroSamples = []
-        _.each(this.service.samples, sample => {
-          if (data[`${sample}_fpkm`] === 0) {
-            zeroSamples.push(sample.toUpperCase())
-          }
-        })
-        const warning = zeroSamples.length > 0 ? `${gene} has FPKM of zero for ${zeroSamples}.` : ''
-
-        // Newly created verticals will be appended to chartData
-        const chartData = this.state.chartData
-
-        // Remove any old verticals
-        if (this.verticals) {
-          _.each(this.service.samples, () => chartData.pop())
-        }
-
-        // Create new verticals for each sample
-        _.each(this.service.samples, sample => {
-          const name = `${gene} fpkm in ${sample}`
-          // Generate x,y coords that draw the vertical line
-          // Default x to 0 when log2 values are undefined
-          const coords = [
-            [data[`${sample}_log2`] || 0, 0],
-            [data[`${sample}_log2`] || 0, data[`${sample}_height`]]
-          ]
-          const color = colorMaps.vertical[sample]
-
-          const vertical = createVerticalSeries(name, coords, color)
-          chartData.push(vertical)
-        })
-
-        this.verticals = true
-        this.setState({
-          chartData: chartData,
-          tableData: tableData,
-          alertText: warning
-        })
       })
+      const warning = zeroSamples.length > 0 ? `${gene} has FPKM of zero for ${zeroSamples}.` : ''
+
+      // Newly created verticals will be appended to chartData
+      const chartData = this.state.chartData
+
+      // Remove any old verticals
+      if (this.verticals) {
+        _.each(this.service.samples, () => chartData.pop())
+      }
+
+      // Create new verticals for each sample
+      _.each(this.service.samples, sample => {
+        const name = `${gene} fpkm in ${sample}`
+        // Generate x,y coords that draw the vertical line
+        // Default x to 0 when log2 values are undefined
+        const coords = [
+          [data[`${sample}_log2`] || 0, 0],
+          [data[`${sample}_log2`] || 0, data[`${sample}_height`]]
+        ]
+        const color = colorMaps.vertical[sample]
+
+        const vertical = createVerticalSeries(name, coords, color)
+        chartData.push(vertical)
+      })
+
+      this.verticals = true
+      this.setState({
+        chartData: chartData,
+        tableData: tableData,
+        alertText: warning
+      })
+    })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     // Load BellCurveChart data on mount
-    this.service.getBellCurve(this.bellCurveType)
-      .then(data => {
-        const series = []
+    this.service.getBellCurve(this.bellCurveType).then(data => {
+      const series = []
 
-        _.each(data, dataPerSample => {
-          const sample = dataPerSample.sample
-          const curve = createCurveSeries(sample, dataPerSample.data[0].curve, colorMaps.curve[sample])
-          const hgram = createHistogramSeries(sample, dataPerSample.data[0].hgram, colorMaps.histogram[sample])
-          series.push(curve, hgram)
-        })
-
-        this.setState({
-          chartData: series
-        })
+      _.each(data, dataPerSample => {
+        const sample = dataPerSample.sample
+        const curve = createCurveSeries(
+          sample,
+          dataPerSample.data[0].curve,
+          colorMaps.curve[sample]
+        )
+        const hgram = createHistogramSeries(
+          sample,
+          dataPerSample.data[0].hgram,
+          colorMaps.histogram[sample]
+        )
+        series.push(curve, hgram)
       })
+
+      this.setState({
+        chartData: series
+      })
+    })
   }
 
-  render () {
+  render() {
     let alert = null
 
     if (this.state.alertText) {
-      alert = <Alert
-        message={this.state.alertText}
-        type='error'
-        style={{ width: '30%' }}
-        showIcon
-      />
+      alert = (
+        <Alert message={this.state.alertText} type='error' style={{ width: '30%' }} showIcon />
+      )
     }
 
     return (
@@ -134,9 +137,7 @@ class DifferentialGeneExpression extends React.Component {
         <Row>
           <h1>Differential Gene Expression</h1>
         </Row>
-        <Row>
-          {alert}
-        </Row>
+        <Row>{alert}</Row>
         <Row>
           <Search
             size='large'
@@ -158,11 +159,7 @@ class DifferentialGeneExpression extends React.Component {
           />
         </Row>
         <Row>
-          <BellCurveChart
-            series={this.state.chartData}
-            xLabel={'Log2 FPKM'}
-            yLabel={'Frequency'}
-          />
+          <BellCurveChart series={this.state.chartData} xLabel={'Log2 FPKM'} yLabel={'Frequency'} />
         </Row>
       </Content>
     )

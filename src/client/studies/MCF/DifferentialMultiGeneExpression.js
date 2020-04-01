@@ -41,11 +41,11 @@ class DifferentialMultiGeneExpression extends React.Component {
 
   searchText = ''
 
-  updateSearchText = (evt) => {
+  updateSearchText = evt => {
     this.searchText = evt.target.value
   }
 
-  handleCtrlEnter = (evt) => {
+  handleCtrlEnter = evt => {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       this.performSearch()
     }
@@ -55,23 +55,27 @@ class DifferentialMultiGeneExpression extends React.Component {
     const newlineTokens = _.split(this.searchText, '\n') // Split newline tokens
     const filteredTokens = _.filter(newlineTokens, t => t !== '')
     const genes = _.map(filteredTokens, t => _.trim(t).toUpperCase()) // Trim whitespaces and convert to uppercase
-    this.service.getHeatMap(genes)
-      .then(data => {
-        const series = createHeatMapSeries(data, this.service.samples, (sample) => `${sample}_log2`, true)
-        const range = getQuartiles(series, QUARTILE_FLOAT)
-        const yAxisCategories = _.map(data, (d) => d.gene)
+    this.service.getHeatMap(genes).then(data => {
+      const series = createHeatMapSeries(
+        data,
+        this.service.samples,
+        sample => `${sample}_log2`,
+        true
+      )
+      const range = getQuartiles(series, QUARTILE_FLOAT)
+      const yAxisCategories = _.map(data, d => d.gene)
 
-        this.setState({
-          tableData: data,
-          chartData: series,
-          yAxisCategories: yAxisCategories,
-          yAxisMin: range.min,
-          yAxisMax: range.max
-        })
+      this.setState({
+        tableData: data,
+        chartData: series,
+        yAxisCategories: yAxisCategories,
+        yAxisMin: range.min,
+        yAxisMax: range.max
       })
+    })
   }
 
-  render () {
+  render() {
     return (
       <Content>
         <Row>
@@ -86,10 +90,13 @@ class DifferentialMultiGeneExpression extends React.Component {
             placeholder='Enter newline separated list of genes here.'
             onChange={this.updateSearchText}
             onKeyUp={this.handleCtrlEnter}
-            style={{ width: '50%' }} />
+            style={{ width: '50%' }}
+          />
         </Row>
         <Row>
-          <Button type='primary' icon='search' onClick={this.performSearch}>Search</Button>
+          <Button type='primary' icon='search' onClick={this.performSearch}>
+            Search
+          </Button>
         </Row>
         <Row>
           <HeatMapChart
@@ -117,10 +124,7 @@ class DifferentialMultiGeneExpression extends React.Component {
           />
         </Row>
         <Row>
-          <CSVLink
-            data={this.state.tableData}
-            headers={headers}
-            filename={'heatmapData.csv'}>
+          <CSVLink data={this.state.tableData} headers={headers} filename={'heatmapData.csv'}>
             <Button type='primary' icon='download' size={'large'}>
               Export as .csv
             </Button>

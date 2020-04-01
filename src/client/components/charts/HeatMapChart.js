@@ -16,7 +16,7 @@ HeatMapFactory(Highcharts)
   }
 */
 class HeatMapChart extends React.Component {
-  render () {
+  render() {
     return (
       <div>
         <HighchartsReact
@@ -30,15 +30,17 @@ class HeatMapChart extends React.Component {
               zoomType: 'y',
               height: this.props.series.length < 100 ? 500 : 1500
             },
-            series: [{
-              turboThreshold: 0,
-              borderWidth: 1,
-              data: this.props.series,
-              dataLabels: {
-                enabled: false,
-                color: '#000000'
+            series: [
+              {
+                turboThreshold: 0,
+                borderWidth: 1,
+                data: this.props.series,
+                dataLabels: {
+                  enabled: false,
+                  color: '#000000'
+                }
               }
-            }],
+            ],
             title: {
               text: null
             },

@@ -12,12 +12,10 @@ const divStyle = {
 }
 
 export class Content extends React.Component {
-  render () {
+  render() {
     return (
       <AntContent style={contentStyle}>
-        <div style={divStyle}>
-          {this.props.children}
-        </div>
+        <div style={divStyle}>{this.props.children}</div>
       </AntContent>
     )
   }

@@ -24,27 +24,29 @@ export class MCFService {
     })
 
     const data = []
-    return axios.all(requests)
-      .then(axios.spread((...responses) => {
+    return axios.all(requests).then(
+      axios.spread((...responses) => {
         _.each(responses, resp => {
           const sample = resp.config.params.sample
           data.push({ sample: sample, data: resp.data })
         })
 
         return data
-      }))
+      })
+    )
   }
 
   getVertical = (gene, type, subsets = []) => {
-    return axios.get('/api/vertical', {
-      params: {
-        study: this.study,
-        samples: this.samples,
-        gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE,
-        subsets: subsets,
-        type: type
-      }
-    })
+    return axios
+      .get('/api/vertical', {
+        params: {
+          study: this.study,
+          samples: this.samples,
+          gene: gene.toUpperCase(), // DB stores gene names in UPPERCASE,
+          subsets: subsets,
+          type: type
+        }
+      })
       .then(resp => {
         if (!resp.data.length) {
           return null
@@ -54,23 +56,25 @@ export class MCFService {
       })
   }
 
-  getHeatMap = (genes) => {
-    return axios.post('/api/heatmap', {
-      study: this.study,
-      genes: genes
-    })
+  getHeatMap = genes => {
+    return axios
+      .post('/api/heatmap', {
+        study: this.study,
+        genes: genes
+      })
       .then(resp => {
         return resp.data
       })
   }
 
-  getIntronAnalysisHeatMap = (gene) => {
-    return axios.get('/api/intron-analysis-heatmap', {
-      params: {
-        study: 'mcf',
-        gene: gene.toUpperCase()
-      }
-    })
+  getIntronAnalysisHeatMap = gene => {
+    return axios
+      .get('/api/intron-analysis-heatmap', {
+        params: {
+          study: 'mcf',
+          gene: gene.toUpperCase()
+        }
+      })
       .then(resp => {
         return resp.data
       })

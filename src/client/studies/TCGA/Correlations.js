@@ -17,14 +17,14 @@ class Correlations extends React.Component {
 
   dataset = 'RBP'
 
-  generateCSVHeaders = (label) => {
+  generateCSVHeaders = label => {
     return [
       { label: label, key: 'gene' },
       { label: 'Rvalue', key: 'Rvalue' }
     ]
   }
 
-  generateTableColumns = (title) => {
+  generateTableColumns = title => {
     return [
       { title: title, dataIndex: 'gene', width: '40%' },
       { title: 'Rvalue', dataIndex: 'Rvalue', sorter: (a, b) => a.Rvalue - b.Rvalue }
@@ -41,7 +41,7 @@ class Correlations extends React.Component {
     maximum: ''
   }
 
-  performSearch = (evt) => {
+  performSearch = evt => {
     if (evt.key === 'Enter') {
       this.getRvals(this.input.gene)
     }
@@ -51,11 +51,11 @@ class Correlations extends React.Component {
     this.input[key] = _.trim(evt.target.value)
   }
 
-  setDataset = (e) => {
+  setDataset = e => {
     this.dataset = e.target.value
   }
 
-  getRvals = (gene) => {
+  getRvals = gene => {
     const min = this.input.minimum
     const max = this.input.maximum
 
@@ -79,24 +79,25 @@ class Correlations extends React.Component {
       return
     }
 
-    this.service.getCorrelations(gene, this.dataset, min, max)
-      .then(data => {
-        if (!data) {
-          if (min !== '' || max !== '') {
-            this.setState({ alertText: `${gene} not found for given range! Please try another entry.` })
-          } else {
-            this.setState({ alertText: `${gene} not found! Please try another name.` })
-          }
-          return
+    this.service.getCorrelations(gene, this.dataset, min, max).then(data => {
+      if (!data) {
+        if (min !== '' || max !== '') {
+          this.setState({
+            alertText: `${gene} not found for given range! Please try another entry.`
+          })
+        } else {
+          this.setState({ alertText: `${gene} not found! Please try another name.` })
         }
-        // If request goes through update header and column
-        this.columns = this.generateTableColumns(this.dataset)
-        this.headers = this.generateCSVHeaders(this.dataset)
-        this.setState({ data: data, alertText: null })
-      })
+        return
+      }
+      // If request goes through update header and column
+      this.columns = this.generateTableColumns(this.dataset)
+      this.headers = this.generateCSVHeaders(this.dataset)
+      this.setState({ data: data, alertText: null })
+    })
   }
 
-  render () {
+  render() {
     let alert
 
     if (this.state.alertText) {
@@ -110,56 +111,57 @@ class Correlations extends React.Component {
         <Row>
           <h1>Correlations</h1>
         </Row>
-        <Row>
-          Select desired data for correlation analysis
-        </Row>
+        <Row>Select desired data for correlation analysis</Row>
         <Row>
           <Radio.Group onChange={this.setDataset} defaultValue={'RBP'}>
             <Radio value={'RBP'}>RBP</Radio>
             <Radio value={'U12'}>U12</Radio>
           </Radio.Group>
         </Row>
-        <Row>
-          {alert}
-        </Row>
+        <Row>{alert}</Row>
         <Row>
           <Search
             size='large'
             placeholder='Enter gene name here, eg: MAPK14'
             onSearch={this.getRvals}
             style={{ width: '30%' }}
-            onChange={(e) => this.updateVal(e, 'gene')}
+            onChange={e => this.updateVal(e, 'gene')}
             enterButton
           />
         </Row>
-        <Row>
-          Enter range of desired correlation values.
-          Leave blank to not restrict values.
-        </Row>
+        <Row>Enter range of desired correlation values. Leave blank to not restrict values.</Row>
         <Row>
           <Group compact size='medium'>
             <Input
               style={{
-                width: 60, textAlign: 'center', pointerEvents: 'none', color: '#000000'
+                width: 60,
+                textAlign: 'center',
+                pointerEvents: 'none',
+                color: '#000000'
               }}
               defaultValue='From'
               disabled
             />
-            <Input style={{ width: '10%' }}
+            <Input
+              style={{ width: '10%' }}
               placeholder='Minimum'
-              onChange={(e) => this.updateVal(e, 'minimum')}
+              onChange={e => this.updateVal(e, 'minimum')}
               onKeyUp={this.performSearch}
             />
             <Input
               style={{
-                width: 40, textAlign: 'center', pointerEvents: 'none', color: '#000000'
+                width: 40,
+                textAlign: 'center',
+                pointerEvents: 'none',
+                color: '#000000'
               }}
               defaultValue='to'
               disabled
             />
-            <Input style={{ width: '10%' }}
+            <Input
+              style={{ width: '10%' }}
               placeholder='Maximum'
-              onChange={(e) => this.updateVal(e, 'maximum')}
+              onChange={e => this.updateVal(e, 'maximum')}
               onKeyUp={this.performSearch}
             />
           </Group>
@@ -180,13 +182,10 @@ class Correlations extends React.Component {
           <CSVLink
             data={this.state.data}
             headers={this.headers}
-            filename={`${this.input.gene}.csv`}>
-            <Button
-              type='primary'
-              icon='download'
-              size={'large'}
-            >
-                Export as .csv
+            filename={`${this.input.gene}.csv`}
+          >
+            <Button type='primary' icon='download' size={'large'}>
+              Export as .csv
             </Button>
           </CSVLink>
         </Row>

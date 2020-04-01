@@ -2,7 +2,10 @@ import React from 'react'
 import { MCFService } from '../../services'
 import { Content, Row, BellCurveChart, HeatMapChart } from '../../components/'
 import {
-  createCurveSeries, createHistogramSeries, createVerticalSeries, createHeatMapSeries
+  createCurveSeries,
+  createHistogramSeries,
+  createVerticalSeries,
+  createHeatMapSeries
 } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
 import { Table } from 'antd'
@@ -37,112 +40,130 @@ class IntronAnalysis extends React.Component {
 
   verticals = false
 
-  performSearch = (gene) => {
+  performSearch = gene => {
     // performSearch does 2 things:
     // 1. Obtains the verticals for the bellcurvechart
     // 2. Obtains the data for the heatmapchart
-    this.service.getVertical(gene, this.bellCurveType, this.service.subsets)
-      .then(data => {
-        // Newly created verticals will be appended to bellCurveChartData
-        const bellCurveChartData = this.state.bellCurveChartData
+    this.service.getVertical(gene, this.bellCurveType, this.service.subsets).then(data => {
+      // Newly created verticals will be appended to bellCurveChartData
+      const bellCurveChartData = this.state.bellCurveChartData
 
-        if (this.verticals) {
-          _.each(this.service.samples, () => bellCurveChartData.pop())
-        }
+      if (this.verticals) {
+        _.each(this.service.samples, () => bellCurveChartData.pop())
+      }
 
-        // Create verticals for each sample
-        _.each(this.service.samples, sample => {
-          // Generate x,y coords that draw the vertical line
-          // Default x to 0 when log2 values are undefined
-          let coords = [
-            [data[`${sample}_avg_log2_psi`] || 0, 0],
-            [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_height`]]
-          ]
+      // Create verticals for each sample
+      _.each(this.service.samples, sample => {
+        // Generate x,y coords that draw the vertical line
+        // Default x to 0 when log2 values are undefined
+        let coords = [
+          [data[`${sample}_avg_log2_psi`] || 0, 0],
+          [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_height`]]
+        ]
 
-          const vertical = createVerticalSeries(
-            `${gene} psi in ${sample}`,
-            coords,
-            colorMaps.vertical[sample]
+        const vertical = createVerticalSeries(
+          `${gene} psi in ${sample}`,
+          coords,
+          colorMaps.vertical[sample]
+        )
+        bellCurveChartData.push(vertical)
+
+        // Add verticals for subsets
+        _.each(this.service.subsets, function (subset) {
+          const sampleSubset = `${sample}_${subset}`
+          if (vertical[sampleSubset]) {
+            // Generate x,y coords for subset verticals
+            coords = [
+              [data[`${sample}_avg_log2_psi`] || 0, 0],
+              [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_${subset}_height`]]
+            ]
+
+            const subsetVertical = createVerticalSeries(
+              `${vertical.gene} psi in ${sampleSubset}`,
+              coords,
+              colorMaps.vertical[sampleSubset]
+            )
+
+            bellCurveChartData.push(subsetVertical)
+          }
+        })
+      })
+
+      this.verticals = true
+      this.setState({
+        bellCurveChartData: bellCurveChartData
+      })
+    })
+
+    this.service.getIntronAnalysisHeatMap(gene).then(data => {
+      const series = createHeatMapSeries(
+        data,
+        this.service.samples,
+        sample => `${sample}_log2_psi`,
+        false
+      )
+      const xAxisCategories = _.map(data, d => d.intron_number)
+      const psiVals = _.flatMap(data, d => [d.mcf10a_log2_psi, d.mcf7_log2_psi])
+
+      this.setState({
+        heatMapChartData: series,
+        xAxisCategories: xAxisCategories,
+        yAxisMin: _.min(psiVals),
+        yAxisMax: _.max(psiVals)
+      })
+    })
+  }
+
+  componentDidMount() {
+    this.service.getBellCurve(this.bellCurveType, this.service.subsets).then(data => {
+      const series = []
+      const medianVals = {}
+
+      _.each(data, dataPerSample => {
+        const sample = dataPerSample.sample
+        const curve = createCurveSeries(
+          sample,
+          dataPerSample.data[0].curve,
+          colorMaps.curve[sample]
+        )
+        const hgram = createHistogramSeries(
+          sample,
+          dataPerSample.data[0].hgram,
+          colorMaps.histogram[sample]
+        )
+        series.push(curve, hgram)
+        medianVals[sample] = dataPerSample.data[0].median
+
+        _.each(this.service.subsets, function (subset, index) {
+          // subset data starts from index = 1
+          const subsetData = dataPerSample.data[index + 1]
+          const subsetSample = `${sample}_${subset}`
+          const subsetCurve = createCurveSeries(
+            subsetSample,
+            subsetData.curve,
+            colorMaps.curve[subsetSample]
           )
-          bellCurveChartData.push(vertical)
-
-          // Add verticals for subsets
-          _.each(this.service.subsets, function (subset) {
-            const sampleSubset = `${sample}_${subset}`
-            if (vertical[sampleSubset]) {
-              // Generate x,y coords for subset verticals
-              coords = [
-                [data[`${sample}_avg_log2_psi`] || 0, 0],
-                [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_${subset}_height`]]
-              ]
-
-              const subsetVertical = createVerticalSeries(
-                `${vertical.gene} psi in ${sampleSubset}`,
-                coords,
-                colorMaps.vertical[sampleSubset]
-              )
-
-              bellCurveChartData.push(subsetVertical)
-            }
-          })
-        })
-
-        this.verticals = true
-        this.setState({
-          bellCurveChartData: bellCurveChartData
+          const subsetHgram = createHistogramSeries(
+            subsetSample,
+            subsetData.hgram,
+            colorMaps.histogram[subsetSample]
+          )
+          series.push(subsetCurve, subsetHgram)
+          medianVals[subsetSample] = subsetData.median
         })
       })
 
-    this.service.getIntronAnalysisHeatMap(gene)
-      .then(data => {
-        const series = createHeatMapSeries(data, this.service.samples, (sample) => `${sample}_log2_psi`, false)
-        const xAxisCategories = _.map(data, (d) => d.intron_number)
-        const psiVals = _.flatMap(data, (d) => [d.mcf10a_log2_psi, d.mcf7_log2_psi])
+      // 'key' is expected by antd
+      medianVals.key = 1
 
-        this.setState({
-          heatMapChartData: series,
-          xAxisCategories: xAxisCategories,
-          yAxisMin: _.min(psiVals),
-          yAxisMax: _.max(psiVals)
-        })
+      this.setState({
+        bellCurveChartData: series,
+        medianVals: [medianVals] // antd table expects array as input
       })
+    })
   }
 
-  componentDidMount () {
-    this.service.getBellCurve(this.bellCurveType, this.service.subsets)
-      .then(data => {
-        const series = []
-        const medianVals = {}
-
-        _.each(data, dataPerSample => {
-          const sample = dataPerSample.sample
-          const curve = createCurveSeries(sample, dataPerSample.data[0].curve, colorMaps.curve[sample])
-          const hgram = createHistogramSeries(sample, dataPerSample.data[0].hgram, colorMaps.histogram[sample])
-          series.push(curve, hgram)
-          medianVals[sample] = dataPerSample.data[0].median
-
-          _.each(this.service.subsets, function (subset, index) {
-            // subset data starts from index = 1
-            const subsetData = dataPerSample.data[index + 1]
-            const subsetSample = `${sample}_${subset}`
-            const subsetCurve = createCurveSeries(subsetSample, subsetData.curve, colorMaps.curve[subsetSample])
-            const subsetHgram = createHistogramSeries(subsetSample, subsetData.hgram, colorMaps.histogram[subsetSample])
-            series.push(subsetCurve, subsetHgram)
-            medianVals[subsetSample] = subsetData.median
-          })
-        })
-
-        // 'key' is expected by antd
-        medianVals.key = 1
-
-        this.setState({
-          bellCurveChartData: series,
-          medianVals: [medianVals] // antd table expects array as input
-        })
-      })
-  }
-
-  render () {
+  render() {
     return (
       <Content>
         <Row>
@@ -166,7 +187,9 @@ class IntronAnalysis extends React.Component {
             yAxisMax={this.state.yAxisMax}
             tooltipFormatter={function () {
               return `Psi value for <b>${this.series.yAxis.categories[this.point.y]}</b>
-              in intron <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${this.point.value}</b>`
+              in intron <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${
+                this.point.value
+              }</b>`
             }}
           />
         </Row>

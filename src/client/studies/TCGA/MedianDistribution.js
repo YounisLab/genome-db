@@ -30,86 +30,98 @@ class MedianDistribution extends React.Component {
 
   verticals = false
 
-  performSearch = (gene) => {
-    this.service.getVertical(gene, this.bellCurveType, this.service.subsets)
-      .then(data => {
-        if (!data) {
-          this.setState({ alertText: `${gene} not found! Please try another name.` })
-          return
-        }
+  performSearch = gene => {
+    this.service.getVertical(gene, this.bellCurveType, this.service.subsets).then(data => {
+      if (!data) {
+        this.setState({ alertText: `${gene} not found! Please try another name.` })
+        return
+      }
 
-        let alertText = ''
-        if (data.median_log2_norm_count_plus_1 === -1) {
-          alertText = `${gene} has median log2 norm count plus one of -1`
-        }
+      let alertText = ''
+      if (data.median_log2_norm_count_plus_1 === -1) {
+        alertText = `${gene} has median log2 norm count plus one of -1`
+      }
 
-        const chartData = this.state.chartData
+      const chartData = this.state.chartData
 
-        // Remove any old verticals
-        if (this.verticals) {
-          _.each(this.service.samples, () => chartData.pop())
-        }
+      // Remove any old verticals
+      if (this.verticals) {
+        _.each(this.service.samples, () => chartData.pop())
+      }
 
-        const x1 = data.median_log2_norm_count_plus_1 || 0
-        // Create vertical for full tcga distribution
-        const coords = [
-          [x1, data.tcga_height],
-          [x1, 0]
-        ]
-        const vertical = createVerticalSeries(
-          `${gene} median`,
-          coords,
-          colorMaps.vertical.tcga
+      const x1 = data.median_log2_norm_count_plus_1 || 0
+      // Create vertical for full tcga distribution
+      const coords = [
+        [x1, data.tcga_height],
+        [x1, 0]
+      ]
+      const vertical = createVerticalSeries(`${gene} median`, coords, colorMaps.vertical.tcga)
+      chartData.push(vertical)
+
+      this.verticals = true
+      this.setState({
+        chartData: chartData,
+        alertText: alertText
+      })
+    })
+  }
+
+  componentDidMount() {
+    this.service.getBellCurve(this.bellCurveType, this.service.subsets).then(data => {
+      const series = []
+      const medianVals = {}
+
+      _.each(data, dataPerSample => {
+        const sample = dataPerSample.sample
+        const curve = createCurveSeries(
+          sample,
+          dataPerSample.data[0].curve,
+          colorMaps.curve[sample]
         )
-        chartData.push(vertical)
+        const hgram = createHistogramSeries(
+          sample,
+          dataPerSample.data[0].hgram,
+          colorMaps.histogram[sample]
+        )
+        series.push(curve, hgram)
+        medianVals[sample] = dataPerSample.data[0].median
 
-        this.verticals = true
-        this.setState({
-          chartData: chartData,
-          alertText: alertText
+        _.each(this.service.subsets, function (subset, index) {
+          // subset data starts from index = 1
+          const subsetData = dataPerSample.data[index + 1]
+          const subsetSample = `${sample}_${subset}`
+          const subsetCurve = createCurveSeries(
+            subsetSample,
+            subsetData.curve,
+            colorMaps.curve[subsetSample]
+          )
+          const subsetHgram = createHistogramSeries(
+            subsetSample,
+            subsetData.hgram,
+            colorMaps.histogram[subsetSample]
+          )
+          series.push(subsetCurve, subsetHgram)
+          medianVals[subsetSample] = subsetData.median
         })
       })
-  }
 
-  componentDidMount () {
-    this.service.getBellCurve(this.bellCurveType, this.service.subsets)
-      .then(data => {
-        const series = []
-        const medianVals = {}
+      // 'key' is expected by antd
+      medianVals.key = 1
 
-        _.each(data, dataPerSample => {
-          const sample = dataPerSample.sample
-          const curve = createCurveSeries(sample, dataPerSample.data[0].curve, colorMaps.curve[sample])
-          const hgram = createHistogramSeries(sample, dataPerSample.data[0].hgram, colorMaps.histogram[sample])
-          series.push(curve, hgram)
-          medianVals[sample] = dataPerSample.data[0].median
-
-          _.each(this.service.subsets, function (subset, index) {
-            // subset data starts from index = 1
-            const subsetData = dataPerSample.data[index + 1]
-            const subsetSample = `${sample}_${subset}`
-            const subsetCurve = createCurveSeries(subsetSample, subsetData.curve, colorMaps.curve[subsetSample])
-            const subsetHgram = createHistogramSeries(subsetSample, subsetData.hgram, colorMaps.histogram[subsetSample])
-            series.push(subsetCurve, subsetHgram)
-            medianVals[subsetSample] = subsetData.median
-          })
-        })
-
-        // 'key' is expected by antd
-        medianVals.key = 1
-
-        this.setState({
-          chartData: series,
-          medianVals: [medianVals] // antd table expects array as input
-        })
+      this.setState({
+        chartData: series,
+        medianVals: [medianVals] // antd table expects array as input
       })
+    })
   }
 
-  render () {
+  render() {
     let alert
 
     if (this.state.alertText) {
-      alert = <Alert message={this.state.alertText} type='error' style={{ width: '30%' }} showIcon />
+      alert = (
+        <Alert message={this.state.alertText} type='error' style={{ width: '30%' }} showIcon />
+      )
     } else {
       alert = null
     }
@@ -119,9 +131,7 @@ class MedianDistribution extends React.Component {
         <Row>
           <h1>Median Distribution</h1>
         </Row>
-        <Row>
-          {alert}
-        </Row>
+        <Row>{alert}</Row>
         <Row>
           <Search
             size='large'
