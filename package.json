@@ -9,7 +9,8 @@
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon --es-module-specifier-resolution=node -L src/server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "format": "prettier --config ./.prettierrc.json \"src/**/*.{ts,js,css,scss}\" --write"
   },
   "author": "Fadhil Abubaker",
   "dependencies": {
