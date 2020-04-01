@@ -8,7 +8,8 @@
     "start": "node --es-module-specifier-resolution=node src/server/index.js",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon --es-module-specifier-resolution=node -L src/server/index.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "lint": "eslint src"
   },
   "author": "Fadhil Abubaker",
   "dependencies": {
@@ -26,11 +27,8 @@
     "concurrently": "^4.0.0",
     "css-loader": "^2.0.0",
     "d3": "^5.9.1",
-    "eslint": "^5.0.0",
     "eslint-config-airbnb": "^17.0.0",
-    "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0",
     "express": "^4.16.3",
     "file-loader": "^3.0.0",
     "highcharts": "^7.0.3",
@@ -56,5 +54,14 @@
   "engines": {
     "node": "13.x"
   },
-  "heroku-run-build-script": true
+  "heroku-run-build-script": true,
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-standard": "^4.0.1"
+  }
 }
