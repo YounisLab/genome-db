@@ -11,7 +11,7 @@ HeatMapFactory(Highcharts)
     yAxisCategories: categories for labelling y-axis
     yAxisMin:
     yAxisMax:
-    tooltip_formatter:
+    tooltipFormatter:
     series: data to be drawn (HighCharts series format)
   }
 */
@@ -82,7 +82,7 @@ class HeatMapChart extends React.Component {
               symbolHeight: 280
             },
             tooltip: {
-              formatter: this.props.tooltip_formatter
+              formatter: this.props.tooltipFormatter
             }
           }}
         />

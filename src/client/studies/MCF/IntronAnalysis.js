@@ -164,6 +164,10 @@ class IntronAnalysis extends React.Component {
             yAxisCategories={this.service.samples}
             yAxisMin={this.state.yAxisMin}
             yAxisMax={this.state.yAxisMax}
+            tooltipFormatter={function () {
+              return `Psi value for <b>${this.series.yAxis.categories[this.point.y]}</b>
+              in intron <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${this.point.value}</b>`
+            }}
           />
         </Row>
         <Row>

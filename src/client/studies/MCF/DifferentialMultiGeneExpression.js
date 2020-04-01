@@ -98,6 +98,10 @@ class DifferentialMultiGeneExpression extends React.Component {
             yAxisCategories={this.state.yAxisCategories}
             yAxisMin={this.state.yAxisMin}
             yAxisMax={this.state.yAxisMax}
+            tooltipFormatter={function () {
+              return `Log2 FPKM for <b>${this.series.yAxis.categories[this.point.y]}</b>
+              in <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${this.point.value}</b>`
+            }}
           />
         </Row>
         <Row>
