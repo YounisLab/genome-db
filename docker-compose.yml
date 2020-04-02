@@ -20,7 +20,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./src/server/seed:/docker-entrypoint-initdb.d/
       - genomepg:/var/lib/postgresql/data
   mongo:
     image: mongo:4.2.3
