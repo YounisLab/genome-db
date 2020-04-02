@@ -18,7 +18,14 @@ This will start GenomeDB on port 3000. Navigate to http://localhost:3000.
 Any changes made inside `src/client` or `src/server` will be captured by the containers and
 reflected in the browser.
 
-Changes made outside these folders require restarting the services using `docker-compose up`.
+Changes made outside these folders require re-building using `docker-compose build`, and then `docker-compose up` to
+to bring them up again.
+
+## Contributing
+
+Make sure to install [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for your text-editor.
+
+These tools will automatically flag formatting errors and styling issues with your code.
 
 ## Known issues
 
