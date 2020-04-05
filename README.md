@@ -11,6 +11,11 @@ git clone git@github.com:YounisLab/GenomeDB.git
 cd GenomeDB
 ```
 
+Note that the clone process might take some time due to git-lfs downloading data files.
+
+If you wish to download only the source code and not any of the data files, set `export GIT_LFS_SKIP_SMUDGE=1` before 
+running `git clone`.
+
 Build and run the app:
 
 ```
