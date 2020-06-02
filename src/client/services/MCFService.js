@@ -56,24 +56,12 @@ export class MCFService {
       })
   }
 
-  getHeatMap = genes => {
+  getHeatMap = (genes, type) => {
     return axios
       .post('/api/heatmap', {
         study: this.study,
-        genes: genes
-      })
-      .then(resp => {
-        return resp.data
-      })
-  }
-
-  getIntronAnalysisHeatMap = gene => {
-    return axios
-      .get('/api/intron-analysis-heatmap', {
-        params: {
-          study: 'mcf',
-          gene: gene.toUpperCase()
-        }
+        genes: genes,
+        type: type
       })
       .then(resp => {
         return resp.data
