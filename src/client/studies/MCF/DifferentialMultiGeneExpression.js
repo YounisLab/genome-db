@@ -39,6 +39,8 @@ class DifferentialMultiGeneExpression extends React.Component {
 
   service = new MCFService()
 
+  heatMapType = 'fpkm'
+
   searchText = ''
 
   updateSearchText = evt => {
@@ -55,7 +57,7 @@ class DifferentialMultiGeneExpression extends React.Component {
     const newlineTokens = _.split(this.searchText, '\n') // Split newline tokens
     const filteredTokens = _.filter(newlineTokens, t => t !== '')
     const genes = _.map(filteredTokens, t => _.trim(t).toUpperCase()) // Trim whitespaces and convert to uppercase
-    this.service.getHeatMap(genes).then(data => {
+    this.service.getHeatMap(genes, this.heatMapType).then(data => {
       const series = createHeatMapSeries(
         data,
         this.service.samples,

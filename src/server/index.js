@@ -90,8 +90,11 @@ app.get('/api/vertical', (req, res) => {
 })
 
 app.post('/api/heatmap', (req, res) => {
-  adapter
-    .heatMap(req.body.genes)
+  const heatmap =
+    req.body.type === 'fpkm'
+      ? adapter.heatMap(req.body.genes)
+      : adapter.intronAnalysisHeatmap(req.body.genes.toUpperCase())
+  heatmap
     .then(function (results) {
       res.json(results.rows)
     })
@@ -106,42 +109,6 @@ app.get('/api/correlations', (req, res) => {
     .correlations(req.query.table, req.query.gene, req.query.min, req.query.max)
     .then(function (results) {
       res.json(results)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
-
-app.get('/api/intron-analysis-heatmap', (req, res) => {
-  adapter
-    .intronAnalysisHeatmap(req.query.gene)
-    .then(function (results) {
-      res.json(results.rows)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
-
-app.get('/api/intron-analysis-bellcurve', (req, res) => {
-  adapter
-    .intronAnalysisBellCurve(req.query.sample)
-    .then(function (results) {
-      res.json(results)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
-
-app.get('/api/intron-analysis-vertical', (req, res) => {
-  adapter
-    .intronAnalysisVertical(req.query.gene)
-    .then(function (results) {
-      res.json(results.rows)
     })
     .catch(function (err) {
       console.log(err)

@@ -37,6 +37,7 @@ class IntronAnalysis extends React.Component {
   service = new MCFService()
 
   bellCurveType = 'psi'
+  heatMapType = 'psi'
 
   verticals = false
 
@@ -95,7 +96,7 @@ class IntronAnalysis extends React.Component {
       })
     })
 
-    this.service.getIntronAnalysisHeatMap(gene).then(data => {
+    this.service.getHeatMap(gene, this.heatMapType).then(data => {
       const series = createHeatMapSeries(
         data,
         this.service.samples,
