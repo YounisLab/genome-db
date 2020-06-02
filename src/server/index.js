@@ -124,27 +124,3 @@ app.get('/api/intron-analysis-heatmap', (req, res) => {
       res.status(500).json({ status: 'Error' })
     })
 })
-
-app.get('/api/intron-analysis-bellcurve', (req, res) => {
-  adapter
-    .intronAnalysisBellCurve(req.query.sample)
-    .then(function (results) {
-      res.json(results)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
-
-app.get('/api/intron-analysis-vertical', (req, res) => {
-  adapter
-    .intronAnalysisVertical(req.query.gene)
-    .then(function (results) {
-      res.json(results.rows)
-    })
-    .catch(function (err) {
-      console.log(err)
-      res.status(500).json({ status: 'Error' })
-    })
-})
