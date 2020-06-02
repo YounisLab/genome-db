@@ -90,29 +90,18 @@ app.get('/api/vertical', (req, res) => {
 })
 
 app.post('/api/heatmap', (req, res) => {
-  if (req.body.type === 'fpkm') {
-    adapter
-      .heatMap(req.body.genes)
-      .then(function (results) {
-        res.json(results.rows)
-      })
-      .catch(function (err) {
-        console.log(err)
-        res.status(500).json({ status: 'Error' })
-      })
-  }
-  // req.body.type === 'psi'
-  else {
-    adapter
-      .intronAnalysisHeatmap(req.body.genes.toUpperCase())
-      .then(function (results) {
-        res.json(results.rows)
-      })
-      .catch(function (err) {
-        console.log(err)
-        res.status(500).json({ status: 'Error' })
-      })
-  }
+  const heatmap =
+    req.body.type === 'fpkm'
+      ? adapter.heatMap(req.body.genes)
+      : adapter.intronAnalysisHeatmap(req.body.genes.toUpperCase())
+  heatmap
+    .then(function (results) {
+      res.json(results.rows)
+    })
+    .catch(function (err) {
+      console.log(err)
+      res.status(500).json({ status: 'Error' })
+    })
 })
 
 app.get('/api/correlations', (req, res) => {
