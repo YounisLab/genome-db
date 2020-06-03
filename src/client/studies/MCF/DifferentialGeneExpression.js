@@ -11,7 +11,7 @@ const columns = [
   { title: 'MCF10A FPKM', dataIndex: 'mcf10a_fpkm' },
   { title: 'MCF7 FPKM', dataIndex: 'mcf7_fpkm' },
   { title: 'p-value', dataIndex: 'pvalue' },
-  { title: 'log2 Foldchange', dataIndex: 'log2_foldchange' }
+  { title: 'Fold Change (log2)', dataIndex: 'log2_foldchange' }
 ]
 
 const colorMaps = {
