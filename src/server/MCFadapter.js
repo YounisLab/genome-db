@@ -14,13 +14,15 @@ export class MCFAdapter {
   // Computes smooth histogram curve
   bellCurve = (sample, subsets, type) => {
     if (type === 'fpkm') {
-      var key = sample + '_log2'
-      var conditions = {}
-      var select = {}
+      let key = sample + '_log2'
+      let conditions = {}
+      let select = {}
       conditions[key] = { $ne: Infinity }
       select[key] = 1
-      select['_id'] = 0
-      return this.mongodb.collection('mcf10a_vs_mcf7').find(conditions, {projection: select})
+      select._id = 0
+      return this.mongodb
+        .collection('mcf10a_vs_mcf7')
+        .find(conditions, {projection: select})
         .toArray()
         .then(result => {
           const log2fpkms = _.map(result, r => r[`${sample}_log2`])
@@ -28,36 +30,39 @@ export class MCFAdapter {
         })
     }
     // type === 'psi'
-    var key = sample + '_avg_log2_psi'
-    var conditions = {}
-    var select = {}
+    let key = sample + '_avg_log2_psi'
+    let conditions = {}
+    let select = {}
     conditions[key] = { $ne: '' }
     select[key] = 1
-    select['_id'] = 0
-    const fullDataLine = this.mongodb.collection('mcf_avg_psi').find(conditions, {projection : select})
+    select._id = 0
+    const fullDataLine = this.mongodb
+      .collection('mcf_avg_psi')
+      .find(conditions, {projection : select})
       .toArray()
       .then(result => {
         const avgPsiVals = _.map(result, r => r[`${sample}_avg_log2_psi`])
         return computeCurve(this.binsHash, avgPsiVals, sample + '_ia')
       })
-    var key = sample + '_avg_log2_psi'
-    var conditions = {}
-    var transform = {}
-    var select = {}
+    conditions = {}
+    let transform = {}
+    select = {}
     conditions[key] = { $ne: '' }
     conditions['matched'] = { $gte: 1 }
     transform['u12_gene'] = 1
     transform[key] = 1
     transform['matched'] = { "$size": "$u12_gene" }
-    select['_id'] = 0
+    select._id = 0
     select[key] = 1
-    var query = [
+    let query = [
       {$lookup: {from: 'u12_genes', localField: 'gene', foreignField: 'gene', as: 'u12_gene'}},
       {$project: transform},
       {$match: conditions},
       {$project: select}
      ]
-    const limitedDataLine = this.mongodb.collection('mcf_avg_psi').aggregate(query)
+    const limitedDataLine = this.mongodb
+      .collection('mcf_avg_psi')
+      .aggregate(query)
       .toArray()
       .then(result => {
         const avgPsiVals = _.map(result, r => r[`${sample}_avg_log2_psi`])
@@ -71,11 +76,13 @@ export class MCFAdapter {
   // Computes verticals to display on bellcurve
   vertical = (gene, samples, subsets, type) => {
     if (type === 'fpkm') {
-      var conditions = {}
-      var select = {}
+      let conditions = {}
+      let select = {}
       conditions['gene'] = gene
-      select['_id'] = 0
-      return this.mongodb.collection('mcf10a_vs_mcf7').find(conditions, {projection: select})
+      select._id = 0
+      return this.mongodb
+        .collection('mcf10a_vs_mcf7')
+        .find(conditions, {projection: select})
         .toArray()
         .then(results => {
           if (results.length < 1) {
@@ -95,24 +102,28 @@ export class MCFAdapter {
         })
     }
     // type === 'psi'
-    var conditions = {}
-    var select = {}
+    let conditions = {}
+    let select = {}
     conditions['gene'] = gene
     select['gene'] = 1
     select['mcf10a_avg_log2_psi'] = 1
     select['mcf7_avg_log2_psi'] = 1
-    select['_id'] = 0
-    return this.mongodb.collection('mcf_avg_psi').find(conditions, {projection: select})
+    select._id = 0
+    return this.mongodb
+      .collection('mcf_avg_psi')
+      .find(conditions, {projection: select})
       .toArray()
       .then(results => {
         if (results.length < 1) {
           return [] // gene not found
         }
         // Check if gene is in the u12 dataset
-        var conditions = {}
-        var select = {}
+        conditions = {}
+        select = {}
         conditions['gene'] = gene
-        return this.mongodb.collection('u12_genes').find(conditions)
+        return this.mongodb
+          .collection('u12_genes')
+          .find(conditions)
           .toArray()
           .then(u12Results => {
             const u12 = u12Results.length > 0
@@ -135,30 +146,36 @@ export class MCFAdapter {
   }
 
   heatMap = genes => {
-    var select = {}
+    let select = {}
     select['pvalue'] = 0
-    select['_id'] = 0
+    select._id = 0
     select['log2_foldchange'] = 0
-    var query = [
+    let query = [
       {$match: {gene: {$in: genes}}},
       {$addFields: {"key": {$indexOfArray: [genes, "$gene" ]}}},
       {$sort: {"key": 1}},
       {$project: select }
      ]
-    return this.mongodb.collection('mcf10a_vs_mcf7').aggregate(query).toArray()
+    return this.mongodb
+      .collection('mcf10a_vs_mcf7')
+      .aggregate(query)
+      .toArray()
   }
 
   intronAnalysisHeatmap = gene => {
-    var conditions = {}
-    var select = {}
-    var order = {}
+    let conditions = {}
+    let select = {}
+    let order = {}
     conditions['gene'] = gene
     select['intron_number'] = 1
     select['mcf10a_log2_psi'] = 1
     select['mcf7_log2_psi'] = 1
-    select['_id'] = 0
+    select._id = 0
     order['intron_number'] = 1
-    return this.mongodb.collection('mcf_intron_psi').find(conditions, {projection: select}).sort(order)
+    return this.mongodb
+      .collection('mcf_intron_psi')
+      .find(conditions, {projection: select})
+      .sort(order)
       .toArray()
       .then(results => {
         if (results.length < 1) {
