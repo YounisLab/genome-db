@@ -28,7 +28,7 @@ class MedianDistribution extends React.Component {
 
   bellCurveType = 'median'
 
-  verticals = false
+  verticals = 0
 
   performSearch = gene => {
     this.service.getVertical(gene, this.bellCurveType, this.service.subsets).then(data => {
@@ -45,13 +45,13 @@ class MedianDistribution extends React.Component {
       const chartData = this.state.chartData
 
       // Remove any old verticals
-      if (this.verticals) {
-        _.each(this.service.samples, () => chartData.pop())
-      }
+      _.times(this.verticals, () => _.each(this.service.samples, () => chartData.pop()))
+
+      let verticals = 0
 
       const x1 = data.median_log2_norm_count_plus_1 || 0
       // Create vertical for full tcga distribution
-      const coords = [
+      let coords = [
         [x1, data.tcga_height],
         [x1, 0]
       ]
@@ -61,8 +61,29 @@ class MedianDistribution extends React.Component {
         colorMaps.vertical.tcga
       )
       chartData.push(vertical)
+      verticals++
 
-      this.verticals = true
+      // Add verticals for subsets
+      _.each(this.service.subsets, function (subset) {
+        if (data[subset]) {
+          // Generate x,y coords for subset verticals
+          coords = [
+            [x1, data[`tcga_${subset}_height`]],
+            [x1, 0]
+          ]
+
+          const subsetVertical = createVerticalSeries(
+            `${gene.toUpperCase()} median_${subset}`,
+            coords,
+            colorMaps.vertical[`tcga_${subset}`]
+          )
+
+          chartData.push(subsetVertical)
+          verticals++
+        }
+      })
+
+      this.verticals = verticals
       this.setState({
         chartData: chartData,
         alertText: alertText
