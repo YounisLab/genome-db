@@ -103,7 +103,7 @@ class DifferentialMultiGeneExpression extends React.Component {
         <Row>
           <HeatMapChart
             series={this.state.chartData}
-            xAxisCategories={this.service.samples}
+            xAxisCategories={_.map(this.service.samples, sample => sample.toUpperCase())}
             yAxisCategories={this.state.yAxisCategories}
             yAxisMin={this.state.yAxisMin}
             yAxisMax={this.state.yAxisMax}

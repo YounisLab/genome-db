@@ -75,7 +75,7 @@ class DifferentialGeneExpression extends React.Component {
 
       // Create new verticals for each sample
       _.each(this.service.samples, sample => {
-        const name = `${gene} fpkm in ${sample}`
+        const name = `${gene.toUpperCase()} FPKM in ${sample.toUpperCase()}`
         // Generate x,y coords that draw the vertical line
         // Default x to 0 when log2 values are undefined
         const coords = [

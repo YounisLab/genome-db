@@ -55,7 +55,11 @@ class MedianDistribution extends React.Component {
         [x1, data.tcga_height],
         [x1, 0]
       ]
-      const vertical = createVerticalSeries(`${gene} median`, coords, colorMaps.vertical.tcga)
+      const vertical = createVerticalSeries(
+        `${gene.toUpperCase()} median`,
+        coords,
+        colorMaps.vertical.tcga
+      )
       chartData.push(vertical)
 
       this.verticals = true

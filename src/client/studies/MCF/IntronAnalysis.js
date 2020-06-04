@@ -69,7 +69,7 @@ class IntronAnalysis extends React.Component {
         ]
 
         const vertical = createVerticalSeries(
-          `${gene} psi in ${sample}`,
+          `${gene.toUpperCase()} psi in ${sample.toUpperCase()}`,
           coords,
           colorMaps.vertical[sample]
         )
@@ -191,7 +191,7 @@ class IntronAnalysis extends React.Component {
           <HeatMapChart
             series={this.state.heatMapChartData}
             xAxisCategories={this.state.xAxisCategories}
-            yAxisCategories={this.service.samples}
+            yAxisCategories={_.map(this.service.samples, sample => sample.toUpperCase())}
             yAxisMin={this.state.yAxisMin}
             yAxisMax={this.state.yAxisMax}
             tooltipFormatter={function () {
