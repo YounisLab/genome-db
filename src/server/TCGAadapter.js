@@ -19,46 +19,70 @@ export class TCGAAdapter {
   pool = null
   binsHash = {}
 
-  setPool = dbObj => {
+  setPool = (dbObj, mongodbObj) => {
     this.pool = dbObj
+    this.mongodb = mongodbObj
     return 0
   }
 
   bellCurve = (sample, subsets, type) => {
-    const fullDataLine = this.pool
-      .query('SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median')
+    var select = {}
+    select['median_log2_norm_count_plus_1'] = 1
+    select['_id'] = 0
+    const fullDataLine = this.mongodb.collection('tcga_brca_genes_median').find({}, {projection: select})
+      .toArray()
       .then(result => {
-        const medianCounts = _.map(result.rows, r => {
+        const medianCounts = _.map(result, r => {
           return r.median_log2_norm_count_plus_1
         })
         return computeCurve(this.binsHash, medianCounts, sample)
       })
-
-    const rbpDataLine = this.pool
-      .query(
-        `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median
-      INNER JOIN rbp_genes
-      ON tcga_brca_genes_median.gene = rbp_genes.gene`
-      )
-      .then(result => {
-        const medianCounts = _.map(result.rows, r => {
-          return r.median_log2_norm_count_plus_1
+      var conditions = {}
+      var transform = {}
+      var select = {}
+      conditions['matched'] = { $gte: 1 }
+      transform['rbp_gene'] = 1
+      transform['median_log2_norm_count_plus_1'] = 1
+      transform['matched'] = { "$size": "$rbp_gene" }
+      select['_id'] = 0
+      select['median_log2_norm_count_plus_1'] = 1
+      var query = [
+        {$lookup: {from: 'rbp_genes', localField: 'gene', foreignField: 'gene', as: 'rbp_gene'}},
+        {$project: transform},
+        {$match: conditions},
+        {$project: select}
+       ]
+      const rbpDataLine = this.mongodb.collection('tcga_brca_genes_median').aggregate(query)
+        .toArray()
+        .then(result => {
+          const medianCounts = _.map(result, r => {
+            return r.median_log2_norm_count_plus_1
+          })
+          return computeCurve(this.binsHash, medianCounts, sample + '_rbp')
         })
-        return computeCurve(this.binsHash, medianCounts, sample + '_rbp')
-      })
-
-    const u12DataLine = this.pool
-      .query(
-        `SELECT median_log2_norm_count_plus_1 FROM tcga_brca_genes_median
-      INNER JOIN u12_genes
-      ON tcga_brca_genes_median.gene = u12_genes.gene`
-      )
-      .then(result => {
-        const medianCounts = _.map(result.rows, r => {
-          return r.median_log2_norm_count_plus_1
+      var conditions = {}
+      var transform = {}
+      var select = {}
+      conditions['matched'] = { $gte: 1 }
+      transform['u12_gene'] = 1
+      transform['median_log2_norm_count_plus_1'] = 1
+      transform['matched'] = { "$size": "$u12_gene" }
+      select['_id'] = 0
+      select['median_log2_norm_count_plus_1'] = 1
+      var query = [
+        {$lookup: {from: 'u12_genes', localField: 'gene', foreignField: 'gene', as: 'u12_gene'}},
+        {$project: transform},
+        {$match: conditions},
+        {$project: select}
+        ]
+      const u12DataLine = this.mongodb.collection('tcga_brca_genes_median').aggregate(query)
+        .toArray()
+        .then(result => {
+          const medianCounts = _.map(result, r => {
+            return r.median_log2_norm_count_plus_1
+          })
+          return computeCurve(this.binsHash, medianCounts, sample + '_u12')
         })
-        return computeCurve(this.binsHash, medianCounts, sample + '_u12')
-      })
 
     return Promise.all([fullDataLine, rbpDataLine, u12DataLine]).then(values => {
       return values
@@ -66,52 +90,49 @@ export class TCGAAdapter {
   }
 
   vertical = (gene, samples, subsets, type) => {
-    return this.pool
-      .query(
-        `
-      SELECT
-        gene,
-        median_log2_norm_count_plus_1
-      FROM tcga_brca_genes_median
-      WHERE gene = $1
-    `,
-        [gene]
-      )
+    var conditions = {}
+    var select = {}
+    conditions['gene'] = gene
+    select['gene'] = 1
+    select['median_log2_norm_count_plus_1'] = 1
+    select['_id'] = 0
+    return this.mongodb.collection('tcga_brca_genes_median').find(conditions, {projection: select})
+      .toArray()
       .then(results => {
-        results.rows.u12 = false
-        results.rows.rbp = false
-        if (results.rows.length < 1) {
+        results.u12 = false
+        results.rbp = false
+        if (results.length < 1) {
           return [] // gene not found
         }
         const samples = ['tcga']
         // Check if gene is in the u12 dataset
-        return this.pool
-          .query(
-            `
-          SELECT 1 FROM u12_genes WHERE gene= '${gene}'
-        `
-          )
+        var conditions = {}
+        var select = {}
+        conditions['gene'] = gene
+        select['_id'] = 0
+        return this.mongodb.collection('u12_genes').find(conditions, {projection: select})
+          .toArray()
           .then(u12Results => {
-            if (u12Results.rows.length > 0) {
+            if (u12Results.length > 0) {
               samples.push('tcga_u12')
-              results.rows[0].u12 = true
+              results[0].u12 = true
             }
             // Check if gene is in rbp dataaset
-            return this.pool
-              .query(
-                `
-              SELECT 1 FROM rbp_genes WHERE gene= '${gene}'
-            `
-              )
+            var conditions = {}
+            var select = {}
+            conditions['gene'] = gene
+            select['_id'] = 0
+            return this.mongodb.collection('rbp_genes').find(conditions, {projection: select})
+              .toArray()
               .then(rbpResults => {
-                if (rbpResults.rows.length > 0) {
+                if (rbpResults.length > 0) {
                   samples.push('tcga_rbp')
-                  results.rows[0].rbp = true
+                  results[0].rbp = true
                 }
                 _.each(samples, sample => {
                   if (this.binsHash[sample]) {
-                    results.rows[0][`${sample}_height`] = NormalDensityZx(
-                      results.rows[0].median_log2_norm_count_plus_1,
+                    results[0][`${sample}_height`] = NormalDensityZx(
+                      results[0].median_log2_norm_count_plus_1,
                       this.binsHash[sample].mean,
                       this.binsHash[sample].stddev,
                       this.binsHash[sample].scaleFactor
@@ -125,13 +146,20 @@ export class TCGAAdapter {
   }
 
   correlations = (table, gene, min, max) => {
+    var conditions = {}
+    var select = {}
+    conditions['gene'] = gene
+    select['rvalue'] = 1
+    select['_id'] = 0
     // Returns RBP names with corresponing Rvalue for gene in sorted order
-    return this.pool.query(`SELECT rvalue FROM ${table} WHERE gene = '${gene}'`).then(results => {
-      if (results.rows.length < 1) {
+    return this.mongodb.collection(table).find(conditions, {projection: select})
+    .toArray()
+    .then(results => {
+      if (results.length < 1) {
         return [] // gene not found
       }
       // Pass just json with gene:correlation
-      const filteredRvals = rangeFilter(results.rows[0].rvalue, min, max)
+      const filteredRvals = rangeFilter(results[0].rvalue, min, max)
       // Map to object with gene and rvals as keys
       const mappedRvals = _.map(filteredRvals, (value, gene) => {
         return { gene: gene, Rvalue: value }
