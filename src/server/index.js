@@ -29,8 +29,11 @@ function connect() {
     connectionString: dbURL.href
   })
   return pool.query('SELECT NOW() as now').then(function () {
-    MongoClient.connect(mongodbURL, function(err, client) {
-      console.log("Connected successfully to server")
+    MongoClient.connect(mongodbURL, function (err, client) {
+      if (err) {
+        console.log(err)
+      }
+      console.log('Connected successfully to server')
       mongodb = client.db(mongodbDB)
     })
   })

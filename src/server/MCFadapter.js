@@ -51,15 +51,15 @@ export class MCFAdapter {
     conditions.matched = { $gte: 1 }
     transform.u12_gene = 1
     transform[key] = 1
-    transform.matched = { "$size": "$u12_gene" }
+    transform.matched = { $size: '$u12_gene' }
     select._id = 0
     select[key] = 1
-    let query = [
-      {$lookup: {from: 'u12_genes', localField: 'gene', foreignField: 'gene', as: 'u12_gene'}},
-      {$project: transform},
-      {$match: conditions},
-      {$project: select}
-     ]
+    const query = [
+      { $lookup: { from: 'u12_genes', localField: 'gene', foreignField: 'gene', as: 'u12_gene' } },
+      { $project: transform },
+      { $match: conditions },
+      { $project: select }
+    ]
     const limitedDataLine = this.mongodb
       .collection('mcf_avg_psi')
       .aggregate(query)
@@ -151,15 +151,12 @@ export class MCFAdapter {
     select._id = 0
     select.log2_foldchange = 0
     const query = [
-      {$match: {gene: {$in: genes}}},
-      {$addFields: {"key": {$indexOfArray: [genes, "$gene" ]}}},
-      {$sort: {"key": 1}},
-      {$project: select}
-     ]
-    return this.mongodb
-      .collection('mcf10a_vs_mcf7')
-      .aggregate(query)
-      .toArray()
+      { $match: { gene: { $in: genes } } },
+      { $addFields: { key: { $indexOfArray: [genes, '$gene'] } } },
+      { $sort: { key: 1 } },
+      { $project: select }
+    ]
+    return this.mongodb.collection('mcf10a_vs_mcf7').aggregate(query).toArray()
   }
 
   intronAnalysisHeatmap = gene => {
