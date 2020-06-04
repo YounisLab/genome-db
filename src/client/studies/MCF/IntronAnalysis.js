@@ -40,6 +40,7 @@ class IntronAnalysis extends React.Component {
   heatMapType = 'psi'
 
   verticals = false
+  subsetVerticals = false
 
   performSearch = gene => {
     // performSearch does 2 things:
@@ -52,6 +53,11 @@ class IntronAnalysis extends React.Component {
       if (this.verticals) {
         _.each(this.service.samples, () => bellCurveChartData.pop())
       }
+      if (this.subsetVerticals) {
+        _.each(this.service.samples, () => bellCurveChartData.pop())
+      }
+
+      let subsetVerticals = false
 
       // Create verticals for each sample
       _.each(this.service.samples, sample => {
@@ -72,25 +78,27 @@ class IntronAnalysis extends React.Component {
         // Add verticals for subsets
         _.each(this.service.subsets, function (subset) {
           const sampleSubset = `${sample}_${subset}`
-          if (vertical[sampleSubset]) {
+          if (data[subset]) {
             // Generate x,y coords for subset verticals
             coords = [
               [data[`${sample}_avg_log2_psi`] || 0, 0],
-              [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_${subset}_height`]]
+              [data[`${sample}_avg_log2_psi`] || 0, data[`${sampleSubset}_height`]]
             ]
 
             const subsetVertical = createVerticalSeries(
-              `${vertical.gene} psi in ${sampleSubset}`,
+              `${gene.toUpperCase()} psi in ${sampleSubset.toUpperCase()}`,
               coords,
               colorMaps.vertical[sampleSubset]
             )
 
             bellCurveChartData.push(subsetVertical)
+            subsetVerticals = true
           }
         })
       })
 
       this.verticals = true
+      this.subsetVerticals = subsetVerticals
       this.setState({
         bellCurveChartData: bellCurveChartData
       })
