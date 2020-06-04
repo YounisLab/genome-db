@@ -176,7 +176,7 @@ class IntronAnalysis extends React.Component {
     return (
       <Content>
         <Row>
-          <h1>Intron Analysis</h1>
+          <h1>Minor-Intron Splicing Efficiency</h1>
         </Row>
         <Row>
           <Search
