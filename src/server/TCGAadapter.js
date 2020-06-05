@@ -26,7 +26,7 @@ export class TCGAAdapter {
   bellCurve = (sample, subsets, type) => {
     let projection = {
       median_log2_norm_count_plus_1: 1,
-      _id: 0,
+      _id: 0
     }
     const fullDataLine = this.mongodb
       .collection('tcga_brca_genes_median')
@@ -40,15 +40,15 @@ export class TCGAAdapter {
       })
     let conditions = {
       matched: {
-          $gte: 1
-        }
+        $gte: 1
+      }
     }
     let transform = {
       rbp_gene: 1,
       median_log2_norm_count_plus_1: 1,
       matched: {
-          $size: '$rbp_gene'
-        }
+        $size: '$rbp_gene'
+      }
     }
     projection = {
       median_log2_norm_count_plus_1: 1,
@@ -70,17 +70,17 @@ export class TCGAAdapter {
         })
         return computeCurve(this.binsHash, medianCounts, sample + '_rbp')
       })
-    conditions =  {
+    conditions = {
       matched: {
-          $gte: 1
-        }
+        $gte: 1
+      }
     }
     transform = {
       u12_gene: 1,
       median_log2_norm_count_plus_1: 1,
       matched: {
-          $size: '$u12_gene'
-        }
+        $size: '$u12_gene'
+      }
     }
     projection = {
       median_log2_norm_count_plus_1: 1,
@@ -110,7 +110,7 @@ export class TCGAAdapter {
 
   vertical = (gene, samples, subsets, type) => {
     let conditions = {
-      gene: gene,
+      gene: gene
     }
     let projection = {
       gene: 1,

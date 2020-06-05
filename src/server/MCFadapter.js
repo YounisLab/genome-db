@@ -15,12 +15,12 @@ export class MCFAdapter {
       const key = sample + '_log2'
       const conditions = {
         [key]: {
-            $ne: Infinity
-         }
+          $ne: Infinity
+        }
       }
       const projection = {
         [key]: 1,
-        _id:  0
+        _id: 0
       }
       return this.mongodb
         .collection('mcf10a_vs_mcf7')
@@ -35,12 +35,12 @@ export class MCFAdapter {
     const key = sample + '_avg_log2_psi'
     let conditions = {
       [key]: {
-          $ne: ''
-        }
+        $ne: ''
+      }
     }
     let projection = {
       [key]: 1,
-      _id:  0
+      _id: 0
     }
     const fullDataLine = this.mongodb
       .collection('mcf_avg_psi')
@@ -54,20 +54,20 @@ export class MCFAdapter {
       u12_gene: 1,
       [key]: 1,
       matched: {
-          $size: '$u12_gene'
-        }
+        $size: '$u12_gene'
+      }
     }
     projection = {
       [key]: 1,
-      _id:  0
+      _id: 0
     }
     conditions = {
       [key]: {
-          $ne: ''
-        },
+        $ne: ''
+      },
       matched: {
-          $gte: 1
-        }
+        $gte: 1
+      }
     }
     const query = [
       { $lookup: { from: 'u12_genes', localField: 'gene', foreignField: 'gene', as: 'u12_gene' } },
@@ -95,7 +95,7 @@ export class MCFAdapter {
         gene: gene
       }
       const projection = {
-        _id:  0
+        _id: 0
       }
       return this.mongodb
         .collection('mcf10a_vs_mcf7')
@@ -182,7 +182,7 @@ export class MCFAdapter {
 
   intronAnalysisHeatmap = gene => {
     const conditions = {
-      gene: gene,
+      gene: gene
     }
     const projection = {
       intron_number: 1,
@@ -191,7 +191,7 @@ export class MCFAdapter {
       _id: 0
     }
     const order = {
-      intron_number: 1,
+      intron_number: 1
     }
     return this.mongodb
       .collection('mcf_intron_psi')

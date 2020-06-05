@@ -1,5 +1,4 @@
 import express from 'express'
-import { URL } from 'url'
 import { MCFAdapter as MCFAdapterClass } from './MCFadapter'
 import { TCGAAdapter as TCGAAdapterClass } from './TCGAadapter'
 import bodyParser from 'body-parser'
@@ -19,9 +18,9 @@ let mongodb
 // set up db object
 function connect() {
   return MongoClient.connect(mongoURL)
-  .then(function (client) {
-    console.log('Connected successfully to server')
-    mongodb = client.db(mongoDatabase)
+    .then(function (client) {
+      console.log('Connected successfully to server')
+      mongodb = client.db(mongoDatabase)
     })
     .catch(function (err) {
       console.log(err)
