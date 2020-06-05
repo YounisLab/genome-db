@@ -2,7 +2,7 @@ import React from 'react'
 import { TCGAService } from '../../services'
 import { Table, Alert } from 'antd'
 import { Content, Row, BellCurveChart } from '../../components/'
-import { createCurveSeries, createHistogramSeries, createVerticalSeries } from '../shared-utils'
+import { createCurveSeries, createVerticalSeries } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
 import _ from 'lodash'
 
@@ -14,7 +14,6 @@ const columns = [
 
 const colorMaps = {
   curve: { tcga: '#77a1e5', tcga_rbp: 'green', tcga_u12: '#f28f43' },
-  histogram: { tcga: '#77a1e5', tcga_rbp: 'green', tcga_u12: '#f28f43' },
   vertical: { tcga: '#77a1e5', tcga_rbp: 'green', tcga_u12: '#f28f43' }
 }
 
@@ -103,12 +102,7 @@ class MedianDistribution extends React.Component {
           dataPerSample.data[0].curve,
           colorMaps.curve[sample]
         )
-        const hgram = createHistogramSeries(
-          sample,
-          dataPerSample.data[0].hgram,
-          colorMaps.histogram[sample]
-        )
-        series.push(curve, hgram)
+        series.push(curve)
         medianVals[sample] = dataPerSample.data[0].median
 
         _.each(this.service.subsets, function (subset, index) {
@@ -120,12 +114,7 @@ class MedianDistribution extends React.Component {
             subsetData.curve,
             colorMaps.curve[subsetSample]
           )
-          const subsetHgram = createHistogramSeries(
-            subsetSample,
-            subsetData.hgram,
-            colorMaps.histogram[subsetSample]
-          )
-          series.push(subsetCurve, subsetHgram)
+          series.push(subsetCurve)
           medianVals[subsetSample] = subsetData.median
         })
       })

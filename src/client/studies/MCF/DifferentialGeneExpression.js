@@ -1,7 +1,7 @@
 import React from 'react'
 import { MCFService } from '../../services'
 import { Content, Row, BellCurveChart } from '../../components/'
-import { createCurveSeries, createHistogramSeries, createVerticalSeries } from '../shared-utils'
+import { createCurveSeries, createVerticalSeries } from '../shared-utils'
 import { Input, Table, Alert } from 'antd'
 import _ from 'lodash'
 const { Search } = Input
@@ -16,7 +16,6 @@ const columns = [
 
 const colorMaps = {
   curve: { mcf10a: 'blue', mcf7: 'red' },
-  histogram: { mcf10a: 'blue', mcf7: 'red' },
   vertical: { mcf10a: 'blue', mcf7: 'red' }
 }
 
@@ -109,12 +108,7 @@ class DifferentialGeneExpression extends React.Component {
           dataPerSample.data[0].curve,
           colorMaps.curve[sample]
         )
-        const hgram = createHistogramSeries(
-          sample,
-          dataPerSample.data[0].hgram,
-          colorMaps.histogram[sample]
-        )
-        series.push(curve, hgram)
+        series.push(curve)
       })
 
       this.setState({

@@ -1,12 +1,7 @@
 import React from 'react'
 import { MCFService } from '../../services'
 import { Content, Row, BellCurveChart, HeatMapChart } from '../../components/'
-import {
-  createCurveSeries,
-  createHistogramSeries,
-  createVerticalSeries,
-  createHeatMapSeries
-} from '../shared-utils'
+import { createCurveSeries, createVerticalSeries, createHeatMapSeries } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
 import { Table } from 'antd'
 import _ from 'lodash'
@@ -20,7 +15,6 @@ const columns = [
 
 const colorMaps = {
   curve: { mcf10a: 'blue', mcf7: 'red', mcf10a_u12: 'purple', mcf7_u12: 'green' },
-  histogram: { mcf10a: 'blue', mcf7: 'red', mcf10a_u12: 'purple', mcf7_u12: 'green' },
   vertical: { mcf10a: 'blue', mcf7: 'red', mcf10a_u12: 'purple', mcf7_u12: 'green' }
 }
 
@@ -135,12 +129,7 @@ class IntronAnalysis extends React.Component {
           dataPerSample.data[0].curve,
           colorMaps.curve[sample]
         )
-        const hgram = createHistogramSeries(
-          sample,
-          dataPerSample.data[0].hgram,
-          colorMaps.histogram[sample]
-        )
-        series.push(curve, hgram)
+        series.push(curve)
         medianVals[sample] = dataPerSample.data[0].median
 
         _.each(this.service.subsets, function (subset, index) {
@@ -152,12 +141,7 @@ class IntronAnalysis extends React.Component {
             subsetData.curve,
             colorMaps.curve[subsetSample]
           )
-          const subsetHgram = createHistogramSeries(
-            subsetSample,
-            subsetData.hgram,
-            colorMaps.histogram[subsetSample]
-          )
-          series.push(subsetCurve, subsetHgram)
+          series.push(subsetCurve)
           medianVals[subsetSample] = subsetData.median
         })
       })

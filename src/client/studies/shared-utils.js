@@ -12,16 +12,6 @@ export function createCurveSeries(sample, data, color) {
   }
 }
 
-export function createHistogramSeries(sample, data, color) {
-  return {
-    name: `${sample.toUpperCase()} histogram`,
-    type: 'column',
-    data: data,
-    color: color,
-    visible: false
-  }
-}
-
 export function createVerticalSeries(sample, data, color) {
   return {
     name: `${sample}`,
