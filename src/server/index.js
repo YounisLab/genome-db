@@ -3,40 +3,29 @@ import { URL } from 'url'
 import { MCFAdapter as MCFAdapterClass } from './MCFadapter'
 import { TCGAAdapter as TCGAAdapterClass } from './TCGAadapter'
 import bodyParser from 'body-parser'
-import Pool from 'pg-pool'
 import MongoClient from 'mongodb'
 
 const app = express()
 const port = process.env.PORT || 8080
-const dbURL = new URL(
-  process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'
-)
-const mongodbURL = process.env.MONGODB_URL
-const mongodbDB = process.env.MONGO_DATABASE
+const mongoURL = process.env.MONGO_URL || 'mongodb://mongo'
+const mongoDatabase = process.env.MONGO_DATABASE || 'genomedb'
 
 const MCFAdapter = new MCFAdapterClass()
 const TCGAAdapter = new TCGAAdapterClass()
 
 let adapter // set by middleware
-let pool
 let mongodb
 
 // set up db object
 function connect() {
-  const host = dbURL.host
-  console.log('Connecting to postgres at', host)
-  pool = new Pool({
-    connectionString: dbURL.href
-  })
-  return pool.query('SELECT NOW() as now').then(function () {
-    MongoClient.connect(mongodbURL, function (err, client) {
-      if (err) {
-        console.log(err)
-      }
-      console.log('Connected successfully to server')
-      mongodb = client.db(mongodbDB)
+  return MongoClient.connect(mongoURL)
+  .then(function (client) {
+    console.log('Connected successfully to server')
+    mongodb = client.db(mongoDatabase)
     })
-  })
+    .catch(function (err) {
+      console.log(err)
+    })
 }
 
 app.use(bodyParser.json({ limit: '5mb' }))
@@ -66,8 +55,8 @@ connect()
 
 // pass in db object to adapter
 app.use(function (req, res, next) {
-  if (adapter.setPool(pool, mongodb) !== 0) {
-    console.log('Error Setting Pool. Exiting..')
+  if (adapter.setDB(mongodb) !== 0) {
+    console.log('Error Setting Mongodb. Exiting..')
     process.exit(1)
   }
   next()

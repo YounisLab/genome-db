@@ -16,22 +16,21 @@ function rangeFilter(rvals, min, max) {
 }
 
 export class TCGAAdapter {
-  pool = null
   binsHash = {}
 
-  setPool = (dbObj, mongodbObj) => {
-    this.pool = dbObj
+  setDB = mongodbObj => {
     this.mongodb = mongodbObj
     return 0
   }
 
   bellCurve = (sample, subsets, type) => {
-    let select = {}
-    select.median_log2_norm_count_plus_1 = 1
-    select._id = 0
+    let projection = {
+      median_log2_norm_count_plus_1: 1,
+      _id: 0,
+    }
     const fullDataLine = this.mongodb
       .collection('tcga_brca_genes_median')
-      .find({}, { projection: select })
+      .find({}, { projection: projection })
       .toArray()
       .then(result => {
         const medianCounts = _.map(result, r => {
@@ -39,20 +38,27 @@ export class TCGAAdapter {
         })
         return computeCurve(this.binsHash, medianCounts, sample)
       })
-    let conditions = {}
-    let transform = {}
-    select = {}
-    conditions.matched = { $gte: 1 }
-    transform.rbp_gene = 1
-    transform.median_log2_norm_count_plus_1 = 1
-    transform.matched = { $size: '$rbp_gene' }
-    select._id = 0
-    select.median_log2_norm_count_plus_1 = 1
+    let conditions = {
+      matched: {
+          $gte: 1
+        }
+    }
+    let transform = {
+      rbp_gene: 1,
+      median_log2_norm_count_plus_1: 1,
+      matched: {
+          $size: '$rbp_gene'
+        }
+    }
+    projection = {
+      median_log2_norm_count_plus_1: 1,
+      _id: 0
+    }
     let query = [
       { $lookup: { from: 'rbp_genes', localField: 'gene', foreignField: 'gene', as: 'rbp_gene' } },
       { $project: transform },
       { $match: conditions },
-      { $project: select }
+      { $project: projection }
     ]
     const rbpDataLine = this.mongodb
       .collection('tcga_brca_genes_median')
@@ -64,20 +70,27 @@ export class TCGAAdapter {
         })
         return computeCurve(this.binsHash, medianCounts, sample + '_rbp')
       })
-    conditions = {}
-    transform = {}
-    select = {}
-    conditions.matched = { $gte: 1 }
-    transform.u12_gene = 1
-    transform.median_log2_norm_count_plus_1 = 1
-    transform.matched = { $size: '$u12_gene' }
-    select._id = 0
-    select.median_log2_norm_count_plus_1 = 1
+    conditions =  {
+      matched: {
+          $gte: 1
+        }
+    }
+    transform = {
+      u12_gene: 1,
+      median_log2_norm_count_plus_1: 1,
+      matched: {
+          $size: '$u12_gene'
+        }
+    }
+    projection = {
+      median_log2_norm_count_plus_1: 1,
+      _id: 0
+    }
     query = [
       { $lookup: { from: 'u12_genes', localField: 'gene', foreignField: 'gene', as: 'u12_gene' } },
       { $project: transform },
       { $match: conditions },
-      { $project: select }
+      { $project: projection }
     ]
     const u12DataLine = this.mongodb
       .collection('tcga_brca_genes_median')
@@ -96,15 +109,17 @@ export class TCGAAdapter {
   }
 
   vertical = (gene, samples, subsets, type) => {
-    let conditions = {}
-    let select = {}
-    conditions.gene = gene
-    select.gene = 1
-    select.median_log2_norm_count_plus_1 = 1
-    select._id = 0
+    let conditions = {
+      gene: gene,
+    }
+    let projection = {
+      gene: 1,
+      median_log2_norm_count_plus_1: 1,
+      _id: 0
+    }
     return this.mongodb
       .collection('tcga_brca_genes_median')
-      .find(conditions, { projection: select })
+      .find(conditions, { projection: projection })
       .toArray()
       .then(results => {
         results.u12 = false
@@ -114,13 +129,15 @@ export class TCGAAdapter {
         }
         const samples = ['tcga']
         // Check if gene is in the u12 dataset
-        conditions = {}
-        select = {}
-        conditions.gene = gene
-        select._id = 0
+        conditions = {
+          gene: gene
+        }
+        projection = {
+          _id: 0
+        }
         return this.mongodb
           .collection('u12_genes')
-          .find(conditions, { projection: select })
+          .find(conditions, { projection: projection })
           .toArray()
           .then(u12Results => {
             if (u12Results.length > 0) {
@@ -128,13 +145,15 @@ export class TCGAAdapter {
               results[0].u12 = true
             }
             // Check if gene is in rbp dataaset
-            conditions = {}
-            select = {}
-            conditions.gene = gene
-            select._id = 0
+            conditions = {
+              gene: gene
+            }
+            projection = {
+              _id: 0
+            }
             return this.mongodb
               .collection('rbp_genes')
-              .find(conditions, { projection: select })
+              .find(conditions, { projection: projection })
               .toArray()
               .then(rbpResults => {
                 if (rbpResults.length > 0) {
@@ -158,15 +177,17 @@ export class TCGAAdapter {
   }
 
   correlations = (table, gene, min, max) => {
-    const conditions = {}
-    const select = {}
-    conditions.gene = gene
-    select.rvalue = 1
-    select._id = 0
+    const conditions = {
+      gene: gene
+    }
+    const projection = {
+      rvalue: 1,
+      _id: 0
+    }
     // Returns RBP names with corresponing Rvalue for gene in sorted order
     return this.mongodb
       .collection(table)
-      .find(conditions, { projection: select })
+      .find(conditions, { projection: projection })
       .toArray()
       .then(results => {
         if (results.length < 1) {

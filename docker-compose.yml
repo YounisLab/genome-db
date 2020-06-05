@@ -12,7 +12,7 @@ services:
     depends_on:
       - postgres
     environment:
-      - MONGODB_URL=mongodb://mongo
+      - MONGO_URL=mongodb://mongo
       - MONGO_DATABASE=genomedb
   postgres:
     image: postgres:9.5
