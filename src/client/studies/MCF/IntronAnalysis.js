@@ -55,26 +55,13 @@ class IntronAnalysis extends React.Component {
 
       // Create verticals for each sample
       _.each(this.service.samples, sample => {
-        // Generate x,y coords that draw the vertical line
-        // Default x to 0 when log2 values are undefined
-        let coords = [
-          [data[`${sample}_avg_log2_psi`] || 0, 0],
-          [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_height`]]
-        ]
-
-        const vertical = createVerticalSeries(
-          `${gene.toUpperCase()} psi in ${sample.toUpperCase()}`,
-          coords,
-          colorMaps.vertical[sample]
-        )
-        bellCurveChartData.push(vertical)
-
         // Add verticals for subsets
         _.each(this.service.subsets, function (subset) {
           const sampleSubset = `${sample}_${subset}`
           if (data[subset]) {
             // Generate x,y coords for subset verticals
-            coords = [
+            // Default x to 0 when log2 values are undefined
+            const coords = [
               [data[`${sample}_avg_log2_psi`] || 0, 0],
               [data[`${sample}_avg_log2_psi`] || 0, data[`${sampleSubset}_height`]]
             ]
@@ -124,12 +111,6 @@ class IntronAnalysis extends React.Component {
 
       _.each(data, dataPerSample => {
         const sample = dataPerSample.sample
-        const curve = createCurveSeries(
-          sample,
-          dataPerSample.data[0].curve,
-          colorMaps.curve[sample]
-        )
-        series.push(curve)
         medianVals[sample] = dataPerSample.data[0].median
 
         _.each(this.service.subsets, function (subset, index) {
