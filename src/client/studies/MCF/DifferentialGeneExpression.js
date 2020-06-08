@@ -153,7 +153,12 @@ class DifferentialGeneExpression extends React.Component {
           />
         </Row>
         <Row>
-          <BellCurveChart series={this.state.chartData} xLabel={'Log2 FPKM'} yLabel={'Frequency'} />
+          <BellCurveChart
+            series={this.state.chartData}
+            xLabel={'Log2 FPKM'}
+            yLabel={'Frequency'}
+            filename={'mcf_bellcurve'}
+          />
         </Row>
       </Content>
     )

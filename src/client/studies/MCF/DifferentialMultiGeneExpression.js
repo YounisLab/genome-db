@@ -112,6 +112,7 @@ class DifferentialMultiGeneExpression extends React.Component {
               return `Log2 FPKM for <b>${this.series.yAxis.categories[this.point.y]}</b>
               in <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${this.point.value}</b>`
             }}
+            filename={'mcfHeatMap'}
           />
         </Row>
         <Row>

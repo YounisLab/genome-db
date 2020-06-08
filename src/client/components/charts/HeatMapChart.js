@@ -2,7 +2,7 @@ import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HeatMapFactory from 'highcharts/modules/heatmap'
-
+import { getExportOptions, ExportButton } from '../../components'
 HeatMapFactory(Highcharts)
 
 /*
@@ -17,12 +17,22 @@ HeatMapFactory(Highcharts)
   }
 */
 class HeatMapChart extends React.Component {
+  exportOptions
+
+  getChartRef = () => {
+    return this.refs.chart.chart
+  }
+
   render() {
+    this.exportOptions = getExportOptions(this.props.filename)
     return (
       <div>
         <HighchartsReact
           highcharts={Highcharts}
+          constructorType={'chart'}
+          ref={'chart'}
           options={{
+            exporting: this.exportOptions,
             chart: {
               type: 'heatmap',
               marginTop: 40,
@@ -90,6 +100,7 @@ class HeatMapChart extends React.Component {
             }
           }}
         />
+        <ExportButton getChartRef={this.getChartRef} />
       </div>
     )
   }

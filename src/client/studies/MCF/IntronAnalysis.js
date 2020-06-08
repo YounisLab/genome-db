@@ -185,6 +185,7 @@ class IntronAnalysis extends React.Component {
                 this.point.value
               }</b>`
             }}
+            filename={'intronAnalysisHeatMap'}
           />
         </Row>
         <Row>
@@ -203,6 +204,7 @@ class IntronAnalysis extends React.Component {
             series={this.state.bellCurveChartData}
             xLabel={'Log2 Psi'}
             yLabel={'Frequency'}
+            filename={'intronAnalysisBellCurve'}
           />
         </Row>
       </Content>
