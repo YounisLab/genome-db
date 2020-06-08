@@ -49,24 +49,11 @@ class MedianDistribution extends React.Component {
       let verticals = 0
 
       const x1 = data.median_log2_norm_count_plus_1 || 0
-      // Create vertical for full tcga distribution
-      let coords = [
-        [x1, data.tcga_height],
-        [x1, 0]
-      ]
-      const vertical = createVerticalSeries(
-        `${gene.toUpperCase()} median`,
-        coords,
-        colorMaps.vertical.tcga
-      )
-      chartData.push(vertical)
-      verticals++
-
       // Add verticals for subsets
       _.each(this.service.subsets, function (subset) {
         if (data[subset]) {
           // Generate x,y coords for subset verticals
-          coords = [
+          const coords = [
             [x1, data[`tcga_${subset}_height`]],
             [x1, 0]
           ]
