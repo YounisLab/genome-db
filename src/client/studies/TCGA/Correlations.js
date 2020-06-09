@@ -20,14 +20,14 @@ class Correlations extends React.Component {
   generateCSVHeaders = label => {
     return [
       { label: label, key: 'gene' },
-      { label: 'Rvalue', key: 'Rvalue' }
+      { label: 'rvalue', key: 'rvalue' }
     ]
   }
 
   generateTableColumns = title => {
     return [
       { title: title, dataIndex: 'gene', width: '40%' },
-      { title: 'Rvalue', dataIndex: 'Rvalue', sorter: (a, b) => a.Rvalue - b.Rvalue }
+      { title: 'rvalue', dataIndex: 'rvalue', sorter: (a, b) => a.Rvalue - b.Rvalue }
     ]
   }
 

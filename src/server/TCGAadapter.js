@@ -1,20 +1,6 @@
 import _ from 'lodash'
 import { NormalDensityZx, computeCurve } from './utility'
 
-// Return RBP json filtered to remove 'NA'
-// and match range
-function rangeFilter(rvals, min, max) {
-  return _.pickBy(rvals, value => {
-    return (
-      value !== 'N/A' &&
-      // If either min or max defined make
-      // appropriate comparison
-      (min == null || value > min) &&
-      (max == null || value < max)
-    )
-  })
-}
-
 export class TCGAAdapter {
   binsHash = {}
 
@@ -177,31 +163,48 @@ export class TCGAAdapter {
   }
 
   correlations = (table, gene, min, max) => {
+    min = Number(min) || Number.MIN_SAFE_INTEGER
+    max = Number(max) || Number.MAX_SAFE_INTEGER
     const conditions = {
       gene: gene
     }
     const projection = {
-      rvalue: 1,
+      rvalues: 1,
       _id: 0
     }
+    const query = [
+      { $match: conditions },
+      {
+        $project: {
+          rvalues: {
+            $filter: {
+              input: '$rvalues',
+              as: 'entry',
+              cond: {
+                $and: [
+                  { $ne: ['$$entry.rvalue', 'N/A'] },
+                  { $gt: ['$$entry.rvalue', min] },
+                  { $lt: ['$$entry.rvalue', max] }
+                ]
+              }
+            }
+          }
+        }
+      },
+      { $project: projection }
+    ]
     // Returns RBP names with corresponing Rvalue for gene in sorted order
     return this.mongodb
       .collection(table)
-      .find(conditions, { projection: projection })
+      .aggregate(query)
       .toArray()
       .then(results => {
         if (results.length < 1) {
           return [] // gene not found
         }
-        // Pass just json with gene:correlation
-        const filteredRvals = rangeFilter(results[0].rvalue, min, max)
-        // Map to object with gene and rvals as keys
-        const mappedRvals = _.map(filteredRvals, (value, gene) => {
-          return { gene: gene, Rvalue: value }
-        })
         return _.reverse(
-          _.sortBy(mappedRvals, o => {
-            return o.Rvalue // We use reciprocal to achieve descending sort
+          _.sortBy(results[0].rvalues, o => {
+            return o.rvalue // We use reciprocal to achieve descending sort
           })
         )
       })
