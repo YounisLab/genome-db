@@ -89,9 +89,7 @@ export class TCGAAdapter {
         return computeCurve(this.binsHash, medianCounts, sample + '_u12')
       })
 
-    return Promise.all([fullDataLine, rbpDataLine, u12DataLine]).then(values => {
-      return values
-    })
+    return Promise.all([fullDataLine, rbpDataLine, u12DataLine])
   }
 
   vertical = (gene, samples, subsets, type) => {

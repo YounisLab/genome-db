@@ -83,9 +83,7 @@ export class MCFAdapter {
         const avgPsiVals = _.map(result, r => r[`${sample}_avg_log2_psi`])
         return computeCurve(this.binsHash, avgPsiVals, sample + '_u12_ia')
       })
-    return Promise.all([fullDataLine, limitedDataLine]).then(values => {
-      return values
-    })
+    return Promise.all([fullDataLine, limitedDataLine])
   }
 
   // Computes verticals to display on bellcurve
@@ -198,11 +196,5 @@ export class MCFAdapter {
       .find(conditions, { projection: projection })
       .sort(order)
       .toArray()
-      .then(results => {
-        if (results.length < 1) {
-          return [] // gene not found
-        }
-        return results
-      })
   }
 }
