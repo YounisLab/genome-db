@@ -27,7 +27,7 @@ class MedianDistribution extends React.Component {
 
   bellCurveType = 'median'
 
-  verticals = 0
+  verticalCount = 0
 
   performSearch = gene => {
     this.service.getVertical(gene, this.bellCurveType, this.service.subsets).then(data => {
@@ -44,9 +44,9 @@ class MedianDistribution extends React.Component {
       const chartData = this.state.chartData
 
       // Remove any old verticals
-      _.times(this.verticals, () => _.each(this.service.samples, () => chartData.pop()))
+      _.times(this.verticalCount, () => _.each(this.service.samples, () => chartData.pop()))
 
-      let verticals = 0
+      let verticalCount = 0
 
       const x1 = data.median_log2_norm_count_plus_1 || 0
       // Add verticals for subsets
@@ -65,11 +65,11 @@ class MedianDistribution extends React.Component {
           )
 
           chartData.push(subsetVertical)
-          verticals++
+          verticalCount++
         }
       })
 
-      this.verticals = verticals
+      this.verticalCount = verticalCount
       this.setState({
         chartData: chartData,
         alertText: alertText
