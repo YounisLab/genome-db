@@ -17,14 +17,16 @@ HeatMapFactory(Highcharts)
   }
 */
 class HeatMapChart extends React.Component {
-  exportOptions
+  constructor(props) {
+    super(props)
+    this.exportOptions = getExportOptions(this.props.filename)
+  }
 
   getChartRef = () => {
     return this.refs.chart.chart
   }
 
   render() {
-    this.exportOptions = getExportOptions(this.props.filename)
     return (
       <div>
         <HighchartsReact
