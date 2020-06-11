@@ -161,8 +161,12 @@ export class TCGAAdapter {
   }
 
   correlations = (table, gene, min, max) => {
-    min = Number(min) || Number.MIN_SAFE_INTEGER
-    max = Number(max) || Number.MAX_SAFE_INTEGER
+    if (typeof min === 'undefined') {
+      min = Number.MIN_SAFE_INTEGER
+    }
+    if (typeof max === 'undefined') {
+      max = Number.MAX_SAFE_INTEGER
+    }
     const conditions = {
       gene: gene
     }
@@ -181,8 +185,8 @@ export class TCGAAdapter {
               cond: {
                 $and: [
                   { $ne: ['$$entry.rvalue', 'N/A'] },
-                  { $gt: ['$$entry.rvalue', min] },
-                  { $lt: ['$$entry.rvalue', max] }
+                  { $gt: ['$$entry.rvalue', Number(min)] },
+                  { $lt: ['$$entry.rvalue', Number(max)] }
                 ]
               }
             }
