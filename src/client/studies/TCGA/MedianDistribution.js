@@ -44,7 +44,7 @@ class MedianDistribution extends React.Component {
       const chartData = this.state.chartData
 
       // Remove any old verticals
-      _.times(this.verticalCount, () => _.each(this.service.samples, () => chartData.pop()))
+      _.times(this.verticalCount, () => chartData.pop())
 
       let verticalCount = 0
 
