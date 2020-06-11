@@ -191,6 +191,9 @@ export class TCGAAdapter {
           }
         }
       },
+      { $unwind: '$rvalues' },
+      { $sort: { 'rvalues.rvalue': -1 } },
+      { $group: { _id: '$_id', rvalues: { $push: '$rvalues' } } },
       { $project: projection }
     ]
     // Returns RBP names with corresponing Rvalue for gene in sorted order
@@ -202,11 +205,7 @@ export class TCGAAdapter {
         if (results.length < 1) {
           return [] // gene not found
         }
-        return _.reverse(
-          _.sortBy(results[0].rvalues, o => {
-            return o.rvalue // We use reciprocal to achieve descending sort
-          })
-        )
+        return results[0].rvalues
       })
   }
 }
