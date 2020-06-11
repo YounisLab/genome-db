@@ -1,32 +1,30 @@
 import express from 'express'
-import { URL } from 'url'
 import { MCFAdapter as MCFAdapterClass } from './MCFadapter'
 import { TCGAAdapter as TCGAAdapterClass } from './TCGAadapter'
 import bodyParser from 'body-parser'
-import Pool from 'pg-pool'
+import MongoClient from 'mongodb'
 
 const app = express()
 const port = process.env.PORT || 8080
-const dbURL = new URL(
-  process.env.DATABASE_URL || 'postgres://genomedb:genomedb@postgres:5432/genomedb'
-)
+const mongoURL = process.env.MONGO_URL || 'mongodb://mongo'
+const mongoDatabase = process.env.MONGO_DATABASE || 'genomedb'
 
 const MCFAdapter = new MCFAdapterClass()
 const TCGAAdapter = new TCGAAdapterClass()
 
 let adapter // set by middleware
-let pool
+let mongodb
 
 // set up db object
 function connect() {
-  const host = dbURL.host
-  console.log('Connecting to postgres at', host)
-  pool = new Pool({
-    connectionString: dbURL.href
-  })
-  return pool.query('SELECT NOW() as now').then(function (res) {
-    console.log('Connected to postgres on', res.rows[0].now)
-  })
+  return MongoClient.connect(mongoURL)
+    .then(function (client) {
+      console.log('Connected successfully to server')
+      mongodb = client.db(mongoDatabase)
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
 }
 
 app.use(bodyParser.json({ limit: '5mb' }))
@@ -56,8 +54,8 @@ connect()
 
 // pass in db object to adapter
 app.use(function (req, res, next) {
-  if (adapter.setPool(pool) !== 0) {
-    console.log('Error Setting Pool. Exiting..')
+  if (adapter.setDB(mongodb) !== 0) {
+    console.log('Error Setting Mongodb. Exiting..')
     process.exit(1)
   }
   next()
@@ -81,7 +79,7 @@ app.get('/api/vertical', (req, res) => {
   adapter
     .vertical(req.query.gene, req.query.samples, req.query.subsets, req.query.type)
     .then(function (results) {
-      res.json(results.rows)
+      res.json(results)
     })
     .catch(function (err) {
       console.log(err)
@@ -96,7 +94,7 @@ app.post('/api/heatmap', (req, res) => {
       : adapter.intronAnalysisHeatmap(req.body.genes.toUpperCase())
   heatmap
     .then(function (results) {
-      res.json(results.rows)
+      res.json(results)
     })
     .catch(function (err) {
       console.log(err)
