@@ -157,7 +157,7 @@ class DifferentialGeneExpression extends React.Component {
             series={this.state.chartData}
             xLabel={'Log2 FPKM'}
             yLabel={'Frequency'}
-            filename={'mcf_bellcurve'}
+            filename={'mcf_bell_curve'}
           />
         </Row>
       </Content>

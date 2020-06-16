@@ -158,7 +158,7 @@ class MedianDistribution extends React.Component {
             series={this.state.chartData}
             xLabel={'Log2 Median'}
             yLabel={'Frequency'}
-            filename={'tcgaBellCurve'}
+            filename={'tcga_bell_curve'}
           />
         </Row>
       </Content>
