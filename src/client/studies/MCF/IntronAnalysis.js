@@ -45,7 +45,6 @@ class IntronAnalysis extends React.Component {
 
       // Remove any old verticals
       _.times(this.verticalCount, () => {
-        console.log("count")
         bellCurveChartData.pop()
       })
 

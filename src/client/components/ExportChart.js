@@ -1,12 +1,12 @@
 import React from 'react'
 import Highcharts from 'highcharts'
-import HC_exporting from 'highcharts/modules/exporting'
-import HC_offline_exporting from 'highcharts/modules/offline-exporting.js'
+import hcExporting from 'highcharts/modules/exporting'
+import hcOfflineExporting from 'highcharts/modules/offline-exporting.js'
 import { Button } from 'antd'
 
 /* initialize export modules */
-HC_exporting(Highcharts)
-HC_offline_exporting(Highcharts)
+hcExporting(Highcharts)
+hcOfflineExporting(Highcharts)
 
 export function getExportOptions(filename) {
   return {
