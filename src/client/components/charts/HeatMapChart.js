@@ -69,7 +69,7 @@ class HeatMapChart extends React.Component {
               categories: this.props.yAxisCategories,
               title: 'Genes',
               labels: {
-                enabled: this.props.yAxisLabel,
+                enabled: this.props.yAxisLabel === undefined ? true : this.props.yAxisLabel,
                 style: {
                   fontSize: '15px'
                 }
