@@ -33,8 +33,7 @@ class IntronAnalysis extends React.Component {
   bellCurveType = 'psi'
   heatMapType = 'psi'
 
-  verticals = false
-  subsetVerticals = false
+  verticalCount = 0
 
   performSearch = gene => {
     // performSearch does 2 things:
@@ -44,14 +43,13 @@ class IntronAnalysis extends React.Component {
       // Newly created verticals will be appended to bellCurveChartData
       const bellCurveChartData = this.state.bellCurveChartData
 
-      if (this.verticals) {
-        _.each(this.service.samples, () => bellCurveChartData.pop())
-      }
-      if (this.subsetVerticals) {
-        _.each(this.service.samples, () => bellCurveChartData.pop())
-      }
+      // Remove any old verticals
+      _.times(this.verticalCount, () => {
+        console.log("count")
+        bellCurveChartData.pop()
+      })
 
-      let subsetVerticals = false
+      let verticalCount = 0
 
       // Create verticals for each sample
       _.each(this.service.samples, sample => {
@@ -73,13 +71,12 @@ class IntronAnalysis extends React.Component {
             )
 
             bellCurveChartData.push(subsetVertical)
-            subsetVerticals = true
+            verticalCount++
           }
         })
       })
 
-      this.verticals = true
-      this.subsetVerticals = subsetVerticals
+      this.verticalCount = verticalCount
       this.setState({
         bellCurveChartData: bellCurveChartData
       })
