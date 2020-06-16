@@ -9,7 +9,7 @@ import _ from 'lodash'
 
 // Columns for table
 const columns = [
-  { title: 'No.', dataIndex: 'key' },
+  { title: 'No.', dataIndex: 'key', width: '10%' },
   { title: 'Gene', dataIndex: 'gene', width: '20%' },
   { title: 'MCF10A FPKM', dataIndex: 'mcf10a_fpkm', width: '20%' },
   { title: 'MCF7 FPKM', dataIndex: 'mcf7_fpkm', width: '20%' },
