@@ -1,7 +1,7 @@
 import React from 'react'
 import { MCFService } from '../../services'
 import { Content, Row, BellCurveChart } from '../../components/'
-import { createCurveSeries, createHistogramSeries, createVerticalSeries } from '../shared-utils'
+import { createCurveSeries, createVerticalSeries } from '../shared-utils'
 import { Input, Table, Alert } from 'antd'
 import _ from 'lodash'
 const { Search } = Input
@@ -11,12 +11,11 @@ const columns = [
   { title: 'MCF10A FPKM', dataIndex: 'mcf10a_fpkm' },
   { title: 'MCF7 FPKM', dataIndex: 'mcf7_fpkm' },
   { title: 'p-value', dataIndex: 'pvalue' },
-  { title: 'log2 Foldchange', dataIndex: 'log2_foldchange' }
+  { title: 'Fold Change (log2)', dataIndex: 'log2_foldchange' }
 ]
 
 const colorMaps = {
   curve: { mcf10a: 'blue', mcf7: 'red' },
-  histogram: { mcf10a: 'blue', mcf7: 'red' },
   vertical: { mcf10a: 'blue', mcf7: 'red' }
 }
 
@@ -75,7 +74,7 @@ class DifferentialGeneExpression extends React.Component {
 
       // Create new verticals for each sample
       _.each(this.service.samples, sample => {
-        const name = `${gene} fpkm in ${sample}`
+        const name = `${gene.toUpperCase()} FPKM in ${sample.toUpperCase()}`
         // Generate x,y coords that draw the vertical line
         // Default x to 0 when log2 values are undefined
         const coords = [
@@ -109,12 +108,7 @@ class DifferentialGeneExpression extends React.Component {
           dataPerSample.data[0].curve,
           colorMaps.curve[sample]
         )
-        const hgram = createHistogramSeries(
-          sample,
-          dataPerSample.data[0].hgram,
-          colorMaps.histogram[sample]
-        )
-        series.push(curve, hgram)
+        series.push(curve)
       })
 
       this.setState({
@@ -159,7 +153,12 @@ class DifferentialGeneExpression extends React.Component {
           />
         </Row>
         <Row>
-          <BellCurveChart series={this.state.chartData} xLabel={'Log2 FPKM'} yLabel={'Frequency'} />
+          <BellCurveChart
+            series={this.state.chartData}
+            xLabel={'Log2 FPKM'}
+            yLabel={'Frequency'}
+            filename={'mcf_bell_curve'}
+          />
         </Row>
       </Content>
     )

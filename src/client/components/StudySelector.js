@@ -19,7 +19,7 @@ class StudySelector extends React.Component {
             }}
           >
             <Option value='mcf' style={{ fontSize: 16 }}>
-              MCF
+              MCF10A vs MCF7
             </Option>
             <Option value='tcga_brca' style={{ fontSize: 16 }}>
               TCGA BRCA

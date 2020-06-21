@@ -1,12 +1,7 @@
 import React from 'react'
 import { MCFService } from '../../services'
 import { Content, Row, BellCurveChart, HeatMapChart } from '../../components/'
-import {
-  createCurveSeries,
-  createHistogramSeries,
-  createVerticalSeries,
-  createHeatMapSeries
-} from '../shared-utils'
+import { createCurveSeries, createVerticalSeries, createHeatMapSeries } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
 import { Table } from 'antd'
 import _ from 'lodash'
@@ -20,7 +15,6 @@ const columns = [
 
 const colorMaps = {
   curve: { mcf10a: 'blue', mcf7: 'red', mcf10a_u12: 'purple', mcf7_u12: 'green' },
-  histogram: { mcf10a: 'blue', mcf7: 'red', mcf10a_u12: 'purple', mcf7_u12: 'green' },
   vertical: { mcf10a: 'blue', mcf7: 'red', mcf10a_u12: 'purple', mcf7_u12: 'green' }
 }
 
@@ -39,7 +33,7 @@ class IntronAnalysis extends React.Component {
   bellCurveType = 'psi'
   heatMapType = 'psi'
 
-  verticals = false
+  verticalCount = 0
 
   performSearch = gene => {
     // performSearch does 2 things:
@@ -49,48 +43,39 @@ class IntronAnalysis extends React.Component {
       // Newly created verticals will be appended to bellCurveChartData
       const bellCurveChartData = this.state.bellCurveChartData
 
-      if (this.verticals) {
-        _.each(this.service.samples, () => bellCurveChartData.pop())
-      }
+      // Remove any old verticals
+      _.times(this.verticalCount, () => {
+        bellCurveChartData.pop()
+      })
+
+      let verticalCount = 0
 
       // Create verticals for each sample
       _.each(this.service.samples, sample => {
-        // Generate x,y coords that draw the vertical line
-        // Default x to 0 when log2 values are undefined
-        let coords = [
-          [data[`${sample}_avg_log2_psi`] || 0, 0],
-          [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_height`]]
-        ]
-
-        const vertical = createVerticalSeries(
-          `${gene} psi in ${sample}`,
-          coords,
-          colorMaps.vertical[sample]
-        )
-        bellCurveChartData.push(vertical)
-
         // Add verticals for subsets
         _.each(this.service.subsets, function (subset) {
           const sampleSubset = `${sample}_${subset}`
-          if (vertical[sampleSubset]) {
+          if (data[subset]) {
             // Generate x,y coords for subset verticals
-            coords = [
+            // Default x to 0 when log2 values are undefined
+            const coords = [
               [data[`${sample}_avg_log2_psi`] || 0, 0],
-              [data[`${sample}_avg_log2_psi`] || 0, data[`${sample}_${subset}_height`]]
+              [data[`${sample}_avg_log2_psi`] || 0, data[`${sampleSubset}_height`]]
             ]
 
             const subsetVertical = createVerticalSeries(
-              `${vertical.gene} psi in ${sampleSubset}`,
+              `${gene.toUpperCase()} psi in ${sampleSubset.toUpperCase()}`,
               coords,
               colorMaps.vertical[sampleSubset]
             )
 
             bellCurveChartData.push(subsetVertical)
+            verticalCount++
           }
         })
       })
 
-      this.verticals = true
+      this.verticalCount = verticalCount
       this.setState({
         bellCurveChartData: bellCurveChartData
       })
@@ -122,17 +107,6 @@ class IntronAnalysis extends React.Component {
 
       _.each(data, dataPerSample => {
         const sample = dataPerSample.sample
-        const curve = createCurveSeries(
-          sample,
-          dataPerSample.data[0].curve,
-          colorMaps.curve[sample]
-        )
-        const hgram = createHistogramSeries(
-          sample,
-          dataPerSample.data[0].hgram,
-          colorMaps.histogram[sample]
-        )
-        series.push(curve, hgram)
         medianVals[sample] = dataPerSample.data[0].median
 
         _.each(this.service.subsets, function (subset, index) {
@@ -144,12 +118,7 @@ class IntronAnalysis extends React.Component {
             subsetData.curve,
             colorMaps.curve[subsetSample]
           )
-          const subsetHgram = createHistogramSeries(
-            subsetSample,
-            subsetData.hgram,
-            colorMaps.histogram[subsetSample]
-          )
-          series.push(subsetCurve, subsetHgram)
+          series.push(subsetCurve)
           medianVals[subsetSample] = subsetData.median
         })
       })
@@ -168,7 +137,7 @@ class IntronAnalysis extends React.Component {
     return (
       <Content>
         <Row>
-          <h1>Intron Analysis</h1>
+          <h1>Minor-Intron Splicing Efficiency</h1>
         </Row>
         <Row>
           <Search
@@ -183,7 +152,7 @@ class IntronAnalysis extends React.Component {
           <HeatMapChart
             series={this.state.heatMapChartData}
             xAxisCategories={this.state.xAxisCategories}
-            yAxisCategories={this.service.samples}
+            yAxisCategories={_.map(this.service.samples, sample => sample.toUpperCase())}
             yAxisMin={this.state.yAxisMin}
             yAxisMax={this.state.yAxisMax}
             tooltipFormatter={function () {
@@ -192,6 +161,7 @@ class IntronAnalysis extends React.Component {
                 this.point.value
               }</b>`
             }}
+            filename={'intron_analysis_heat_map'}
           />
         </Row>
         <Row>
@@ -210,6 +180,7 @@ class IntronAnalysis extends React.Component {
             series={this.state.bellCurveChartData}
             xLabel={'Log2 Psi'}
             yLabel={'Frequency'}
+            filename={'intron_analysis_bell_curve'}
           />
         </Row>
       </Content>

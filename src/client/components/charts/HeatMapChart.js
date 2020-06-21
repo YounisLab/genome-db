@@ -2,7 +2,7 @@ import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HeatMapFactory from 'highcharts/modules/heatmap'
-
+import { getExportOptions, ExportButton } from '../../components'
 HeatMapFactory(Highcharts)
 
 /*
@@ -11,17 +11,32 @@ HeatMapFactory(Highcharts)
     yAxisCategories: categories for labelling y-axis
     yAxisMin:
     yAxisMax:
+    disableYAxisLabel: bool to disable y-axis labels (defaults to false)
     tooltipFormatter:
     series: data to be drawn (HighCharts series format)
   }
 */
 class HeatMapChart extends React.Component {
+  constructor(props) {
+    super(props)
+    this.exportOptions = getExportOptions(this.props.filename)
+  }
+
+  static defaultProps = { disableYAxisLabel: false }
+
+  getChartRef = () => {
+    return this.refs.chart.chart
+  }
+
   render() {
     return (
       <div>
         <HighchartsReact
           highcharts={Highcharts}
+          constructorType={'chart'}
+          ref={'chart'}
           options={{
+            exporting: this.exportOptions,
             chart: {
               type: 'heatmap',
               marginTop: 40,
@@ -56,6 +71,7 @@ class HeatMapChart extends React.Component {
               categories: this.props.yAxisCategories,
               title: 'Genes',
               labels: {
+                enabled: !this.props.disableYAxisLabel,
                 style: {
                   fontSize: '15px'
                 }
@@ -88,6 +104,7 @@ class HeatMapChart extends React.Component {
             }
           }}
         />
+        <ExportButton getChartRef={this.getChartRef} />
       </div>
     )
   }

@@ -6,7 +6,7 @@ export class TCGAService {
 
   samples = ['tcga']
 
-  subsets = ['u12', 'rbp']
+  subsets = ['rbp', 'u12']
 
   types = ['median']
 

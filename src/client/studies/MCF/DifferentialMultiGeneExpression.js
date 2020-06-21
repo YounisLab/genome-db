@@ -9,7 +9,7 @@ import _ from 'lodash'
 
 // Columns for table
 const columns = [
-  { title: 'No.', dataIndex: 'key' },
+  { title: 'No.', dataIndex: 'key', width: '10%' },
   { title: 'Gene', dataIndex: 'gene', width: '20%' },
   { title: 'MCF10A FPKM', dataIndex: 'mcf10a_fpkm', width: '20%' },
   { title: 'MCF7 FPKM', dataIndex: 'mcf7_fpkm', width: '20%' },
@@ -103,14 +103,16 @@ class DifferentialMultiGeneExpression extends React.Component {
         <Row>
           <HeatMapChart
             series={this.state.chartData}
-            xAxisCategories={this.service.samples}
+            xAxisCategories={_.map(this.service.samples, sample => sample.toUpperCase())}
             yAxisCategories={this.state.yAxisCategories}
             yAxisMin={this.state.yAxisMin}
             yAxisMax={this.state.yAxisMax}
+            disableYAxisLabel={true}
             tooltipFormatter={function () {
               return `Log2 FPKM for <b>${this.series.yAxis.categories[this.point.y]}</b>
               in <b>${this.series.xAxis.categories[this.point.x]}</b>: <b>${this.point.value}</b>`
             }}
+            filename={'mcf_heat_map'}
           />
         </Row>
         <Row>

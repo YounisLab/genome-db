@@ -2,23 +2,13 @@ import _ from 'lodash'
 
 export function createCurveSeries(sample, data, color) {
   return {
-    name: `${sample} distribution`,
+    name: `${sample.toUpperCase()} distribution`,
     type: 'line',
     data: data,
     color: color,
     marker: {
       enabled: false
     }
-  }
-}
-
-export function createHistogramSeries(sample, data, color) {
-  return {
-    name: `${sample} histogram`,
-    type: 'column',
-    data: data,
-    color: color,
-    visible: false
   }
 }
 

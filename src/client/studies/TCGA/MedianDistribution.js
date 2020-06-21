@@ -2,7 +2,7 @@ import React from 'react'
 import { TCGAService } from '../../services'
 import { Table, Alert } from 'antd'
 import { Content, Row, BellCurveChart } from '../../components/'
-import { createCurveSeries, createHistogramSeries, createVerticalSeries } from '../shared-utils'
+import { createCurveSeries, createVerticalSeries } from '../shared-utils'
 import Search from 'antd/lib/input/Search'
 import _ from 'lodash'
 
@@ -14,7 +14,6 @@ const columns = [
 
 const colorMaps = {
   curve: { tcga: '#77a1e5', tcga_rbp: 'green', tcga_u12: '#f28f43' },
-  histogram: { tcga: '#77a1e5', tcga_rbp: 'green', tcga_u12: '#f28f43' },
   vertical: { tcga: '#77a1e5', tcga_rbp: 'green', tcga_u12: '#f28f43' }
 }
 
@@ -28,7 +27,7 @@ class MedianDistribution extends React.Component {
 
   bellCurveType = 'median'
 
-  verticals = false
+  verticalCount = 0
 
   performSearch = gene => {
     this.service.getVertical(gene, this.bellCurveType, this.service.subsets).then(data => {
@@ -45,20 +44,32 @@ class MedianDistribution extends React.Component {
       const chartData = this.state.chartData
 
       // Remove any old verticals
-      if (this.verticals) {
-        _.each(this.service.samples, () => chartData.pop())
-      }
+      _.times(this.verticalCount, () => chartData.pop())
+
+      let verticalCount = 0
 
       const x1 = data.median_log2_norm_count_plus_1 || 0
-      // Create vertical for full tcga distribution
-      const coords = [
-        [x1, data.tcga_height],
-        [x1, 0]
-      ]
-      const vertical = createVerticalSeries(`${gene} median`, coords, colorMaps.vertical.tcga)
-      chartData.push(vertical)
+      // Add verticals for subsets
+      _.each(this.service.subsets, function (subset) {
+        if (data[subset]) {
+          // Generate x,y coords for subset verticals
+          const coords = [
+            [x1, data[`tcga_${subset}_height`]],
+            [x1, 0]
+          ]
 
-      this.verticals = true
+          const subsetVertical = createVerticalSeries(
+            `${gene.toUpperCase()} median_${subset}`,
+            coords,
+            colorMaps.vertical[`tcga_${subset}`]
+          )
+
+          chartData.push(subsetVertical)
+          verticalCount++
+        }
+      })
+
+      this.verticalCount = verticalCount
       this.setState({
         chartData: chartData,
         alertText: alertText
@@ -78,12 +89,7 @@ class MedianDistribution extends React.Component {
           dataPerSample.data[0].curve,
           colorMaps.curve[sample]
         )
-        const hgram = createHistogramSeries(
-          sample,
-          dataPerSample.data[0].hgram,
-          colorMaps.histogram[sample]
-        )
-        series.push(curve, hgram)
+        series.push(curve)
         medianVals[sample] = dataPerSample.data[0].median
 
         _.each(this.service.subsets, function (subset, index) {
@@ -95,12 +101,7 @@ class MedianDistribution extends React.Component {
             subsetData.curve,
             colorMaps.curve[subsetSample]
           )
-          const subsetHgram = createHistogramSeries(
-            subsetSample,
-            subsetData.hgram,
-            colorMaps.histogram[subsetSample]
-          )
-          series.push(subsetCurve, subsetHgram)
+          series.push(subsetCurve)
           medianVals[subsetSample] = subsetData.median
         })
       })
@@ -157,6 +158,7 @@ class MedianDistribution extends React.Component {
             series={this.state.chartData}
             xLabel={'Log2 Median'}
             yLabel={'Frequency'}
+            filename={'tcga_bell_curve'}
           />
         </Row>
       </Content>

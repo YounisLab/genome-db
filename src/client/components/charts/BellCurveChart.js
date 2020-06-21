@@ -1,6 +1,7 @@
 import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { getExportOptions, ExportButton } from '../../components'
 
 /*
   props = {
@@ -10,12 +11,24 @@ import HighchartsReact from 'highcharts-react-official'
   }
 */
 class BellCurveChart extends React.Component {
+  constructor(props) {
+    super(props)
+    this.exportOptions = getExportOptions(this.props.filename)
+  }
+
+  getChartRef = () => {
+    return this.refs.chart.chart
+  }
+
   render() {
     return (
       <div>
         <HighchartsReact
           highcharts={Highcharts}
+          constructorType={'chart'}
+          ref={'chart'}
           options={{
+            exporting: this.exportOptions,
             chart: {
               zoomType: 'x'
             },
@@ -63,6 +76,7 @@ class BellCurveChart extends React.Component {
             title: '' // No title needed, overrides default
           }}
         />
+        <ExportButton getChartRef={this.getChartRef} />
       </div>
     )
   }
