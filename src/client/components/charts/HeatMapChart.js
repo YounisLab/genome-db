@@ -11,7 +11,7 @@ HeatMapFactory(Highcharts)
     yAxisCategories: categories for labelling y-axis
     yAxisMin:
     yAxisMax:
-    enableYAxisLabel: bool to enable/disable y-axis labels
+    disableYAxisLabel: bool to disable y-axis labels (defaults to false)
     tooltipFormatter:
     series: data to be drawn (HighCharts series format)
   }
@@ -21,6 +21,8 @@ class HeatMapChart extends React.Component {
     super(props)
     this.exportOptions = getExportOptions(this.props.filename)
   }
+
+  static defaultProps = { disableYAxisLabel: false }
 
   getChartRef = () => {
     return this.refs.chart.chart
@@ -69,8 +71,7 @@ class HeatMapChart extends React.Component {
               categories: this.props.yAxisCategories,
               title: 'Genes',
               labels: {
-                enabled:
-                  this.props.disableYAxisLabel === undefined ? true : this.props.disableYAxisLabel,
+                enabled: !this.props.disableYAxisLabel,
                 style: {
                   fontSize: '15px'
                 }
