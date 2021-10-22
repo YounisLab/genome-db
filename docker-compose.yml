@@ -10,16 +10,10 @@ services:
       - ./src/server:/home/src/server
       - ./src/client:/home/src/client
     depends_on:
-      - postgres
+      - mongo
     environment:
       - MONGO_URL=mongodb://mongo
       - MONGO_DATABASE=genomedb
-  postgres:
-    image: postgres:9.5
-    ports:
-      - "5432:5432"
-    volumes:
-      - genomepg:/var/lib/postgresql/data
   mongo:
     image: mongo:4.2.3
     environment:
@@ -30,5 +24,4 @@ services:
     ports:
       - "27017:27017"
 volumes:
-  genomepg:
   genomemongo:
