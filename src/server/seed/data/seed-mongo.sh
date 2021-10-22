@@ -25,8 +25,8 @@ run_mongoimport () {
   fi
 
   # assumes mongo service is up and running and has /seed/data mapped
-  docker-compose exec -w /seed/data/ mongo \
-    mongoimport -vvv -c $2 --type $extension --file $1 $headerline --uri $MONGO_URI
+  # docker-compose exec -w /seed/data/ mongo \
+  mongoimport -vvv -c $2 --type $extension --file $1 $headerline --uri $MONGO_URI
 }
 
 run_mongoimport "mcf10a_vs_mcf7.tsv" "mcf10a_vs_mcf7"
