@@ -39,7 +39,7 @@
     "less-loader": "^4.1.0",
     "lodash": "^4.17.19",
     "mathjs": "^5.4.2",
-    "mongodb": "^3.5.7",
+    "mongodb": "^4.1.0",
     "nodemon": "^1.19.4",
     "react": "^16.5.2",
     "react-csv": "^1.1.1",
