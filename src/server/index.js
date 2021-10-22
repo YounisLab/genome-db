@@ -2,7 +2,8 @@ import express from 'express'
 import { MCFAdapter as MCFAdapterClass } from './MCFadapter'
 import { TCGAAdapter as TCGAAdapterClass } from './TCGAadapter'
 import bodyParser from 'body-parser'
-import MongoClient from 'mongodb'
+import mongodb from 'mongodb'
+const { MongoClient } = mongodb
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -13,14 +14,14 @@ const MCFAdapter = new MCFAdapterClass()
 const TCGAAdapter = new TCGAAdapterClass()
 
 let adapter // set by middleware
-let mongodb
+let mongoConnection
 
 // set up db object
 function connect() {
   return MongoClient.connect(mongoURL)
     .then(function (client) {
       console.log('Connected successfully to server')
-      mongodb = client.db(mongoDatabase)
+      mongoConnection = client.db(mongoDatabase)
     })
     .catch(function (err) {
       console.log(err)
@@ -54,7 +55,7 @@ connect()
 
 // pass in db object to adapter
 app.use(function (req, res, next) {
-  if (adapter.setDB(mongodb) !== 0) {
+  if (adapter.setDB(mongoConnection) !== 0) {
     console.log('Error Setting Mongodb. Exiting..')
     process.exit(1)
   }
