@@ -13,7 +13,7 @@ cd GenomeDB
 
 Note that the clone process might take some time due to git-lfs downloading data files.
 
-If you wish to download only the source code and not any of the data files, set `export GIT_LFS_SKIP_SMUDGE=1` before 
+If you wish to download only the source code and not any of the data files, set `export GIT_LFS_SKIP_SMUDGE=1` before
 running `git lfs clone`.
 
 Build and run the app:
@@ -23,13 +23,14 @@ docker-compose build
 docker-compose up
 ```
 
-In order for the app to serve data, we must unpack the data files and load it into mongodb:
+In order for the app to serve data, we must unpack the data files and load it
+into mongodb. To do so, we first need to install the [`mongoimport`](https://docs.mongodb.com/database-tools/mongoimport/) tool. The actual commands are defined in a wrapper script, which can be run as follows:
 
 ```
 cd ./src/server/seed/data
 unzip data.zip
 
-# Make sure `docker-compose up` is running before executing the command below:
+# Make sure mongoimport is installed before executing the command below:
 ./seed-mongo.sh mongodb://localhost/genomedb
 ```
 
