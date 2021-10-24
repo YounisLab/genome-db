@@ -37,7 +37,7 @@
     "html-webpack-plugin": "^3.2.0",
     "less": "^2.7.2",
     "less-loader": "^4.1.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mathjs": "^7.5.1",
     "mongodb": "^4.1.0",
     "nodemon": "^1.19.4",
